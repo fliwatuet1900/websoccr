@@ -33,7 +33,7 @@ class SellYouthPlayerController implements IActionController {
 	
 	public function executeAction($parameters) {
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig("youth_enabled")) {
+		if (!$this->_websoccer->getConfig('youth_enabled')) {
 			return NULL;
 		}
 		
@@ -42,36 +42,29 @@ class SellYouthPlayerController implements IActionController {
 		$clubId = $user->getClubId($this->_websoccer, $this->_db);
 		
 		// check if it is own player
-		$player = YouthPlayersDataService::getYouthPlayerById($this->_websoccer, $this->_db, $this->_i18n, $parameters["id"]);
-		if ($clubId != $player["team_id"]) {
-			throw new Exception($this->_i18n->getMessage("youthteam_err_notownplayer"));
-		}
+		$player = YouthPlayersDataService::getYouthPlayerById($this->_websoccer, $this->_db, $this->_i18n, $parameters['id']);
+		if ($clubId != $player['team_id']) throw new Exception($this->_i18n->getMessage('youthteam_err_notownplayer'));
 		
 		// check if player is already on market
-		if ($player["transfer_fee"]) {
-			throw new Exception($this->_i18n->getMessage("youthteam_sell_err_alreadyonmarket"));
-		}
+		if ($player['transfer_fee']) throw new Exception($this->_i18n->getMessage('youthteam_sell_err_alreadyonmarket'));
 		
-		$this->updatePlayer($parameters["id"], $parameters["transfer_fee"]);
+		$this->updatePlayer($parameters['id'], $parameters['transfer_fee']);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("youthteam_sell_success"),
-				""));
+				$this->_i18n->getMessage('youthteam_sell_success'),
+				''));
 		
-		return "youth-team";
+		return 'youth-team';
 	}
 	
 	private function updatePlayer($playerId, $transferFee) {
 		
-		$columns = array("transfer_fee" => $transferFee);
+		$columns = array('transfer_fee' => $transferFee);
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_youthplayer";
-		$whereCondition = "id = %d";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_youthplayer';
+		$whereCondition = 'id = \'%d\'';
 		
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $playerId);
 	}
-	
 }
-
-?>

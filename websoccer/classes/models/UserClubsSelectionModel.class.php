@@ -49,9 +49,9 @@ class UserClubsSelectionModel implements IModel {
 	public function getTemplateParameters() {
 		
 		// select general information
-		$whereCondition = "id = %d";
-		$result = $this->_db->querySelect("id,name", $this->_websoccer->getConfig("db_prefix") . "_verein", 
-				"user_id = %d AND status = '1' AND nationalteam != '1' ORDER BY name ASC", 
+		$whereCondition = 'id = \'%d\'';
+		$result = $this->_db->querySelect('id,name', $this->_websoccer->getConfig('db_prefix') . '_verein', 
+				'user_id = \'%d\' AND status = \'1\' AND nationalteam != \'1\' ORDER BY name ASC',
 				$this->_websoccer->getUser()->id);
 		$teams = array();
 		while ($team = $result->fetch_array()) {
@@ -59,9 +59,6 @@ class UserClubsSelectionModel implements IModel {
 		}
 		$result->free();
 		
-		return array("userteams" => $teams);
+		return array('userteams' => $teams);
 	}
-	
 }
-
-?>

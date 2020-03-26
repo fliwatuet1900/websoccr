@@ -40,19 +40,16 @@ class FacebookLogoutController implements IActionController {
 		if (strlen(FacebookSdk::getInstance($this->_websoccer)->getUserEmail())) {
 			
 			$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_ERROR,
-					$this->_i18n->getMessage("facebooklogout_failure"),
-					""));
+					$this->_i18n->getMessage('facebooklogout_failure'),
+					''));
 			
 			return null;
 		}
 		
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS,
-					$this->_i18n->getMessage("facebooklogout_success"),
-					$this->_i18n->getMessage("facebooklogout_success_details")));
+					$this->_i18n->getMessage('facebooklogout_success'),
+					$this->_i18n->getMessage('facebooklogout_success_details')));
 		
-		return "home";
+		return 'home';
 	}
-	
 }
-
-?>

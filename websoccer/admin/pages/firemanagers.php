@@ -28,7 +28,7 @@ if (!$admin['r_admin'] && !$admin['r_demo'] && !$admin[$page['permissionrole']])
 	throw new Exception($i18n->getMessage('error_access_denied'));
 }
 
-echo '<h1>$mainTitle</h1>';
+echo '<h1>'.$mainTitle.'</h1>';
 
 //********** search form **********
 if (!$show) {
@@ -44,19 +44,15 @@ if (!$show) {
     
 	<?php 
 	$formFields = array();
-	
 	$formFields['maxbudget'] = array('type' => 'number', 'value' => (isset($_POST['maxbudget'])) ? escapeOutput($_POST['maxbudget']) : -1000000);
-	
 	$formFields['lastlogindays'] = array('type' => 'number', 'value' => (isset($_POST['lastlogindays'])) ? escapeOutput($_POST['lastlogindays']) : 60);
-	
 	$formFields['maxplayers'] = array('type' => 'number', 'value' => (isset($_POST['maxplayers'])) ? escapeOutput($_POST['maxplayers']) : 15);
-	
 	$formFields['userid'] = array('type' => 'foreign_key', 'value' => (isset($_POST['userid'])) ? escapeOutput($_POST['userid']) : '', 
 				'entity' => 'users', 'jointable' => 'user', 'labelcolumns' => 'nick');
 	
 	foreach ($formFields as $fieldId => $fieldInfo) {
 		echo FormBuilder::createFormGroup($i18n, $fieldId, $fieldInfo, $fieldInfo['value'], 'firemanagers_search_');
-	}	
+	}
 	?>
 	</fieldset>
 	<div class="form-actions">
@@ -88,22 +84,22 @@ if (!$show) {
 		$parameters = array();
 		
 		if (!empty($_POST['maxbudget'])) {
-			$whereCondition .= ' OR C.finanz_budget < %d';
+			$whereCondition .= ' OR C.finanz_budget < \'%d\'';
 			$parameters[] = $_POST['maxbudget'];
 		}
 		
 		if (!empty($_POST['lastlogindays'])) {
-			$whereCondition .= ' OR U.lastonline < %d';
+			$whereCondition .= ' OR U.lastonline < \'%d\'';
 			$parameters[] = $website->getNowAsTimestamp() - $_POST['lastlogindays'] * 24 * 3600;
 		}
 		
 		if (!empty($_POST['maxplayers'])) {
-			$whereCondition .= ' OR (SELECT COUNT(*) FROM '. $website->getConfig('db_prefix') . '_spieler AS PlayerTab WHERE PlayerTab.verein_id = C.id AND status = \'1\') < %d';
+			$whereCondition .= ' OR (SELECT COUNT(*) FROM '. $website->getConfig('db_prefix') . '_spieler AS PlayerTab WHERE PlayerTab.verein_id = C.id AND status = \'1\') < \'%d\'';
 			$parameters[] = $_POST['maxplayers'];
 		}
 		
 		if (!empty($_POST['userid']) && $_POST['userid']) {
-			$whereCondition .= ' OR U.id = %d';
+			$whereCondition .= ' OR U.id = \'%d\'';
 			$parameters[] = $_POST['userid'];
 		}
 		$whereCondition .= ')';
@@ -111,13 +107,14 @@ if (!$show) {
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters, 50);
 		if (!$result->num_rows) {
 			echo createInfoMessage($i18n->getMessage('firemanagers_search_nohits'), '');
-		} else {
+		}
+		else {
 
 			?>
-			<form action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' class='form-horizontal' id='frmMain' name='frmMain'>
-				<input type='hidden' name='site' value='<?php echo $site; ?>'>
-				<input type='hidden' name='show' value='selectoptions'>
-				<table class='table table-striped table-hover'>
+			<form action='<?php echo $_SERVER['PHP_SELF']; ?>' method="post" class="form-horizontal" id="frmMain" name="frmMain">
+				<input type="hidden" name="site" value="<?php echo $site; ?>">
+				<input type="hidden" name="show" value="selectoptions">
+				<table class="table table-striped table-hover">
 					<thead>
 						<tr>
 							<th></th>
@@ -132,21 +129,21 @@ if (!$show) {
 					<?php 
 					while ($row = $result->fetch_array()) {
 						echo '<tr>';
-						echo '<td><input type=\'checkbox\' name=\'selectedteams[]\' value=\''. $row['team_id'] . '\'/></td>';
-						echo '<td class=\'tableRowSelectionCell\'><a href=\''. $website->getInternalUrl('team', 'id=' . $row['team_id']) . '\' target=\'_blank\'>'. escapeOutput($row['team_name']) . '</a></td>';
-						echo '<td class=\'tableRowSelectionCell\'><a href=\''. $website->getInternalUrl('user', 'id=' . $row['user_id']) . '\' target=\'_blank\'>'. escapeOutput($row['user_nick']) . '</a></td>';
-						echo '<td class=\'tableRowSelectionCell\'>'. $website->getFormattedDate($row['user_lastonline']) . '</td>';
-						echo '<td class=\'tableRowSelectionCell\'>'. number_format($row['team_budget'], 0, ',', ' ') . '</td>';
-						echo '<td class=\'tableRowSelectionCell\'>'. $row['team_players'] . '</td>';
+						echo '<td><input type="checkbox" name="selectedteams[]" value="'. $row['team_id'] . '"/></td>';
+						echo '<td class="tableRowSelectionCell"><a href="'. $website->getInternalUrl('team', 'id=' . $row['team_id']) . '" target="_blank">'. escapeOutput($row['team_name']) . '</a></td>';
+						echo '<td class="tableRowSelectionCell"><a href="'. $website->getInternalUrl('user', 'id=' . $row['user_id']) . '" target="_blank">'. escapeOutput($row['user_nick']) . '</a></td>';
+						echo '<td class="tableRowSelectionCell">'. $website->getFormattedDate($row['user_lastonline']) . '</td>';
+						echo '<td class="tableRowSelectionCell">'. number_format($row['team_budget'], 0, ',', ' ') . '</td>';
+						echo '<td class="tableRowSelectionCell">'. $row['team_players'] . '</td>';
 						echo '</tr>' . PHP_EOL;
 					}
 					?>
 					</tbody>
 				</table>
 				
-				<p><label class='checkbox'><input type='checkbox' name='selAll' value='1' onClick='selectAll()'><?php echo $i18n->getMessage('manage_select_all_label'); ?></label></p>
+				<p><label class="checkbox"><input type="checkbox" name="selAll" value="1" onClick="selectAll()"><?php echo $i18n->getMessage('manage_select_all_label'); ?></label></p>
 			
-				<p><input type='submit' class='btn btn-primary' accesskey='l' title='Alt + l' value='<?php echo $i18n->getMessage('firemanagers_dismiss_button'); ?>'></p>
+				<p><input type="submit" class="btn btn-primary" accesskey="l" title="Alt + l" value='<?php echo $i18n->getMessage('firemanagers_dismiss_button'); ?>'></p>
 			</form>
 			
 			
@@ -158,17 +155,18 @@ if (!$show) {
 }
 
 //********** set dismiss options
-elseif ($show == 'selectoptions') {
+elseif ($show === 'selectoptions') {
 	if (!isset($_POST['selectedteams']) || !count($_POST['selectedteams'])) {
 		echo createErrorMessage($i18n->getMessage('firemanagers_dismiss_noneselected'), '');
-		echo '<a href=\'?site='. $site .'\' class=\'btn\'>'. $i18n->getMessage('back_label') .'</a>';
-	} else {
+		echo '<a href="?site='. $site .'" class="btn">'. $i18n->getMessage('back_label') .'</a>';
+	}
+	else {
 ?>
 
-  <form action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' class='form-horizontal'>
-	<input type='hidden' name='site' value='<?php echo $site; ?>'>
-	<input type='hidden' name='show' value='dismiss'>
-	<input type='hidden' name='teamids' value='<?php echo implode(',', $_POST['selectedteams']) ?>'>
+  <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-horizontal">
+	<input type="hidden" name="site" value="<?php echo $site; ?>">
+	<input type="hidden" name="show" value="dismiss">
+	<input type="hidden" name="teamids" value="<?php echo implode(',', $_POST['selectedteams']) ?>">
 	
 	<fieldset>
     <legend><?php echo $i18n->getMessage('firemanagers_dismiss_label'); ?></legend>
@@ -243,29 +241,23 @@ elseif ($show == 'selectoptions') {
 	}	
 	?>
 	</fieldset>
-	<div class='form-actions'>
-		<input type='submit' class='btn btn-primary' accesskey='s' title='Alt + s' value='<?php echo $i18n->getMessage('firemanagers_dismiss_button'); ?>'> 
-		<a class='btn' href='?site=<?php echo $site; ?>'><?php echo $i18n->getMessage('button_cancel'); ?></a>
+	<div class="form-actions">
+		<input type="submit" class="btn btn-primary" accesskey="s" title="Alt + s" value="<?php echo $i18n->getMessage('firemanagers_dismiss_button'); ?>">
+		<a class="btn" href="?site=<?php echo $site; ?>"><?php echo $i18n->getMessage('button_cancel'); ?></a>
 	</div>    
-  </form>
+    </form>
 
-  <?php
-
-	}
+    <?php
+    }
 }
 
 //********** execute dismissals **********
-elseif ($show == 'dismiss') {
+elseif ($show === 'dismiss') {
 
-  if ($admin['r_demo']) $err[] = $i18n->getMessage('validationerror_no_changes_as_demo');
+    if ($admin['r_demo']) $err[] = $i18n->getMessage('validationerror_no_changes_as_demo');
 
-  if (isset($err)) {
-
-    include('validationerror.inc.php');
-
-  }
-  else {
-
+    if (isset($err)) include('validationerror.inc.php');
+    else {
 	// strengths for player generation
 	$strengths['strength'] = $_POST['entity_player_w_staerke'];
 	$strengths['technique'] = $_POST['entity_player_w_technik'];
@@ -275,7 +267,6 @@ elseif ($show == 'dismiss') {
 
 	$teamIds = explode(',', $_POST['teamids']);
 	foreach($teamIds as $teamId) {
-		
 		// get team info
 		$team = TeamsDataService::getTeamSummaryById($website, $db, $teamId);
 		
@@ -285,12 +276,10 @@ elseif ($show == 'dismiss') {
 			'captain_id' => '',
 			'finanz_budget' => (!empty($_POST['minbudget'])) ? max($_POST['minbudget'], $team['team_budget']) : $team['team_budget']	
 		);
-		$db->queryUpdate($teamcolumns, $website->getConfig('db_prefix') . '_verein', 'id = %d', $teamId);
+		$db->queryUpdate($teamcolumns, $website->getConfig('db_prefix') . '_verein', 'id = \'%d\'', $teamId);
 		
 		// disable user
-		if (isset($_POST['disableusers']) && $_POST['disableusers']) {
-			$db->queryUpdate(array('status' => '0'), $website->getConfig('db_prefix') . '_user', 'id = %d', $team['user_id']);
-		}
+		if (isset($_POST['disableusers']) && $_POST['disableusers']) $db->queryUpdate(array('status' => '0'), $website->getConfig('db_prefix') . '_user', 'id = \'%d\'', $team['user_id']);
 		
 		// send message to user
 		if (!empty($_POST['message_subject']) && !empty($_POST['message_content'])) {
@@ -320,7 +309,7 @@ elseif ($show == 'dismiss') {
 		$positionsCount['RS'] = 0;
 		
 		$result = $db->querySelect('id, position_main, w_kondition, w_frische, w_zufriedenheit, vertrag_spiele', $website->getConfig('db_prefix') . '_spieler', 
-			'verein_id = %d AND status = \'1\'', $teamId);
+			'verein_id = \'%d\' AND status = \'1\'', $teamId);
 		while ($player = $result->fetch_array()) {
 			$updateRequired = FALSE;
 			
@@ -354,13 +343,10 @@ elseif ($show == 'dismiss') {
 					'w_kondition' => $stamina,
 					'w_zufriedenheit' => $satisfaction,
 					'vertrag_spiele' => $contractMatches
-				), $website->getConfig('db_prefix') . '_spieler', 'id = %d', $player['id']);
+				), $website->getConfig('db_prefix') . '_spieler', 'id = \'%d\'', $player['id']);
 
 			// increase position count
-			if (strlen($player['position_main'])) {
-				$positionsCount[$player['position_main']] = $positionsCount[$player['position_main']] + 1;
-			}
-			
+			if (strlen($player['position_main'])) $positionsCount[$player['position_main']] = $positionsCount[$player['position_main']] + 1;
 		}
 		$result->free();
 		
@@ -394,11 +380,6 @@ elseif ($show == 'dismiss') {
 	}
     
 	echo createSuccessMessage($i18n->getMessage('firemanagers_dismiss_success'), '');
-
-    echo '<p>&raquo; <a href=\'?site='. $site .'\'>'. $i18n->getMessage('back_label') . '</a></p>';
-
-  }
-
+    echo '<p>&raquo; <a href="?site='. $site .'">'. $i18n->getMessage('back_label') . '</a></p>';
+    }
 }
-
-?>

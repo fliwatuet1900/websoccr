@@ -57,7 +57,4 @@ class YouthPlayerScoutedEvent extends AbstractEvent {
 		$this->scoutId = $scoutId;
 		$this->playerId = $playerId;
 	}
-
 }
-
-?>

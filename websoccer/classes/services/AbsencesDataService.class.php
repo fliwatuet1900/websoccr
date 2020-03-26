@@ -36,7 +36,7 @@ class AbsencesDataService {
 	public static function getCurrentAbsenceOfUser(WebSoccer $websoccer, DbConnection $db, $userId) {
 		
 		$result = $db->querySelect('*', $websoccer->getConfig('db_prefix') . '_userabsence', 
-				'user_id = %d ORDER BY from_date DESC', $userId, 1);
+				'user_id = \'%d\' ORDER BY from_date DESC', $userId, 1);
 		$absence = $result->fetch_array();
 		$result->free();
 		
@@ -68,7 +68,7 @@ class AbsencesDataService {
 		$db->queryUpdate(array(
 				'user_id' => $deputyId,
 				'user_id_actual' => $userId
-				), $websoccer->getConfig('db_prefix') . '_verein', 'user_id = %d', $userId);
+				), $websoccer->getConfig('db_prefix') . '_verein', 'user_id = \'%d\'', $userId);
 	
 		// create notification for deputy
 		$user = UsersDataService::getUserById($websoccer, $db, $userId);
@@ -96,7 +96,7 @@ class AbsencesDataService {
 		$db->queryUpdate(array(
 				'user_id' => $userId,
 				'user_id_actual' => NULL
-		), $websoccer->getConfig('db_prefix') . '_verein', 'user_id_actual = %d', $userId);
+		), $websoccer->getConfig('db_prefix') . '_verein', 'user_id_actual = \'%d\'', $userId);
 		
 		// delete absence(s)
 		$db->queryDelete($websoccer->getConfig('db_prefix') . '_userabsence', 'user_id', $userId);
@@ -108,8 +108,5 @@ class AbsencesDataService {
 				'absence_comeback_notification', array('user' => $user['nick']),
 				'absence', 'user');
 		}
-		
 	}
-
 }
-?>

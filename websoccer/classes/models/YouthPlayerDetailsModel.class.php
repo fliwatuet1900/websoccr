@@ -35,21 +35,16 @@ class YouthPlayerDetailsModel implements IModel {
 	}
 	
 	public function renderView() {
-		return $this->_websoccer->getConfig("youth_enabled");
+		return $this->_websoccer->getConfig('youth_enabled');
 	}
 	
 	public function getTemplateParameters() {
 		
-		$playerId = (int) $this->_websoccer->getRequestParameter("id");
-		if ($playerId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		$playerId = (int) $this->_websoccer->getRequestParameter('id');
+		if ($playerId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$player = YouthPlayersDataService::getYouthPlayerById($this->_websoccer, $this->_db, $this->_i18n, $playerId);
 		
-		return array("player" => $player);
+		return array('player' => $player);
 	}
-	
 }
-
-?>

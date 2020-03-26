@@ -72,11 +72,8 @@ class Paginator {
 	public function __construct($hits, $eps, $websoccer) {
 		$this->eps = $eps;
 		$this->pageNo = max(1, (int) $websoccer->getRequestParameter(PARAM_PAGENUMBER));
-		if ($hits % $eps) {
-			$this->pages = floor($hits / $eps) + 1;
-		} else {
-			$this->pages = $hits / $eps;
-		}
+		if ($hits % $eps) $this->pages = floor($hits / $eps) + 1;
+		else $this->pages = $hits / $eps;
 	}
 	
 	/**
@@ -85,7 +82,4 @@ class Paginator {
 	public function getFirstIndex() {
 		return ($this->pageNo - 1) * $this->eps;
 	}
-	
 }
-
-?>

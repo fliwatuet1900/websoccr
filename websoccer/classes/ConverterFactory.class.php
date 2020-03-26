@@ -50,8 +50,6 @@ class ConverterFactory {
 			return $converterInstance;
 		}
 		
-		throw new Exception("Converter not found: " . $converter);
+		throw new Exception('Converter not found: ' . $converter);
 	}
-	
 }
-?>

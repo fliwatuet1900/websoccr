@@ -71,6 +71,4 @@ class EmailHelper {
 			throw new Exception('e-mail not sent.');
 		}
 	}
-	
 }
-?>

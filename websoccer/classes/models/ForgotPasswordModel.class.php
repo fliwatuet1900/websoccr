@@ -37,7 +37,7 @@ class ForgotPasswordModel implements IModel {
 	 * @see IModel::renderView()
 	 */
 	public function renderView() {
-		return $this->_websoccer->getConfig("login_allow_sendingpassword");
+		return $this->_websoccer->getConfig('login_allow_sendingpassword');
 	}
 	
 	/**
@@ -47,24 +47,21 @@ class ForgotPasswordModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$parameters = array();
-		if ($this->_websoccer->getConfig("register_use_captcha")
-				&& strlen($this->_websoccer->getConfig("register_captcha_publickey"))
-				&& strlen($this->_websoccer->getConfig("register_captcha_privatekey"))) {
+		if ($this->_websoccer->getConfig('register_use_captcha')
+				&& strlen($this->_websoccer->getConfig('register_captcha_publickey'))
+				&& strlen($this->_websoccer->getConfig('register_captcha_privatekey'))) {
 			
-			include_once(BASE_FOLDER . "/lib/recaptcha/recaptchalib.php");
+			include_once(BASE_FOLDER . '/lib/recaptcha/recaptchalib.php');
 			
 			// support SSL
-			$useSsl = (!empty($_SERVER["HTTPS"]));
+			$useSsl = (!empty($_SERVER['HTTPS']));
 			
-			$captchaCode = recaptcha_get_html($this->_websoccer->getConfig("register_captcha_publickey"), null, $useSsl);
+			$captchaCode = recaptcha_get_html($this->_websoccer->getConfig('register_captcha_publickey'), null, $useSsl);
 			
 
-			$parameters["captchaCode"] = $captchaCode;
+			$parameters['captchaCode'] = $captchaCode;
 		}
 		
 		return $parameters;
 	}
-	
 }
-
-?>

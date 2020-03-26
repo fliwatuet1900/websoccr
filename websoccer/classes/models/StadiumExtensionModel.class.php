@@ -51,15 +51,12 @@ class StadiumExtensionModel implements IModel {
 		$teamId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 		
 		$offers = StadiumsDataService::getBuilderOffersForExtension($this->_websoccer, $this->_db, $teamId,
-				(int) $this->_websoccer->getRequestParameter("side_standing"),
-				(int) $this->_websoccer->getRequestParameter("side_seats"),
-				(int) $this->_websoccer->getRequestParameter("grand_standing"),
-				(int) $this->_websoccer->getRequestParameter("grand_seats"),
-				(int) $this->_websoccer->getRequestParameter("vip"));
+				(int) $this->_websoccer->getRequestParameter('side_standing'),
+				(int) $this->_websoccer->getRequestParameter('side_seats'),
+				(int) $this->_websoccer->getRequestParameter('grand_standing'),
+				(int) $this->_websoccer->getRequestParameter('grand_seats'),
+				(int) $this->_websoccer->getRequestParameter('vip'));
 		
-		return array("offers" => $offers);
+		return array('offers' => $offers);
 	}
-	
 }
-
-?>

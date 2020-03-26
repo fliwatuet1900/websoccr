@@ -43,12 +43,10 @@ class OrderBuildingController implements IActionController {
 		$buildingId = $parameters['id'];
 		$user = $this->_websoccer->getUser();
 		$teamId = $user->getClubId($this->_websoccer, $this->_db);
-		if (!$teamId) {
-			throw new Exception($this->_i18n->getMessage("feature_requires_team"));
-		}
+		if (!$teamId) throw new Exception($this->_i18n->getMessage('feature_requires_team'));
 		
 		$dbPrefix = $this->_websoccer->getConfig('db_prefix');
-		$result = $this->_db->querySelect('*', $dbPrefix . '_stadiumbuilding', 'id = %d', $buildingId);
+		$result = $this->_db->querySelect('*', $dbPrefix . '_stadiumbuilding', 'id = \'%d\'', $buildingId);
 		$building = $result->fetch_array();
 		$result->free();
 		
@@ -59,27 +57,21 @@ class OrderBuildingController implements IActionController {
 		
 		// check budget
 		$team = TeamsDataService::getTeamSummaryById($this->_websoccer, $this->_db, $teamId);
-		if ($team['team_budget'] <= $building['costs']) {
-			throw new Exception($this->_i18n->getMessage('stadiumenvironment_build_err_too_expensive'));
-		}
+		if ($team['team_budget'] <= $building['costs']) throw new Exception($this->_i18n->getMessage('stadiumenvironment_build_err_too_expensive'));
 		
 		// check if already exists in team
-		$result = $this->_db->querySelect('*', $dbPrefix . '_buildings_of_team', 'team_id = %d AND building_id = %d', array($teamId, $buildingId));
+		$result = $this->_db->querySelect('*', $dbPrefix . '_buildings_of_team', 'team_id = \'%d\' AND building_id = \'%d\'', array($teamId, $buildingId));
 		$buildingExists = $result->fetch_array();
 		$result->free();
-		if ($buildingExists) {
-			throw new Exception($this->_i18n->getMessage('stadiumenvironment_build_err_already_exists'));
-		}
+		if ($buildingExists) throw new Exception($this->_i18n->getMessage('stadiumenvironment_build_err_already_exists'));
 		
 		// check required building
 		if ($building['required_building_id']) {
-			$result = $this->_db->querySelect('*', $dbPrefix . '_buildings_of_team', 'team_id = %d AND building_id = %d', array($teamId, $building['required_building_id']));
+			$result = $this->_db->querySelect('*', $dbPrefix . '_buildings_of_team', 'team_id = %d\' AND building_id = \'%d\'', array($teamId, $building['required_building_id']));
 			$requiredBuildingExists = $result->fetch_array();
 			$result->free();
 			
-			if (!$requiredBuildingExists) {
-				throw new Exception($this->_i18n->getMessage('stadiumenvironment_build_err_requires_building'));
-			}
+			if (!$requiredBuildingExists) throw new Exception($this->_i18n->getMessage('stadiumenvironment_build_err_requires_building'));
 		}
 		
 		// check premium costs
@@ -101,27 +93,24 @@ class OrderBuildingController implements IActionController {
 		
 		// withdraw premium fee
 		if ($building['premiumfee']) {
-			PremiumDataService::debitAmount($this->_websoccer, $this->_db, $user->id, $building['premiumfee'], "order-building");
+			PremiumDataService::debitAmount($this->_websoccer, $this->_db, $user->id, $building['premiumfee'], 'order-building');
 		}
 		
 		// credit fan popularity change
 		if ($building['effect_fanpopularity'] != 0) {
-			$result = $this->_db->querySelect('fanbeliebtheit', $dbPrefix . '_user', 'id = %d', $user->id, 1);
+			$result = $this->_db->querySelect('fanbeliebtheit', $dbPrefix . '_user', 'id = \'%d\'', $user->id, 1);
 			$userinfo = $result->fetch_array();
 			$result->free();
 			
 			$popularity = min(100, max(1, $building['effect_fanpopularity'] + $userinfo['fanbeliebtheit']));
-			$this->_db->queryUpdate(array('fanbeliebtheit' => $popularity), $dbPrefix . '_user', 'id = %d', $user->id);
+			$this->_db->queryUpdate(array('fanbeliebtheit' => $popularity), $dbPrefix . '_user', 'id = \'%d\'', $user->id);
 		}
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("stadiumenvironment_build_success"),
-				""));
+				$this->_i18n->getMessage('stadiumenvironment_build_success'),
+				''));
 		
 		return null;
 	}
-	
 }
-
-?>

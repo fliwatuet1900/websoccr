@@ -74,7 +74,7 @@ class YouthMatchDataUpdateSimulatorObserver implements ISimulatorObserver {
 				'guest_goals' => $match->guestTeam->getGoals(),
 				'simulated' => '1'
 				);
-		$this->_db->queryUpdate($columns, $this->_websoccer->getConfig('db_prefix') . '_youthmatch', 'id = %d', $match->id);
+		$this->_db->queryUpdate($columns, $this->_websoccer->getConfig('db_prefix') . '_youthmatch', 'id = \'%d\'', $match->id);
 	}
 	
 	/**
@@ -134,14 +134,14 @@ class YouthMatchDataUpdateSimulatorObserver implements ISimulatorObserver {
 				'state' => ($isOnPitch) ? '1' : 'Ausgewechselt'
 				);
 		$this->_db->queryUpdate($columns, $this->_websoccer->getConfig('db_prefix') . '_youthmatch_player', 
-				'match_id = %d AND player_id = %d', array($match->id, $player->id));
+				'match_id = \'%d\' AND player_id = \'%d\'', array($match->id, $player->id));
 		
 		// update player record, if actually played
 		if ($this->_websoccer->getConfig('sim_played_min_minutes') <= $player->getMinutesPlayed()) {
 			
 			// query existing statistics
 			$result = $this->_db->querySelect('*', $this->_websoccer->getConfig('db_prefix') . '_youthplayer', 
-					'id = %d', $player->id);
+					'id = \'%d\'', $player->id);
 			$playerinfo = $result->fetch_array();
 			$result->free();
 			
@@ -156,7 +156,8 @@ class YouthMatchDataUpdateSimulatorObserver implements ISimulatorObserver {
 			if ($player->yellowCards == 2) {
 				$yellowCards = 1;
 				$yellowRedCards = 1;
-			} else {
+			}
+			else {
 				$yellowCards = $player->yellowCards;
 			}
 			
@@ -167,7 +168,8 @@ class YouthMatchDataUpdateSimulatorObserver implements ISimulatorObserver {
 			if ($strength > $maxStrength) {
 				$strengthChange = 0;
 				$strength = $maxStrength;
-			} else if ($strength < $minStrength) {
+			}
+			elseif ($strength < $minStrength) {
 				$strengthChange = 0;
 				$strength = $minStrength;
 			}
@@ -184,7 +186,7 @@ class YouthMatchDataUpdateSimulatorObserver implements ISimulatorObserver {
 					'st_cards_red' => $playerinfo['st_cards_red'] + $player->redCard
 					);
 			$this->_db->queryUpdate($columns, $this->_websoccer->getConfig('db_prefix') . '_youthplayer',
-					'id = %d', $player->id);
+					'id = \'%d\'', $player->id);
 		}
 	}
 	
@@ -199,16 +201,17 @@ class YouthMatchDataUpdateSimulatorObserver implements ISimulatorObserver {
 		
 		if ($mark <= 1.3) {
 			return $this->_websoccer->getConfig('youth_strengthchange_verygood');
-		} else if ($mark <= 2.3) {
+		}
+		elseif ($mark <= 2.3) {
 			return $this->_websoccer->getConfig('youth_strengthchange_good');
-		} else if ($mark > 4.25 && $mark <= 5) {
+		}
+		elseif ($mark > 4.25 && $mark <= 5) {
 			return $this->_websoccer->getConfig('youth_strengthchange_bad');
-		} else if ($mark > 5) {
+		}
+		elseif ($mark > 5) {
 			return $this->_websoccer->getConfig('youth_strengthchange_verybad');
 		}
 		
 		return 0;
 	}
-	
 }
-?>

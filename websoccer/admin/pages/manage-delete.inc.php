@@ -20,13 +20,9 @@
 
 ******************************************************/
 
-if (isset($id) && $id) {
-	$del_id = array($id);
-}
+if (isset($id) && $id) $del_id = array($id);
 
-if ($admin["r_demo"]) {
-	throw new Exception($i18n->getMessage("error_access_denied"));
-}
+if ($admin['r_demo']) throw new Exception($i18n->getMessage('error_access_denied'));
 
 if (count($del_id)) {
 	$dependencies = ModuleConfigHelper::findDependentEntities($dbTableWithoutPrefix);
@@ -35,31 +31,23 @@ if (count($del_id)) {
 		
 		// log action
 		if ($loggingEnabled) {
-			$result = $db->querySelect($loggingColumns, $dbTable, "id = %d", $deleteId);
+			$result = $db->querySelect($loggingColumns, $dbTable, 'id = \'%d\'', $deleteId);
 			$item = $result->fetch_array(MYSQLI_ASSOC);
 			$result->free();
 			
-			logAdminAction($website, LOG_TYPE_DELETE, $admin["name"], $entity, json_encode($item));
+			logAdminAction($website, LOG_TYPE_DELETE, $admin['name'], $entity, json_encode($item));
 		}
 		
 		// delete item
-		$db->queryDelete($dbTable, "id = %d", $deleteId);
+		$db->queryDelete($dbTable, 'id = \'%d\'', $deleteId);
 		
 		foreach ($dependencies as $dependency) {
-			$fromTable = $website->getConfig("db_prefix") . "_" . $dependency["dbtable"];
-			$whereCondition = $dependency["columnid"] . " = %d";
+			$fromTable = $website->getConfig('db_prefix') . '_' . $dependency['dbtable'];
+			$whereCondition = $dependency['columnid'] . ' = \'%d\'';
 			
-			if (strtolower($dependency["cascade"]) == "delete") {
-				$db->queryDelete($fromTable, $whereCondition, $deleteId);
-			} else {
-				$db->queryUpdate(array($dependency["columnid"] => 0), $fromTable, $whereCondition, $deleteId);
-			}
+			if (strtolower($dependency['cascade']) === 'delete') $db->queryDelete($fromTable, $whereCondition, $deleteId);
+			else $db->queryUpdate(array($dependency['columnid'] => 0), $fromTable, $whereCondition, $deleteId);
 		}
-		
 	}
-	echo createSuccessMessage($i18n->getMessage("manage_success_delete"), "");
+	echo createSuccessMessage($i18n->getMessage('manage_success_delete'), '');
 }
-
-?>
-
-

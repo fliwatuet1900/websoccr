@@ -52,7 +52,4 @@ abstract class AbstractEvent {
 		$this->db = $db;
 		$this->i18n = $i18n;
 	}
-	
 }
-
-?>

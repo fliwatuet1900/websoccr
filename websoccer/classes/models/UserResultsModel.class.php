@@ -36,7 +36,7 @@ class UserResultsModel implements IModel {
 	}
 	
 	public function renderView() {
-		$this->_userId = (int) $this->_websoccer->getRequestParameter("userid");
+		$this->_userId = (int) $this->_websoccer->getRequestParameter('userid');
 		return $this->_userId > 0;
 	}
 	
@@ -44,10 +44,6 @@ class UserResultsModel implements IModel {
 		
 		$matches = MatchesDataService::getLatestMatchesByUser($this->_websoccer, $this->_db, $this->_userId);
 		
-		return array("matches" => $matches);
+		return array('matches' => $matches);
 	}
-	
-	
 }
-
-?>

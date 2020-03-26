@@ -58,7 +58,4 @@ class SeasonOfTeamCompletedEvent extends AbstractEvent {
 		$this->seasonId = $seasonId;
 		$this->rank = $rank;
 	}
-
 }
-
-?>

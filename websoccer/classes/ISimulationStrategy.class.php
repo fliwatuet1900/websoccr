@@ -78,11 +78,9 @@ interface ISimulationStrategy {
 	public function shoot(SimulationMatch $match);
 	
 	/**
-	 * Simulates penalty shooting after the regular matches ended without any winner.
+	 * Simulates penalty shootout after the regular matches ended without any winner.
 	 * 
 	 * @param SimulationMatch $match match to simulate.
 	 */
 	public function penaltyShooting(SimulationMatch $match);
-	
 }
-?>

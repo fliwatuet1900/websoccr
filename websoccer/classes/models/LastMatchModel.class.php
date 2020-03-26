@@ -41,9 +41,6 @@ class LastMatchModel implements IModel {
 	public function getTemplateParameters() {
 		$matchinfo = MatchesDataService::getLastMatch($this->_websoccer, $this->_db);
 		
-		return array("last_match" => $matchinfo);
+		return array('last_match' => $matchinfo);
 	}
-	
 }
-
-?>

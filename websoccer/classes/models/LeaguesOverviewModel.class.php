@@ -41,11 +41,11 @@ class LeaguesOverviewModel implements IModel {
 	public function getTemplateParameters() {
 		
 		// get table markers
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_liga";
-		$whereCondition = "1=1 GROUP BY land ORDER BY land ASC";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_liga';
+		$whereCondition = '1=1 GROUP BY land ORDER BY land ASC';
 		
-		$columns["land"] = "name";
-		$columns["COUNT(*)"] = "noOfLeagues";
+		$columns['land'] = 'name';
+		$columns['COUNT(*)'] = 'noOfLeagues';
 		
 		$countries = array();
 		
@@ -55,10 +55,6 @@ class LeaguesOverviewModel implements IModel {
 		}
 		$result->free();
 		
-		return array("countries" => $countries);
+		return array('countries' => $countries);
 	}
-	
-	
 }
-
-?>

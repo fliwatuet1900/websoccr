@@ -52,7 +52,7 @@ class SessionBasedUserAuthentication implements IUserAuthentication {
 			if ($rememberMe != null) {
 				
 				$columns = 'id, passwort_salt, nick, email, lang';
-				$whereCondition = 'status = 1 AND tokenid = \'%s\'';
+				$whereCondition = 'status = \'1\' AND tokenid = \'%s\'';
 				$result = $db->querySelect($columns, $fromTable, $whereCondition, $rememberMe);
 				$rememberedUser = $result->fetch_array();
 				$result->free();
@@ -63,22 +63,25 @@ class SessionBasedUserAuthentication implements IUserAuthentication {
 					if ($currentToken === $rememberMe) {
 						$this->_login($rememberedUser, $db, $fromTable, $currentUser);
 						return;
-					} else {
+					}
+					else {
 						CookieHelper::destroyCookie('user');
 						
 						// invalid old token since most probably user agent changed
 						$columns = array('tokenid' => '');
-						$whereCondition = 'id = %d';
+						$whereCondition = 'id = \'%d\'';
 						$parameter = $rememberedUser['id'];
 						$db->queryUpdate($columns, $fromTable, $whereCondition, $parameter);
 					}
 					
-				} else {
+				}
+				else {
 					CookieHelper::destroyCookie('user');
 				}
 				
 				// user is neither in session nor with cookie logged on
-			} else {
+			}
+			else {
 				return;
 			}
 		}
@@ -90,15 +93,14 @@ class SessionBasedUserAuthentication implements IUserAuthentication {
 		}
 		
 		$columns = 'id, nick, email, lang, premium_balance, picture';
-		$whereCondition = 'status = 1 AND id = %d';
+		$whereCondition = 'status = \'1\' AND id = \'%d\'';
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $userid);
 		
 		if ($result->num_rows) {
-			
 			$userdata = $result->fetch_array();
 			$this->_login($userdata, $db, $fromTable, $currentUser);
-			
-		} else {
+		}
+		else {
 			// user might got disabled in the meanwhile
 			$this->logoutUser($currentUser);
 		}
@@ -139,10 +141,8 @@ class SessionBasedUserAuthentication implements IUserAuthentication {
 			
 		// update timestamp of last action
 		$columns = array('lastonline' => $this->_website->getNowAsTimestamp(), 'lastaction' => $this->_website->getRequestParameter('page'));
-		$whereCondition = 'id = %d';
+		$whereCondition = 'id = \'%d\'';
 		$parameter = $userdata['id'];
 		$db->queryUpdate($columns, $fromTable, $whereCondition, $parameter);
 	}
 }
-
-?>

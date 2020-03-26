@@ -77,7 +77,4 @@ class UniqueCupNameValidator implements IValidator {
 	public function getMessage() {
 		return $this->_i18n->getMessage('validation_error_uniquecupname');
 	}
-	
 }
-
-?>

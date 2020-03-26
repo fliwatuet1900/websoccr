@@ -42,10 +42,6 @@ class LatestResultsModel implements IModel {
 		
 		$matches = MatchesDataService::getLatestMatches($this->_websoccer, $this->_db);
 		
-		return array("matches" => $matches);
+		return array('matches' => $matches);
 	}
-	
-	
 }
-
-?>

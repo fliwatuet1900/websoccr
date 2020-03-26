@@ -60,7 +60,7 @@ class JoomlaUserLoginMethod implements IUserLoginMethod {
 		// query user in Joomla table
 		$result = $this->_db->querySelect('username,email,password', 
 				$this->_websoccer->getConfig('joomlalogin_tableprefix') . 'users', 
-				'block < 1 AND ' . $queryWhereCondition, $loginStr);
+				'block < \'1\' AND ' . $queryWhereCondition, $loginStr);
 		$joomlaUser = $result->fetch_array();
 		$result->free();
 		
@@ -86,7 +86,4 @@ class JoomlaUserLoginMethod implements IUserLoginMethod {
 		// create new user
 		return UsersDataService::createLocalUser($this->_websoccer, $this->_db, $joomlaUser['username'], $userEmail);
 	}
-	
 }
-
-?>

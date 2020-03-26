@@ -51,24 +51,20 @@ class FormationModel implements IModel {
 	public function getTemplateParameters() {
 		
 		// get team players
-		if ($this->_nationalteam) {
-			$clubId = NationalteamsDataService::getNationalTeamManagedByCurrentUser($this->_websoccer, $this->_db);
-		} else {
-			$clubId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
-		}
+		if ($this->_nationalteam) $clubId = NationalteamsDataService::getNationalTeamManagedByCurrentUser($this->_websoccer, $this->_db);
+		else $clubId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 		
 		// next x matches
 		$nextMatches = MatchesDataService::getNextMatches($this->_websoccer, $this->_db, $clubId, 
 				$this->_websoccer->getConfig('formation_max_next_matches'));
-		if (!count($nextMatches)) {
-			throw new Exception($this->_i18n->getMessage('next_match_block_no_nextmatch'));
-		}
+		if (!count($nextMatches)) throw new Exception($this->_i18n->getMessage('next_match_block_no_nextmatch'));
 		
 		// currently selected match
 		$matchId = $this->_websoccer->getRequestParameter('id');
 		if (!$matchId) {
 			$matchinfo = $nextMatches[0];
-		} else {
+		}
+		else {
 			foreach ($nextMatches as $nextMatch) {
 				if ($nextMatch['match_id'] == $matchId) {
 					$matchinfo = $nextMatch;
@@ -76,15 +72,14 @@ class FormationModel implements IModel {
 				}
 			}
 		}
-		if (!isset($matchinfo)) {
-			throw new Exception('illegal match id');
-		}
+		if (!isset($matchinfo)) throw new Exception('illegal match id');
 		
 		$players = null;
 		if ($clubId > 0) {
 			if ($this->_nationalteam) {
 				$players = NationalteamsDataService::getNationalPlayersOfTeamByPosition($this->_websoccer, $this->_db, $clubId);
-			} else {
+			}
+			else {
 				$players = PlayersDataService::getPlayersOfTeamByPosition($this->_websoccer, $this->_db, $clubId, 'DESC', count($matchinfo) && $matchinfo['match_type'] == 'cup',
 						(isset($matchinfo['match_type']) && $matchinfo['match_type'] != 'friendly'));
 			}
@@ -93,7 +88,8 @@ class FormationModel implements IModel {
 		// load template
 		if ($this->_websoccer->getRequestParameter('templateid')) {
 			$formation = FormationDataService::getFormationByTemplateId($this->_websoccer, $this->_db, $clubId, $this->_websoccer->getRequestParameter('templateid'));
-		} else {
+		}
+		else {
 			// get previously saved formation and tactic
 			$formation = FormationDataService::getFormationByTeamId($this->_websoccer, $this->_db, $clubId, $matchinfo['match_id']);
 		}
@@ -101,7 +97,8 @@ class FormationModel implements IModel {
 		for ($benchNo = 1; $benchNo <= 5; $benchNo++) {
 			if ($this->_websoccer->getRequestParameter('bench' . $benchNo)) {
 				$formation['bench' . $benchNo] = $this->_websoccer->getRequestParameter('bench' . $benchNo);
-			} else if (!isset($formation['bench' . $benchNo])) {
+			}
+			elseif (!isset($formation['bench' . $benchNo])) {
 				$formation['bench' . $benchNo] = '';
 			}
 		}
@@ -113,7 +110,8 @@ class FormationModel implements IModel {
 				$formation['sub' . $subNo .'_minute'] = $this->_websoccer->getRequestParameter('sub' . $subNo .'_minute');
 				$formation['sub' . $subNo .'_condition'] = $this->_websoccer->getRequestParameter('sub' . $subNo .'_condition');
 				$formation['sub' . $subNo .'_position'] = $this->_websoccer->getRequestParameter('sub' . $subNo .'_position');
-			} else if (!isset($formation['sub' . $subNo .'_out'])) {
+			}
+			elseif (!isset($formation['sub' . $subNo .'_out'])) {
 				$formation['sub' . $subNo .'_out'] = '';
 				$formation['sub' . $subNo .'_in'] = '';
 				$formation['sub' . $subNo .'_minute'] = '';
@@ -128,13 +126,9 @@ class FormationModel implements IModel {
 		$criteria = $this->_websoccer->getRequestParameter('preselect');
 		if ($criteria !== NULL) {
 			
-			if ($criteria == 'strongest') {
-				$sortColumn = 'w_staerke';
-			} elseif ($criteria == 'freshest') {
-				$sortColumn = 'w_frische';
-			} else {
-				$sortColumn = 'w_zufriedenheit';
-			}
+			if ($criteria == 'strongest') $sortColumn = 'w_staerke';
+			elseif ($criteria == 'freshest') $sortColumn = 'w_frische';
+			else $sortColumn = 'w_zufriedenheit';
 
 			$proposedPlayers = FormationDataService::getFormationProposalForTeamId($this->_websoccer, $this->_db, $clubId, 
 					$setup['defense'], $setup['dm'], $setup['midfield'], $setup['om'], $setup['striker'], $setup['outsideforward'], $sortColumn, 'DESC', 
@@ -162,25 +156,16 @@ class FormationModel implements IModel {
 		}
 		
 		// free kick taker
-		if ($this->_websoccer->getRequestParameter('freekickplayer')) {
-			$formation['freekickplayer'] = $this->_websoccer->getRequestParameter('freekickplayer');
-		} else if (!isset($formation['freekickplayer'])) {
-			$formation['freekickplayer'] = '';
-		}
+		if ($this->_websoccer->getRequestParameter('freekickplayer')) $formation['freekickplayer'] = $this->_websoccer->getRequestParameter('freekickplayer');
+		elseif (!isset($formation['freekickplayer'])) $formation['freekickplayer'] = '';
 		
 		// tactical options
-		if ($this->_websoccer->getRequestParameter('offensive')) {
-			$formation['offensive'] = $this->_websoccer->getRequestParameter('offensive');
-		} else if (!isset($formation['offensive'])) {
-			$formation['offensive'] = 40;
-		}
+		if ($this->_websoccer->getRequestParameter('offensive')) $formation['offensive'] = $this->_websoccer->getRequestParameter('offensive');
+		elseif (!isset($formation['offensive'])) $formation['offensive'] = 40;
 		
-		if ($this->_websoccer->getRequestParameter('longpasses')) {
-			$formation['longpasses'] = $this->_websoccer->getRequestParameter('longpasses');
-		}
-		if ($this->_websoccer->getRequestParameter('counterattacks')) {
-			$formation['counterattacks'] = $this->_websoccer->getRequestParameter('counterattacks');
-		}
+		if ($this->_websoccer->getRequestParameter('longpasses')) $formation['longpasses'] = $this->_websoccer->getRequestParameter('longpasses');
+
+		if ($this->_websoccer->getRequestParameter('counterattacks')) $formation['counterattacks'] = $this->_websoccer->getRequestParameter('counterattacks');
 		
 		for ($playerNo = 1; $playerNo <= 11; $playerNo++) {
 			// set player from request
@@ -189,7 +174,8 @@ class FormationModel implements IModel {
 				$formation['player' . $playerNo . '_pos'] = $this->_websoccer->getRequestParameter('player' . $playerNo . '_pos');
 				
 				// set to 0 if no previous formation is available
-			} else if (!isset($formation['player' . $playerNo])) {
+			}
+			elseif (!isset($formation['player' . $playerNo])) {
 				$formation['player' . $playerNo] = '';
 				$formation['player' . $playerNo . '_pos'] = '';
 			}
@@ -224,7 +210,8 @@ class FormationModel implements IModel {
 			$setup['outsideforward'] = (int) $this->_websoccer->getRequestParameter('formation_outsideforward');
 			
 			// override by request when page is re-loaded after submitting the main form
-		} elseif ($this->_websoccer->getRequestParameter('setup') !== NULL) {
+		}
+		elseif ($this->_websoccer->getRequestParameter('setup') !== NULL) {
 			
 			$setupParts = explode('-', $this->_websoccer->getRequestParameter('setup'));
 				
@@ -236,7 +223,8 @@ class FormationModel implements IModel {
 			$setup['outsideforward'] = (int) $setupParts[5];
 			
 			// override by previously saved formation
-		} else if (isset($formation['setup']) && strlen($formation['setup'])) {
+		}
+		elseif (isset($formation['setup']) && strlen($formation['setup'])) {
 			$setupParts = explode('-', $formation['setup']);
 			
 			$setup['defense'] = (int) $setupParts[0];
@@ -246,11 +234,8 @@ class FormationModel implements IModel {
 			$setup['striker'] = (int) $setupParts[4];
 			
 			// check number of elements due to backwards compatibility
-			if (count($setupParts) > 5) {
-				$setup['outsideforward'] = (int) $setupParts[5];
-			} else {
-				$setup['outsideforward'] = 0;
-			}
+			if (count($setupParts) > 5) $setup['outsideforward'] = (int) $setupParts[5];
+			else $setup['outsideforward'] = 0;
 		}
 		
 		// alter setup if invalid
@@ -260,34 +245,22 @@ class FormationModel implements IModel {
 			// reduce players
 			if ($noOfPlayers > 10) {
 				
-				if ($setup['striker'] > 1) {
-					$setup['striker'] = $setup['striker'] - 1;
-				} elseif ($setup['outsideforward'] > 1) {
-					$setup['outsideforward'] = 0;
-				} elseif ($setup['om'] > 1) {
-					$setup['om'] = $setup['om'] - 1;
-				} elseif ($setup['dm'] > 1) {
-					$setup['dm'] = $setup['dm'] - 1;
-				} elseif ($setup['midfield'] > 2) {
-					$setup['midfield'] = $setup['midfield'] - 1;
-				} else {
-					$setup['defense'] = $setup['defense'] - 1;
-				}
+				if ($setup['striker'] > 1) $setup['striker'] = $setup['striker'] - 1;
+				elseif ($setup['outsideforward'] > 1) $setup['outsideforward'] = 0;
+				elseif ($setup['om'] > 1) $setup['om'] = $setup['om'] - 1;
+				elseif ($setup['dm'] > 1) $setup['dm'] = $setup['dm'] - 1;
+				elseif ($setup['midfield'] > 2) $setup['midfield'] = $setup['midfield'] - 1;
+				else $setup['defense'] = $setup['defense'] - 1;
 				
 				// increase
-			} else {
+			}
+			else {
 				
-				if ($setup['defense'] < 4) {
-					$setup['defense'] = $setup['defense'] + 1;
-				} else if ($setup['midfield'] < 4) {
-					$setup['midfield'] = $setup['midfield'] + 1;
-				} else if ($setup['dm'] < 2) {
-					$setup['dm'] = $setup['dm'] + 1;
-				} else if ($setup['om'] < 2) {
-					$setup['om'] = $setup['om'] + 1;
-				} else {
-					$setup['striker'] = $setup['striker'] + 1;
-				}
+				if ($setup['defense'] < 4) $setup['defense'] = $setup['defense'] + 1;
+				elseif ($setup['midfield'] < 4) $setup['midfield'] = $setup['midfield'] + 1;
+				elseif ($setup['dm'] < 2) $setup['dm'] = $setup['dm'] + 1;
+				elseif ($setup['om'] < 2) $setup['om'] = $setup['om'] + 1;
+				else $setup['striker'] = $setup['striker'] + 1;
 			}
 			
 			$altered = TRUE;
@@ -301,7 +274,4 @@ class FormationModel implements IModel {
 		
 		return $setup;
 	}
-	
 }
-
-?>

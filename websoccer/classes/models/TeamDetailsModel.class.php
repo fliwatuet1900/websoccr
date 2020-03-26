@@ -46,14 +46,10 @@ class TeamDetailsModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$teamId = (int) $this->_websoccer->getRequestParameter('id');
-		if ($teamId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if ($teamId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$team = TeamsDataService::getTeamById($this->_websoccer, $this->_db, $teamId);
-		if (!isset($team['team_id'])) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if (!isset($team['team_id'])) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$stadium = StadiumsDataService::getStadiumByTeamId($this->_websoccer, $this->_db, $teamId);
 		
@@ -62,19 +58,14 @@ class TeamDetailsModel implements IModel {
 			$dbPrefix = $this->_websoccer->getConfig('db_prefix') ;
 			$result = $this->_db->querySelect('AVG(P.w_staerke) AS avgstrength', 
 					$dbPrefix . '_spieler AS P INNER JOIN ' . $dbPrefix . '_nationalplayer AS NP ON P.id = NP.player_id', 
-					'NP.team_id = %d', $team['team_id']);
+					'NP.team_id = \'%d\'', $team['team_id']);
 			$players = $result->fetch_array();
 			$result->free();
-			if ($players) {
-				$team['team_strength'] = $players['avgstrength'];
-			}
+			if ($players) $team['team_strength'] = $players['avgstrength'];
 		}
 		
-		if (!$team['is_nationalteam']) {
-			$playerfacts = $this->getPlayerFacts($teamId);
-		} else {
-			$playerfacts = array();
-		}
+		if (!$team['is_nationalteam']) $playerfacts = $this->getPlayerFacts($teamId);
+		else $playerfacts = array();
 		
 		$team['victories'] = $this->getVictories($team['team_id'], $team['team_league_id']);
 		$team['cupvictories'] = $this->getCupVictories($team['team_id']);
@@ -91,9 +82,9 @@ class TeamDetailsModel implements IModel {
 		$columns['platz_2_id'] = 'season_second';
 		$columns['platz_3_id'] = 'season_third';
 		$columns['platz_4_id'] = 'season_fourth';
-		$columns['platz_5_id'] = 'season_fivth';
+		$columns['platz_5_id'] = 'season_fifth';
 		
-		$whereCondition = 'beendet = 1 AND (platz_1_id = %d OR platz_2_id = %d OR platz_3_id = %d OR platz_4_id = %d OR platz_5_id = %d)';
+		$whereCondition = 'beendet = \'1\' AND (platz_1_id = \'%d\' OR platz_2_id = \'%d\' OR platz_3_id = \'%d\' OR platz_4_id = \'%d\' OR platz_5_id = \'%d\')';
 		$parameters = array($teamId, $teamId, $teamId, $teamId, $teamId);
 		
 		$victories = array();
@@ -101,15 +92,10 @@ class TeamDetailsModel implements IModel {
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $parameters);
 		while ($season = $result->fetch_array()) {
 			$place = 1;
-			if ($season['season_second'] == $teamId) {
-				$place = 2;
-			} else if ($season['season_third'] == $teamId) {
-				$place = 3;
-			} else if ($season['season_fourth'] == $teamId) {
-				$place = 4;
-			} else if ($season['season_fivth'] == $teamId) {
-				$place = 5;
-			}
+			if ($season['season_second'] == $teamId) $place = 2;
+			elseif ($season['season_third'] == $teamId) $place = 3;
+			elseif ($season['season_fourth'] == $teamId) $place = 4;
+			elseif ($season['season_fifth'] == $teamId) $place = 5;
 			
 			$victories[] = array('season_name' => $season['season_name'], 'season_place' => $place, 'league_name' => $season['league_name']);
 		}
@@ -119,7 +105,7 @@ class TeamDetailsModel implements IModel {
 	
 	private function getCupVictories($teamId) {
 		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_cup';
-		$whereCondition = 'winner_id = %d ORDER BY name ASC';
+		$whereCondition = 'winner_id = \'%d\' ORDER BY name ASC';
 		$result = $this->_db->querySelect('id AS cup_id,name AS cup_name,logo AS cup_logo', $fromTable, $whereCondition, $teamId);
 		
 		$victories = array();
@@ -136,11 +122,9 @@ class TeamDetailsModel implements IModel {
 				);
 		
 		// age
-		if ($this->_websoccer->getConfig('players_aging') == 'birthday') {
-			$ageColumn = 'TIMESTAMPDIFF(YEAR,geburtstag,CURDATE())';
-		} else {
-			$ageColumn = 'age';
-		}
+		if ($this->_websoccer->getConfig('players_aging') == 'birthday') $ageColumn = 'TIMESTAMPDIFF(YEAR,geburtstag,CURDATE())';
+		else $ageColumn = 'age';
+
 		$columns['AVG(' . $ageColumn . ')'] = 'avgAge';
 		
 		// marketvalue
@@ -150,11 +134,12 @@ class TeamDetailsModel implements IModel {
 			$columns['SUM(w_frische)'] = 'sumFreshness';
 			$columns['SUM(w_zufriedenheit)'] = 'sumSatisfaction';
 			$columns['SUM(w_kondition)'] = 'sumStamina';
-		} else {
+		}
+		else {
 			$columns['SUM(marktwert)'] = 'sumMarketValue';
 		}
 		
-		$result = $this->_db->querySelect($columns, $this->_websoccer->getConfig('db_prefix') .'_spieler', 'verein_id = %d AND status = \'1\'', $teamId);
+		$result = $this->_db->querySelect($columns, $this->_websoccer->getConfig('db_prefix') .'_spieler', 'verein_id = \'%d\' AND status = \'1\'', $teamId);
 		$playerfacts = $result->fetch_array();
 		$result->free();
 		
@@ -162,12 +147,8 @@ class TeamDetailsModel implements IModel {
 			$playerfacts['sumMarketValue'] = $this->computeMarketValue($playerfacts['sumStrength'], $playerfacts['sumTechnique'],
 					$playerfacts['sumFreshness'], $playerfacts['sumSatisfaction'], $playerfacts['sumStamina']);
 		}
-		if ($playerfacts['numberOfPlayers'] > 0) {
-			$playerfacts['avgMarketValue'] = $playerfacts['sumMarketValue'] / $playerfacts['numberOfPlayers'];
-		} else {
-			$playerfacts['avgMarketValue'] = 0;
-		}
-		
+		if ($playerfacts['numberOfPlayers'] > 0) $playerfacts['avgMarketValue'] = $playerfacts['sumMarketValue'] / $playerfacts['numberOfPlayers'];
+		else $playerfacts['avgMarketValue'] = 0;
 		
 		return $playerfacts;
 	}
@@ -190,7 +171,4 @@ class TeamDetailsModel implements IModel {
 	
 		return $totalStrength * $this->_websoccer->getConfig('transfermarket_value_per_strength');
 	}
-	
 }
-
-?>

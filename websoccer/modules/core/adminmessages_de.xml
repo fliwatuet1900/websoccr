@@ -140,7 +140,8 @@
 	<message id="settings_label_time_offset_help">in Sekunden (3600 ist eine Stunde)</message> 
 	<message id="settings_label_password_protected">Alle Seiten schützen.</message> 
 	<message id="settings_label_password_protected_help">Nur angemeldete Benutzer können auf Seiten zugreifen.</message> 
-	<message id="settings_label_password_protected_startpage">Auch Startseite schützen.</message> 
+	<message id="settings_label_password_protected_startpage">Auch Startseite schützen.</message>
+	<message id="settings_label_save_images_randomized">Dateinamen hochgeladener Bilder verschlüsselt speichern.</message>
 	<message id="settings_label_entries_per_page">Anzahl Einträge pro Seite</message> 
 	<message id="settings_label_entries_per_page_help">in Listen</message> 
 	<message id="settings_label_supported_languages">Unterstützte Sprachen</message> 

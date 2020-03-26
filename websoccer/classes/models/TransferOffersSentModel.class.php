@@ -35,7 +35,7 @@ class TransferOffersSentModel implements IModel {
 	}
 	
 	public function renderView() {
-		return ($this->_websoccer->getConfig("transferoffers_enabled") == 1);
+		return ($this->_websoccer->getConfig('transferoffers_enabled') == 1);
 	}
 	
 	public function getTemplateParameters() {
@@ -46,20 +46,18 @@ class TransferOffersSentModel implements IModel {
 		$offers = array();
 		$count = DirectTransfersDataService::countSentOffers($this->_websoccer, $this->_db, $clubId, $userId);
 		
-		$eps = $this->_websoccer->getConfig("entries_per_page");
+		$eps = $this->_websoccer->getConfig('entries_per_page');
 		$paginator = new Paginator($count, $eps, $this->_websoccer);
-		$paginator->addParameter("block", "directtransfer-sentoffers");
+		$paginator->addParameter('block', 'directtransfer-sentoffers');
 		
 		if ($count > 0) {
 			$offers = DirectTransfersDataService::getSentOffers($this->_websoccer, $this->_db, 
 					$paginator->getFirstIndex(), $eps, $clubId, $userId);
-		} else {
+		}
+		else {
 			$offers = array();
 		}
 		
-		return array("offers" => $offers, "paginator" => $paginator);
+		return array('offers' => $offers, 'paginator' => $paginator);
 	}
-	
 }
-
-?>

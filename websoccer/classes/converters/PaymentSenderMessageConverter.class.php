@@ -59,7 +59,4 @@ class PaymentSenderMessageConverter implements IConverter {
 	public function toDbValue($value) {
 		return $this->toText($value);
 	}
-	
 }
-
-?>

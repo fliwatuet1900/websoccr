@@ -52,9 +52,9 @@ class GoogleplusLoginController implements IActionController {
 		// not authenticated
 		if (!$userEmail) {
 			$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_WARNING,
-					$this->_i18n->getMessage("googlepluslogin_failure"),
-					""));
-			return "home";
+					$this->_i18n->getMessage('googlepluslogin_failure'),
+					''));
+			return 'home';
 		}
 		
 		// authenticated. Check if user exists.
@@ -62,20 +62,15 @@ class GoogleplusLoginController implements IActionController {
 		$userId = UsersDataService::getUserIdByEmail($this->_websoccer, $this->_db, $userEmail);
 		
 		// if does not exist, then create new user
-		if ($userId < 1) {
-			$userId = UsersDataService::createLocalUser($this->_websoccer, $this->_db, null, $userEmail);
-		}
+		if ($userId < 1) $userId = UsersDataService::createLocalUser($this->_websoccer, $this->_db, null, $userEmail);
 		
 		// log in user
 		SecurityUtil::loginFrontUserUsingApplicationSession($this->_websoccer, $userId);
 		
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS,
-				$this->_i18n->getMessage("googlepluslogin_success"),
-				""));
+				$this->_i18n->getMessage('googlepluslogin_success'),
+				''));
 		
-		return (strlen($this->_websoccer->getUser()->username)) ? "office" : "enter-username";
+		return (strlen($this->_websoccer->getUser()->username)) ? 'office' : 'enter-username';
 	}
-	
 }
-
-?>

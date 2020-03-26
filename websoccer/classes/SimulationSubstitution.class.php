@@ -72,7 +72,8 @@ class SimulationSubstitution {
     	if ($condition != null 
     			&& in_array($condition, array(SUB_CONDITION_TIE, SUB_CONDITION_LEADING, SUB_CONDITION_DEFICIT))) {
     		$this->condition = $condition;
-    	} else {
+    	}
+    	else {
     		$this->condition = null;
     	}
     }
@@ -83,6 +84,4 @@ class SimulationSubstitution {
     public function __toString() {
     	return '{minute: '. $this->minute . ', in: '. $this->playerIn .', out: '. $this->playerOut . '}';
     }
-	
 }
-?>

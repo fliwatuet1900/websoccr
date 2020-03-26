@@ -25,4 +25,3 @@ require_once(BASE_FOLDER . '/admin/config/global.inc.php');
 
 SecurityUtil::logoutAdmin();
 header('location: login.php?loggedout=1');
-?>

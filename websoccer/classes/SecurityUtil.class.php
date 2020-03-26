@@ -50,7 +50,8 @@ class SecurityUtil {
 				self::logoutAdmin();
 				return FALSE;
 			}
-		} else {
+		}
+		else {
 			$_SESSION['HTTP_USER_AGENT'] = md5($_SERVER['HTTP_USER_AGENT']);
 		}
 	
@@ -92,7 +93,6 @@ class SecurityUtil {
 	 * @return string generated session token.
 	 */
 	public static function generateSessionToken($userId, $salt) {
-		
 		$useragent = (isset($_SESSION['HTTP_USER_AGENT'])) ? $_SESSION['HTTP_USER_AGENT'] : 'n.a.';
 		
 		return md5($salt . $useragent . $userId);
@@ -113,8 +113,5 @@ class SecurityUtil {
 		// update user data
 		$userProvider = new SessionBasedUserAuthentication($websoccer);
 		$userProvider->verifyAndUpdateCurrentUser($websoccer->getUser());
-		
 	}
 }
-
-?>

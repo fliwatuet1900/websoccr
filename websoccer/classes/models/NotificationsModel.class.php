@@ -51,15 +51,12 @@ class NotificationsModel implements IModel {
 		$user = $this->_websoccer->getUser();
 		
 		$notifications = NotificationsDataService::getLatestNotifications($this->_websoccer, $this->_db, $this->_i18n, 
-				$user->id, $user->getClubId($this->_websoccer, $this->_db), $this->_websoccer->getConfig("notifications_max"));
+				$user->id, $user->getClubId($this->_websoccer, $this->_db), $this->_websoccer->getConfig('notifications_max'));
 		
 		// mark notifications as seen after retrieval
-		$this->_db->queryUpdate(array("seen" => "1"), $this->_websoccer->getConfig("db_prefix") . "_notification", 
-				"user_id = %d", $this->_websoccer->getUser()->id);
+		$this->_db->queryUpdate(array('seen' => '1'), $this->_websoccer->getConfig('db_prefix') . '_notification', 
+				'user_id = \'%d\'', $this->_websoccer->getUser()->id);
 		
-		return array("notifications" => $notifications);
+		return array('notifications' => $notifications);
 	}
-	
 }
-
-?>

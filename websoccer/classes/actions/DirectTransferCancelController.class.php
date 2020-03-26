@@ -39,33 +39,28 @@ class DirectTransferCancelController implements IActionController {
 	public function executeAction($parameters) {
 		
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig("transferoffers_enabled")) {
+		if (!$this->_websoccer->getConfig('transferoffers_enabled')) {
 			return;
 		}
 		
 		$userId = $this->_websoccer->getUser()->id;
 		
 		// get offer information
-		$result = $this->_db->querySelect("*", $this->_websoccer->getConfig("db_prefix") . "_transfer_offer", 
-				"id = %d AND sender_user_id = %d",
-				array($parameters["id"], $userId));
+		$result = $this->_db->querySelect('*', $this->_websoccer->getConfig('db_prefix') . '_transfer_offer', 
+				'id = \'%d\' AND sender_user_id = \'%d\'',
+				array($parameters['id'], $userId));
 		$offer = $result->fetch_array();
 		$result->free();
 		
-		if (!$offer) {
-			throw new Exception($this->_i18n->getMessage("transferoffers_offer_cancellation_notfound"));
-		}
+		if (!$offer) throw new Exception($this->_i18n->getMessage('transferoffers_offer_cancellation_notfound'));
 		
-		$this->_db->queryDelete($this->_websoccer->getConfig("db_prefix") . "_transfer_offer", "id = %d", $offer["id"]);
+		$this->_db->queryDelete($this->_websoccer->getConfig('db_prefix') . '_transfer_offer', 'id = \'%d\'', $offer['id']);
 			
 		// show success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS,
-				$this->_i18n->getMessage("transferoffers_offer_cancellation_success"),
-				""));
+				$this->_i18n->getMessage('transferoffers_offer_cancellation_success'),
+				''));
 		
 		return null;
 	}
-	
 }
-
-?>

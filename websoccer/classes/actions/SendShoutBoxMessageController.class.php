@@ -58,13 +58,10 @@ class SendShoutBoxMessageController implements IActionController {
 		if (!isset($_SESSION['msgdeleted'])) {
 			// delete messages which are older than 14 days
 			$threshold = $date - 24 * 3600 * 14;
-			$this->_db->queryDelete($fromTable, "created_date < %d", $threshold);
+			$this->_db->queryDelete($fromTable, 'created_date < \'%d\'', $threshold);
 			$_SESSION['msgdeleted'] = 1;
 		}
 		
 		return null;
 	}
-	
 }
-
-?>

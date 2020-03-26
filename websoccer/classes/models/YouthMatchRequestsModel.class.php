@@ -35,7 +35,7 @@ class YouthMatchRequestsModel implements IModel {
 	}
 	
 	public function renderView() {
-		return $this->_websoccer->getConfig("youth_enabled") && $this->_websoccer->getConfig("youth_matchrequests_enabled");
+		return $this->_websoccer->getConfig('youth_enabled') && $this->_websoccer->getConfig('youth_matchrequests_enabled');
 	}
 	
 	public function getTemplateParameters() {
@@ -43,14 +43,11 @@ class YouthMatchRequestsModel implements IModel {
 		YouthPlayersDataService::deleteInvalidOpenMatchRequests($this->_websoccer, $this->_db);
 		
 		$count = YouthPlayersDataService::countMatchRequests($this->_websoccer, $this->_db);
-		$eps = $this->_websoccer->getConfig("entries_per_page");
+		$eps = $this->_websoccer->getConfig('entries_per_page');
 		$paginator = new Paginator($count, $eps, $this->_websoccer);
 		
 		$requests = YouthPlayersDataService::getMatchRequests($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps);
 		
-		return array("requests" => $requests, "paginator" => $paginator);
+		return array('requests' => $requests, 'paginator' => $paginator);
 	}
-	
 }
-
-?>

@@ -20,18 +20,17 @@
 
 ******************************************************/
 
-
 ?>
 <div class="accordion" id="searchFrm">
 	<div class="accordion-group">
 		<div class="accordion-heading">
 			<a class="accordion-toggle" data-toggle="collapse"
 				data-parent="#searchFrm" href="#collapseOne"
-				title="<?php echo $i18n->getMessage("manage_search_collapse"); ?>"> <i class="icon-filter"></i>
-				<?php echo $i18n->getMessage("manage_search_title"); ?>
+				title="<?php echo $i18n->getMessage('manage_search_collapse'); ?>"> <i class="icon-filter"></i>
+				<?php echo $i18n->getMessage('manage_search_title'); ?>
 			</a>
 		</div>
-		<div id="collapseOne" class="accordion-body collapse <?php if ($openSearchForm) echo "in"?>">
+		<div id="collapseOne" class="accordion-body collapse <?php if ($openSearchForm) echo 'in'?>">
 			<div class="accordion-inner">
 				<form class="form-horizontal" name="frmSearch"
 					action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
@@ -40,22 +39,20 @@
 
 					<?php
 					foreach ($filterFields as $filterFieldId => $filterFieldInfo) {
-						if ($filterFieldInfo["type"] !== "timestamp" && $filterFieldInfo["type"] !== "date") {
-							echo FormBuilder::createFormGroup($i18n, $filterFieldId, $filterFieldInfo, $filterFieldInfo["value"], "");
+						if ($filterFieldInfo['type'] !== 'timestamp' && $filterFieldInfo['type'] !== 'date') {
+							echo FormBuilder::createFormGroup($i18n, $filterFieldId, $filterFieldInfo, $filterFieldInfo['value'], '');
 						}
 					}
 					?>
 					
 					<div class="control-group">
 						<div class="controls">
-							<button type="submit" class="btn btn-primary"><?php echo $i18n->getMessage("button_search"); ?></button>
-							<a href="?site=<?php echo $site; ?>&entity=<?php echo $entity; ?>&filterreset=1" class="btn"><?php echo $i18n->getMessage("button_reset"); ?></a>
+							<button type="submit" class="btn btn-primary"><?php echo $i18n->getMessage('button_search'); ?></button>
+							<a href="?site=<?php echo $site; ?>&entity=<?php echo $entity; ?>&filterreset=1" class="btn"><?php echo $i18n->getMessage('button_reset'); ?></a>
 						</div>
 					</div>
-				</form>					
-			
+				</form>
 			</div>
-
 		</div>
 	</div>
 </div>

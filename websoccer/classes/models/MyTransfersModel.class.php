@@ -43,9 +43,6 @@ class MyTransfersModel implements IModel {
 		$teamId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 		$transfers = TransfermarketDataService::getCompletedTransfersOfTeam($this->_websoccer, $this->_db, $teamId);
 		
-		return array("completedtransfers" => $transfers);
+		return array('completedtransfers' => $transfers);
 	}
-	
 }
-
-?>

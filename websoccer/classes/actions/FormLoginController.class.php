@@ -48,58 +48,54 @@ class FormLoginController implements IActionController {
 	 */
 	public function executeAction($parameters) {
 		
-		$loginMethodClass = $this->_websoccer->getConfig("login_method");
+		$loginMethodClass = $this->_websoccer->getConfig('login_method');
 		if (!class_exists($loginMethodClass)) {
-			throw new Exception("Login method class does not exist: " . $loginMethodClass);
+			throw new Exception('Login method class does not exist: ' . $loginMethodClass);
 		}
 		
 		$loginMethod = new $loginMethodClass($this->_websoccer, $this->_db);
 		
 		// sign in with e-mail
-		if ($this->_websoccer->getConfig("login_type") == "email") {
-			$userId = $loginMethod->authenticateWithEmail($parameters["loginstr"], $parameters["loginpassword"]);
+		if ($this->_websoccer->getConfig('login_type') == 'email') {
+			$userId = $loginMethod->authenticateWithEmail($parameters['loginstr'], $parameters['loginpassword']);
 			
 			// sign in with user name
-		} else {
-			$userId = $loginMethod->authenticateWithUsername($parameters["loginstr"], $parameters["loginpassword"]);
+		}
+		else {
+			$userId = $loginMethod->authenticateWithUsername($parameters['loginstr'], $parameters['loginpassword']);
 		}
 		
 		// sign in failed
 		if (!$userId) {
 			sleep(SLEEP_SECONDS_ON_FAILURE);
-			throw new Exception($this->_i18n->getMessage("formlogin_invalid_data"));
+			throw new Exception($this->_i18n->getMessage('formlogin_invalid_data'));
 		}
 		
 		SecurityUtil::loginFrontUserUsingApplicationSession($this->_websoccer, $userId);
 		
-		// "remember me"
-		if (isset($parameters["rememberme"]) && $parameters["rememberme"] == 1) {
+		// 'remember me'
+		if (isset($parameters['rememberme']) && $parameters['rememberme'] == 1) {
 			
-			$fromTable = $this->_websoccer->getConfig("db_prefix") . "_user";
-			$whereCondition = "id = %d";
+			$fromTable = $this->_websoccer->getConfig('db_prefix') . '_user';
+			$whereCondition = 'id = \'%d\'';
 			$parameter = $userId;
 			
 			// get password salt
-			$result = $this->_db->querySelect("passwort_salt", $fromTable, $whereCondition, $parameter);
+			$result = $this->_db->querySelect('passwort_salt', $fromTable, $whereCondition, $parameter);
 			$saltinfo = $result->fetch_array();
 			$result->free();
 			
-			$salt = $saltinfo["passwort_salt"];
-			if (!strlen($salt)) {
-				$salt = SecurityUtil::generatePasswordSalt();
-			}
+			$salt = $saltinfo['passwort_salt'];
+			if (!strlen($salt)) $salt = SecurityUtil::generatePasswordSalt();
 			
 			$sessionToken = SecurityUtil::generateSessionToken($userId, $salt);
-			$columns = array("tokenid" => $sessionToken, "passwort_salt" => $salt);
+			$columns = array('tokenid' => $sessionToken, 'passwort_salt' => $salt);
 			
 			$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameter);
 			
-			CookieHelper::createCookie("user", $sessionToken, REMEMBERME_COOKIE_LIFETIME_DAYS);
+			CookieHelper::createCookie('user', $sessionToken, REMEMBERME_COOKIE_LIFETIME_DAYS);
 		}
 		
-		return (strlen($this->_websoccer->getUser()->username)) ? "office" : "enter-username";
+		return (strlen($this->_websoccer->getUser()->username)) ? 'office' : 'enter-username';
 	}
-	
 }
-
-?>

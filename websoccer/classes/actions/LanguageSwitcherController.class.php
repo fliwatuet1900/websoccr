@@ -32,16 +32,16 @@ class LanguageSwitcherController implements IActionController {
 	}
 	
 	public function executeAction($parameters) {
-		$lang = strtolower($parameters["lang"]);
+		$lang = strtolower($parameters['lang']);
 		
 		$this->_i18n->setCurrentLanguage($lang);
 		
 		// update user profile
 		$user = $this->_websoccer->getUser();
 		if ($user->id != null) {
-			$fromTable = $this->_websoccer->getConfig("db_prefix") ."_user";
-			$columns = array("lang" => $lang);
-			$whereCondition = "id = %d";
+			$fromTable = $this->_websoccer->getConfig('db_prefix') .'_user';
+			$columns = array('lang' => $lang);
+			$whereCondition = 'id = \'%d\'';
 			$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $user->id);
 		}
 		
@@ -54,7 +54,4 @@ class LanguageSwitcherController implements IActionController {
 		
 		return null;
 	}
-	
 }
-
-?>

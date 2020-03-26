@@ -58,30 +58,27 @@ class TrainingModel implements IModel {
 		
 		// has valid training unit?
 		$training_unit = TrainingDataService::getValidTrainingUnit($this->_websoccer, $this->_db, $teamId);
-		if (!isset($training_unit["id"])) {
+		if (!isset($training_unit['id'])) {
 			// get trainers
 			$count = TrainingDataService::countTrainers($this->_websoccer, $this->_db);
-			$eps = $this->_websoccer->getConfig("entries_per_page");
+			$eps = $this->_websoccer->getConfig('entries_per_page');
 			$paginator = new Paginator($count, $eps, $this->_websoccer);
 			
-			if ($count > 0) {
-				$trainers = TrainingDataService::getTrainers($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps);
-			}
-		} else {
-			$training_unit["trainer"] = TrainingDataService::getTrainerById($this->_websoccer, $this->_db, $training_unit["trainer_id"]);
+			if ($count > 0) $trainers = TrainingDataService::getTrainers($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps);
+
+		}
+		else {
+			$training_unit['trainer'] = TrainingDataService::getTrainerById($this->_websoccer, $this->_db, $training_unit['trainer_id']);
 		}
 		
 		// collect effects of executed training unit
 		$trainingEffects = array();
 		$contextParameters = $this->_websoccer->getContextParameters();
-		if (isset($contextParameters["trainingEffects"])) {
-			$trainingEffects = $contextParameters["trainingEffects"];
+		if (isset($contextParameters['trainingEffects'])) {
+			$trainingEffects = $contextParameters['trainingEffects'];
 		}
 		
-		return array("unitsCount" => $unitsCount, "lastExecution" => $lastExecution, "training_unit" => $training_unit, 
-				"trainers" => $trainers, "paginator" => $paginator, "trainingEffects" => $trainingEffects);
+		return array('unitsCount' => $unitsCount, 'lastExecution' => $lastExecution, 'training_unit' => $training_unit, 
+				'trainers' => $trainers, 'paginator' => $paginator, 'trainingEffects' => $trainingEffects);
 	}
-	
 }
-
-?>

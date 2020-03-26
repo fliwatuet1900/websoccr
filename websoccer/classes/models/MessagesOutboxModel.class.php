@@ -41,20 +41,14 @@ class MessagesOutboxModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$count = MessagesDataService::countOutboxMessages($this->_websoccer, $this->_db);
-		$eps = $this->_websoccer->getConfig("entries_per_page");
+		$eps = $this->_websoccer->getConfig('entries_per_page');
 		$paginator = new Paginator($count, $eps, $this->_websoccer);
 		
-		$paginator->addParameter("block", "messages-outbox");
+		$paginator->addParameter('block', 'messages-outbox');
 		
-		if ($count > 0) {
-			$messages = MessagesDataService::getOutboxMessages($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps);
-		} else {
-			$messages = array();
-		}
+		if ($count > 0) $messages = MessagesDataService::getOutboxMessages($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps);
+		else $messages = array();
 		
-		return array("messages" => $messages, "paginator" => $paginator);
+		return array('messages' => $messages, 'paginator' => $paginator);
 	}
-	
 }
-
-?>

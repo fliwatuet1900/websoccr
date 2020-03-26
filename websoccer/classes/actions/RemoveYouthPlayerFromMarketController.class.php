@@ -36,7 +36,7 @@ class RemoveYouthPlayerFromMarketController implements IActionController {
 	
 	public function executeAction($parameters) {
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig("youth_enabled")) {
+		if (!$this->_websoccer->getConfig('youth_enabled')) {
 			return NULL;
 		}
 		
@@ -45,31 +45,26 @@ class RemoveYouthPlayerFromMarketController implements IActionController {
 		$clubId = $user->getClubId($this->_websoccer, $this->_db);
 		
 		// check if it is own player
-		$player = YouthPlayersDataService::getYouthPlayerById($this->_websoccer, $this->_db, $this->_i18n, $parameters["id"]);
-		if ($clubId != $player["team_id"]) {
-			throw new Exception($this->_i18n->getMessage("youthteam_err_notownplayer"));
-		}
+		$player = YouthPlayersDataService::getYouthPlayerById($this->_websoccer, $this->_db, $this->_i18n, $parameters['id']);
+		if ($clubId != $player['team_id']) throw new Exception($this->_i18n->getMessage('youthteam_err_notownplayer'));
 		
-		$this->updatePlayer($parameters["id"]);
+		$this->updatePlayer($parameters['id']);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("youthteam_removefrommarket_success"),
-				""));
+				$this->_i18n->getMessage('youthteam_removefrommarket_success'),
+				''));
 		
-		return "youth-team";
+		return 'youth-team';
 	}
 	
 	private function updatePlayer($playerId) {
 		
-		$columns = array("transfer_fee" => 0);
+		$columns = array('transfer_fee' => 0);
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_youthplayer";
-		$whereCondition = "id = %d";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_youthplayer';
+		$whereCondition = 'id = \'%d\'';
 		
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $playerId);
 	}
-	
 }
-
-?>

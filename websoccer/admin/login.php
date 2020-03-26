@@ -44,12 +44,9 @@ $newpwd = (isset($_GET['newpwd']) && $_GET['newpwd'] == 1) ? TRUE : FALSE;
 
 // process form
 if ($inputUser or $inputPassword) {
-	if (!$inputUser) {
-		$errors['inputUser'] = $i18n->getMessage('login_error_nousername');
-	}
-	if (!$inputPassword) {
-		$errors['inputPassword'] = $i18n->getMessage('login_error_nopassword');
-	}	
+	if (!$inputUser) $errors['inputUser'] = $i18n->getMessage('login_error_nousername');
+
+	if (!$inputPassword) $errors['inputPassword'] = $i18n->getMessage('login_error_nopassword');
 	
 	if (count($errors) == 0) {
 		
@@ -63,12 +60,20 @@ if ($inputUser or $inputPassword) {
 		
 		if($result->num_rows < 1) {
 			$errors['inputUser'] = $i18n->getMessage('login_error_unknownusername');
-		} else {
+		}
+		else {
 			$admin = $result->fetch_array();
 			
 			$hashedPw = SecurityUtil::hashPassword($inputPassword, $admin['passwort_salt']);
 			if ($admin['passwort'] == $hashedPw || $admin['passwort_neu'] == $hashedPw) {
-				session_regenerate_id();
+                if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
+                    // PHP7
+                    session_destroy();
+                    session_start();
+                }
+                elseif (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+                    session_regenerate_id();
+                }
 				$_SESSION['valid'] = 1;
 				$_SESSION['userid'] = $admin['id'];
 				
@@ -76,7 +81,7 @@ if ($inputUser or $inputPassword) {
 				if ($admin['passwort_neu'] == $hashedPw) {
 					$columns = array('passwort' => $hashedPw, 'passwort_neu_angefordert' => 0, 'passwort_neu' => '');
 					$fromTable = $conf['db_prefix'] .'_admin';
-					$whereCondition = 'id = %d';
+					$whereCondition = 'id = \'%d\'';
 					$parameter = $admin['id'];
 					$db->queryUpdate($columns, $fromTable, $whereCondition, $parameter);
 				}
@@ -91,40 +96,35 @@ if ($inputUser or $inputPassword) {
 					$datei = '../generated/adminlog.php';
 					$fp = fopen($datei, 'a+');
 					
-					if (filesize($datei)) {
-						$inhalt = fread($fp, filesize($datei));
-					} else {
-						$inhalt = '';
-					}
+					if (filesize($datei)) $inhalt = fread($fp, filesize($datei));
+					else $inhalt = '';
 					
 					$inhalt .= $content;
 					fwrite($fp, $content);
 					fclose($fp);
-
 				  }
 				
 				header('location: index.php');
-			} else {
+			}
+			else {
 				$errors['inputPassword'] = $i18n->getMessage('login_error_invalidpassword');
 				sleep(5);
 			}
-		
 		}
 		$result->free();
-		
 	}
 }
 
 header('Content-type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html>
-<html lang='de'>
+<html lang="de">
   <head>
     <title><?php echo $i18n->getMessage('login_title');?></title>
-    <link href='bootstrap/css/bootstrap.min.css' rel='stylesheet' media='screen'>
-    <link rel='shortcut icon' type='image/x-icon' href='../favicon.ico' />
-    <meta charset='UTF-8'>
-    <style type='text/css'>
+    <link href="bootstrap/css/bootstrap.min.css" rel='stylesheet' media="screen">
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico" />
+    <meta charset="UTF-8">
+    <style type="text/css">
       body {
         padding-top: 100px;
         padding-bottom: 40px;
@@ -133,55 +133,47 @@ header('Content-type: text/html; charset=utf-8');
   </head>
   <body>
   
-	<div class='container'>
-	
+	<div class="container">
 		<h1><?php echo $i18n->getMessage('login_title');?></h1>
 		
 <?php
-if ($forwarded) {
-	echo createWarningMessage($i18n->getMessage('login_alert_accessdenied_title'), $i18n->getMessage('login_alert_accessdenied_content'));
-} else if ($loggedout) {
-	echo createSuccessMessage($i18n->getMessage('login_alert_logoutsuccess_title'), $i18n->getMessage('login_alert_logoutsuccess_content'));
-} else if ($newpwd) {
-	echo createSuccessMessage($i18n->getMessage('login_alert_sentpassword_title'), $i18n->getMessage('login_alert_sentpassword_content'));
-} else if (count($errors) > 0) {
-	echo createErrorMessage($i18n->getMessage('login_alert_error_title'), $i18n->getMessage('login_alert_error_content'));
-}
+if ($forwarded) echo createWarningMessage($i18n->getMessage('login_alert_accessdenied_title'), $i18n->getMessage('login_alert_accessdenied_content'));
+elseif ($loggedout) echo createSuccessMessage($i18n->getMessage('login_alert_logoutsuccess_title'), $i18n->getMessage('login_alert_logoutsuccess_content'));
+elseif ($newpwd) echo createSuccessMessage($i18n->getMessage('login_alert_sentpassword_title'), $i18n->getMessage('login_alert_sentpassword_content'));
+elseif (count($errors) > 0) echo createErrorMessage($i18n->getMessage('login_alert_error_title'), $i18n->getMessage('login_alert_error_content'));
 ?>
-
-		<p><a href='?lang=en'>English</a> | <a href='?lang=de'>Deutsch</a></p>
+		<p><a href="?lang=en">English</a> | <a href="?lang=de">Deutsch</a></p>
 		
-		<form action='login.php' method='post' class='form-horizontal'>
-		  <div class='control-group<?php if (isset($errors['inputUser'])) echo ' error'; ?>'>
-			<label class='control-label' for='inputUser'><?php echo $i18n->getMessage('login_label_user');?></label>
-			<div class='controls'>
-			  <input type='text' name='inputUser' id='inputUser' placeholder='<?php echo $i18n->getMessage('login_label_user');?>' required>
+		<form action="login.php" method="post" class="form-horizontal">
+		  <div class="control-group<?php if (isset($errors['inputUser'])) echo ' error'; ?>">
+			<label class="control-label" for="inputUser"><?php echo $i18n->getMessage('login_label_user');?></label>
+			<div class="controls">
+			  <input type="text" name="inputUser" id="inputUser" placeholder="<?php echo $i18n->getMessage('login_label_user');?>" required>
 			</div>
 		  </div>
-		  <div class='control-group<?php if (isset($errors['inputPassword'])) echo ' error'; ?>'>
-			<label class='control-label' for='inputPassword'><?php echo $i18n->getMessage('login_label_password');?></label>
-			<div class='controls'>
-			  <input type='password' name='inputPassword' id='inputPassword' placeholder='<?php echo $i18n->getMessage('login_label_password');?>' required>
+		  <div class="control-group<?php if (isset($errors['inputPassword'])) echo ' error'; ?>">
+			<label class="control-label" for="inputPassword"><?php echo $i18n->getMessage('login_label_password');?></label>
+			<div class="controls">
+			  <input type="password" name="inputPassword" id="inputPassword" placeholder="<?php echo $i18n->getMessage('login_label_password');?>" required>
 			</div>
 		  </div>
-		  <div class='control-group'>
-			<div class='controls'>
-			  <button type='submit' class='btn'><?php echo $i18n->getMessage('login_button_logon');?></button>
+		  <div class="control-group">
+			<div class="controls">
+			  <button type="submit" class="btn"><?php echo $i18n->getMessage('login_button_logon');?></button>
 			</div>
 		  </div>
 		</form>		
 		
-		<p><a href='forgot-password.php'><?php echo $i18n->getMessage('login_link_forgotpassword');?></a>
+		<p><a href="forgot-password.php"><?php echo $i18n->getMessage('login_link_forgotpassword');?></a>
 	  
       <hr>
 
       <footer>
-        <p>Powered by <a href='http://www.websoccer-sim.com' target='_blank'>OpenWebSoccer-Sim</a></p>
+        <p>Powered by <a href="http://www.websoccer-sim.com" target="_blank">OpenWebSoccer-Sim</a></p>
       </footer>		  
 	</div>
-	
 
-    <script src='https://code.jquery.com/jquery-latest.min.js'></script>
-    <script src='bootstrap/js/bootstrap.min.js'></script>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
   </body>
 </html>

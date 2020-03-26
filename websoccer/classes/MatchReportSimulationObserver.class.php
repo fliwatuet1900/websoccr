@@ -59,11 +59,8 @@ class MatchReportSimulationObserver implements ISimulationObserver {
 		$assistPlayerName = ($match->getPreviousPlayerWithBall() !== NULL && $match->getPreviousPlayerWithBall()->team->id == $scorer->team->id) 
 			? $match->getPreviousPlayerWithBall()->name : '';
 		
-		if (strlen($assistPlayerName)) {
-			$this->_createMessage($match, 'Tor_mit_vorlage', array($scorer->name, $assistPlayerName), ($scorer->team->id == $match->homeTeam->id));
-		} else {
-			$this->_createMessage($match, 'Tor', array($scorer->name, $goaly->name), ($scorer->team->id == $match->homeTeam->id));
-		}
+		if (strlen($assistPlayerName)) $this->_createMessage($match, 'Tor_mit_vorlage', array($scorer->name, $assistPlayerName), ($scorer->team->id == $match->homeTeam->id));
+		else $this->_createMessage($match, 'Tor', array($scorer->name, $goaly->name), ($scorer->team->id == $match->homeTeam->id));
 		
 	}
 	
@@ -71,11 +68,8 @@ class MatchReportSimulationObserver implements ISimulationObserver {
 	 * @see ISimulationObserver::onShootFailure()
 	 */
 	public function onShootFailure(SimulationMatch $match, SimulationPlayer $scorer, SimulationPlayer $goaly) {
-		if (SimulationHelper::getMagicNumber(0, 1)) {
-			$this->_createMessage($match, 'Torschuss_daneben', array($scorer->name, $goaly->name), ($scorer->team->id == $match->homeTeam->id));
-		} else {
-			$this->_createMessage($match, 'Torschuss_auf_Tor', array($scorer->name, $goaly->name), ($scorer->team->id == $match->homeTeam->id));
-		}
+		if (SimulationHelper::getMagicNumber(0, 1)) $this->_createMessage($match, 'Torschuss_daneben', array($scorer->name, $goaly->name), ($scorer->team->id == $match->homeTeam->id));
+		else $this->_createMessage($match, 'Torschuss_auf_Tor', array($scorer->name, $goaly->name), ($scorer->team->id == $match->homeTeam->id));
 	}
 	
 	/**
@@ -83,11 +77,8 @@ class MatchReportSimulationObserver implements ISimulationObserver {
 	 */
 	public function onAfterTackle(SimulationMatch $match, SimulationPlayer $winner, SimulationPlayer $looser) {
 		
-		if (SimulationHelper::getMagicNumber(0, 1)) {
-			$this->_createMessage($match, 'Zweikampf_gewonnen', array($winner->name, $looser->name), ($winner->team->id == $match->homeTeam->id));
-		} else {
-			$this->_createMessage($match, 'Zweikampf_verloren', array($looser->name, $winner->name), ($looser->team->id == $match->homeTeam->id));
-		}
+		if (SimulationHelper::getMagicNumber(0, 1)) $this->_createMessage($match, 'Zweikampf_gewonnen', array($winner->name, $looser->name), ($winner->team->id == $match->homeTeam->id));
+		else $this->_createMessage($match, 'Zweikampf_verloren', array($looser->name, $winner->name), ($looser->team->id == $match->homeTeam->id));
 		
 	}
 	
@@ -107,7 +98,6 @@ class MatchReportSimulationObserver implements ISimulationObserver {
 			
 			// select random theoretical pass target
 			$targetPlayer = SimulationHelper::selectPlayer($player->team, $player->position, $player);
-			
 			$this->_createMessage($match, 'Pass_daneben', array($player->name, $targetPlayer->name), ($player->team->id == $match->homeTeam->id));
 		}
 	}
@@ -123,11 +113,8 @@ class MatchReportSimulationObserver implements ISimulationObserver {
 	 * @see ISimulationObserver::onYellowCard()
 	 */
 	public function onYellowCard(SimulationMatch $match, SimulationPlayer $player) {
-		if ($player->yellowCards > 1) {
-			$this->_createMessage($match, 'Karte_gelb_rot', array($player->name), ($player->team->id == $match->homeTeam->id));
-		} else {
-			$this->_createMessage($match, 'Karte_gelb', array($player->name), ($player->team->id == $match->homeTeam->id));
-		}
+		if ($player->yellowCards > 1) $this->_createMessage($match, 'Karte_gelb_rot', array($player->name), ($player->team->id == $match->homeTeam->id));
+		else $this->_createMessage($match, 'Karte_gelb', array($player->name), ($player->team->id == $match->homeTeam->id));
 	}
 	
 	/**
@@ -142,11 +129,8 @@ class MatchReportSimulationObserver implements ISimulationObserver {
 	 */
 	public function onPenaltyShoot(SimulationMatch $match, SimulationPlayer $player, SimulationPlayer $goaly, $successful) {
 	
-		if ($successful) {
-			$this->_createMessage($match, 'Elfmeter_erfolg', array($player->name, $goaly->name), ($player->team->id == $match->homeTeam->id));
-		} else {
-			$this->_createMessage($match, 'Elfmeter_verschossen', array($player->name, $goaly->name), ($player->team->id == $match->homeTeam->id));
-		}
+		if ($successful) $this->_createMessage($match, 'Elfmeter_erfolg', array($player->name, $goaly->name), ($player->team->id == $match->homeTeam->id));
+		else $this->_createMessage($match, 'Elfmeter_verschossen', array($player->name, $goaly->name), ($player->team->id == $match->homeTeam->id));
 	}
 	
 	/**
@@ -163,11 +147,8 @@ class MatchReportSimulationObserver implements ISimulationObserver {
 	 */
 	public function onFreeKick(SimulationMatch $match, SimulationPlayer $player, SimulationPlayer $goaly, $successful) {
 	
-		if ($successful) {
-			$this->_createMessage($match, 'Freistoss_treffer', array($player->name, $goaly->name), ($player->team->id == $match->homeTeam->id));
-		} else {
-			$this->_createMessage($match, 'Freistoss_daneben', array($player->name, $goaly->name), ($player->team->id == $match->homeTeam->id));
-		}
+		if ($successful) $this->_createMessage($match, 'Freistoss_treffer', array($player->name, $goaly->name), ($player->team->id == $match->homeTeam->id));
+		else $this->_createMessage($match, 'Freistoss_daneben', array($player->name, $goaly->name), ($player->team->id == $match->homeTeam->id));
 	}
 	
 	private function _createMessage($match, $messageType, $playerNames = null, $isHomeActive = TRUE) {
@@ -181,9 +162,7 @@ class MatchReportSimulationObserver implements ISimulationObserver {
 		$messageId = $this->_availableTexts[$messageType][$index];
 		
 		$players = '';
-		if ($playerNames != null) {
-			$players = implode(';', $playerNames);
-		}
+		if ($playerNames != null) $players = implode(';', $playerNames);
 		
 		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_matchreport';
 		$columns['match_id'] = $match->id;
@@ -195,6 +174,4 @@ class MatchReportSimulationObserver implements ISimulationObserver {
 		
 		$this->_db->queryInsert($columns, $fromTable);
 	}
-	
 }
-?>

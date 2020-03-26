@@ -24,10 +24,7 @@
 DirectTransfersDataService::executeTransferFromOffer($website, $db, $website->getRequestParameter('id'));
 
 // remove pending state
-$db->queryUpdate(array('admin_approval_pending' => '0'), $website->getConfig('db_prefix') . '_transfer_offer',
-		'id = %d', $website->getRequestParameter('id'));
+$db->queryUpdate(array('admin_approval_pending' => '0'), $website->getConfig('db_prefix') . '_transfer_offer', 'id = \'%d\'', $website->getRequestParameter('id'));
 
 // create success message
 echo createSuccessMessage($i18n->getMessage('transferoffer_approval_success'), '');
-
-?>

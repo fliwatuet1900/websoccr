@@ -37,29 +37,23 @@ class RegisterFormModel implements IModel {
 	}
 	
 	public function getTemplateParameters() {
-		if (!$this->_websoccer->getConfig("allow_userregistration")) {
-			throw new Exception($this->_i18n->getMessage("registration_disabled"));
-		}
+		if (!$this->_websoccer->getConfig('allow_userregistration')) throw new Exception($this->_i18n->getMessage('registration_disabled'));
 		
 		$parameters = array();
-		if ($this->_websoccer->getConfig("register_use_captcha")
-				&& strlen($this->_websoccer->getConfig("register_captcha_publickey"))
-				&& strlen($this->_websoccer->getConfig("register_captcha_privatekey"))) {
+		if ($this->_websoccer->getConfig('register_use_captcha')
+				&& strlen($this->_websoccer->getConfig('register_captcha_publickey'))
+				&& strlen($this->_websoccer->getConfig('register_captcha_privatekey'))) {
 			
-			include_once(BASE_FOLDER . "/lib/recaptcha/recaptchalib.php");
+			include_once(BASE_FOLDER . '/lib/recaptcha/recaptchalib.php');
 			
 			// support SSL
-			$useSsl = (!empty($_SERVER["HTTPS"]));
+			$useSsl = (!empty($_SERVER['HTTPS']));
 			
-			$captchaCode = recaptcha_get_html($this->_websoccer->getConfig("register_captcha_publickey"), null, $useSsl);
-			
+			$captchaCode = recaptcha_get_html($this->_websoccer->getConfig('register_captcha_publickey'), null, $useSsl);
 
-			$parameters["captchaCode"] = $captchaCode;
+			$parameters['captchaCode'] = $captchaCode;
 		}
 		
 		return $parameters;
 	}
-	
 }
-
-?>

@@ -49,9 +49,7 @@ class PlayerStatisticsModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$playerId = (int) $this->_websoccer->getRequestParameter('id');
-		if ($playerId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if ($playerId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		// query statistics
 		$leagueStatistics = array();
@@ -77,22 +75,16 @@ class PlayerStatisticsModel implements IModel {
 		$fromTable .= ' LEFT JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_saison AS SEAS ON SEAS.id = M.saison_id';
 		$fromTable .= ' LEFT JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_liga AS L ON SEAS.liga_id = L.id';
 		
-		$whereCondition = 'S.spieler_id = %d AND S.minuten_gespielt > 0 AND ((M.spieltyp = \'Pokalspiel\' AND M.pokalname IS NOT NULL AND M.pokalname != \'\') OR (M.spieltyp = \'Ligaspiel\' AND SEAS.id IS NOT NULL)) GROUP BY IFNULL(M.pokalname,\'\'), SEAS.id ORDER BY L.name ASC, SEAS.id ASC, M.pokalname ASC';		
+		$whereCondition = 'S.spieler_id = \'%d\' AND S.minuten_gespielt > \'0\' AND ((M.spieltyp = \'Pokalspiel\' AND M.pokalname IS NOT NULL AND M.pokalname != \'\') OR (M.spieltyp = \'Ligaspiel\' AND SEAS.id IS NOT NULL)) GROUP BY IFNULL(M.pokalname,\'\'), SEAS.id ORDER BY L.name ASC, SEAS.id ASC, M.pokalname ASC';
 		
 		// execute
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $playerId);
 		while ($statistic = $result->fetch_array()) {
-			if (strlen($statistic['league_name'])) {
-				$leagueStatistics[] = $statistic;
-			} else {
-				$cupStatistics[] = $statistic;
-			}
+			if (strlen($statistic['league_name'])) $leagueStatistics[] = $statistic;
+			else $cupStatistics[] = $statistic;
 		}
 		$result->free();
 		
 		return array('leagueStatistics' => $leagueStatistics, 'cupStatistics' => $cupStatistics);
 	}
-	
 }
-
-?>

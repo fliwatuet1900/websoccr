@@ -49,18 +49,14 @@ class TableHistoryModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$teamId = (int) $this->_websoccer->getRequestParameter('id');
-		if ($teamId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if ($teamId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$team = TeamsDataService::getTeamById($this->_websoccer, $this->_db, $teamId);
-		if (!isset($team['team_id'])) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if (!isset($team['team_id'])) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		// get current season
 		$result = $this->_db->querySelect('id', $this->_websoccer->getConfig('db_prefix') .'_saison',
-				'liga_id = %d AND beendet = \'0\' ORDER BY name DESC', $team['team_league_id'], 1);
+				'liga_id = \'%d\' AND beendet = \'0\' ORDER BY name DESC', $team['team_league_id'], 1);
 		$season = $result->fetch_array();
 		$result->free();
 		
@@ -73,7 +69,7 @@ class TableHistoryModel implements IModel {
 					);
 			$fromTable = $this->_websoccer->getConfig('db_prefix') .'_leaguehistory AS H';
 			$result = $this->_db->querySelect('matchday, rank', $fromTable,
-					'season_id = %d AND team_id = %s ORDER BY matchday ASC', array($season['id'], $team['team_id']));
+					'season_id = \'%d\' AND team_id = \'%s\' ORDER BY matchday ASC', array($season['id'], $team['team_id']));
 			while ($historyRecord = $result->fetch_array()) {
 				$history[] = $historyRecord;
 			}
@@ -82,15 +78,11 @@ class TableHistoryModel implements IModel {
 		
 		// count teams in league
 		$result = $this->_db->querySelect('COUNT(*) AS cnt', $this->_websoccer->getConfig('db_prefix') .'_verein',
-				'liga_id = %d AND status = \'1\'', $team['team_league_id'], 1);
+				'liga_id = \'%d\' AND status = \'1\'', $team['team_league_id'], 1);
 		$teams = $result->fetch_array();
 		$result->free();
 		
 		return array('teamName' => $team['team_name'], 'history' => $history, 'noOfTeamsInLeague' => $teams['cnt'],
 				'leagueid' => $team['team_league_id']);
 	}
-	
-	
 }
-
-?>

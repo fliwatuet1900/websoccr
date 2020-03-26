@@ -39,7 +39,7 @@ class NationalMatchResultsModel implements IModel {
 	 * @see IModel::renderView()
 	 */
 	public function renderView() {
-		return $this->_websoccer->getConfig("nationalteams_enabled");
+		return $this->_websoccer->getConfig('nationalteams_enabled');
 	}
 	
 	/**
@@ -50,16 +50,14 @@ class NationalMatchResultsModel implements IModel {
 		
 		// get team info
 		$teamId = NationalteamsDataService::getNationalTeamManagedByCurrentUser($this->_websoccer, $this->_db);
-		if (!$teamId) {
-			throw new Exception($this->_i18n->getMessage("nationalteams_user_requires_team"));
-		}
+		if (!$teamId) throw new Exception($this->_i18n->getMessage('nationalteams_user_requires_team'));
 		
 		$matchesCount = NationalteamsDataService::countSimulatedMatches($this->_websoccer, $this->_db, $teamId);
 		
 		// setup paginator
 		$eps = 5;
 		$paginator = new Paginator($matchesCount, $eps, $this->_websoccer);
-		$paginator->addParameter("block", "national-match-results");
+		$paginator->addParameter('block', 'national-match-results');
 		
 		$matches = array();
 		if ($matchesCount) {
@@ -67,9 +65,6 @@ class NationalMatchResultsModel implements IModel {
 					$paginator->getFirstIndex(), $eps);
 		}
 		
-		return array("paginator" => $paginator, "matches" => $matches);
+		return array('paginator' => $paginator, 'matches' => $matches);
 	}
-	
 }
-
-?>

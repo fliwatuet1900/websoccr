@@ -49,9 +49,7 @@ class ModuleConfigHelper {
 					}
 				}
 			}
-				
 		}
-		
 		return $entities;
 	}
 	
@@ -64,15 +62,14 @@ class ModuleConfigHelper {
 	 */
 	public static function findModuleConfigAsXmlObject($moduleName) {
 		$pathToFile = FOLDER_MODULES .'/'. $moduleName .'/'. MODULE_CONFIG_FILENAME;
-		if (!file_exists($pathToFile)) {
-			throw new Exception('Config file for module \''. $moduleName . '\' not found.');
-		}
+		if (!file_exists($pathToFile)) throw new Exception('Config file for module \''. $moduleName . '\' not found.');
+
 		return simplexml_load_file($pathToFile);
 	}
 	
 	/**
 	 * 
-	 * @param string $tableName DB table name which containspotentially a query alias.
+	 * @param string $tableName DB table name which potentially contains a query alias.
 	 * @return string table name without query alias.
 	 */
 	public static function removeAliasFromDbTableName($tableName) {
@@ -93,6 +90,4 @@ class ModuleConfigHelper {
 			
 		}
 	}
-
 }
-?>

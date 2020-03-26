@@ -57,5 +57,3 @@ interface IUserLoginMethod {
 	public function authenticateWithUsername($nick, $password);
 	
 }
-
-?>

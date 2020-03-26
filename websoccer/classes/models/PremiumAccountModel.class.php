@@ -50,19 +50,14 @@ class PremiumAccountModel implements IModel {
 
 		$userId = $this->_websoccer->getUser()->id;
 		$count = PremiumDataService::countAccountStatementsOfUser($this->_websoccer, $this->_db, $userId);
-		$eps = $this->_websoccer->getConfig("entries_per_page");
+		$eps = $this->_websoccer->getConfig('entries_per_page');
 		$paginator = new Paginator($count, $eps, $this->_websoccer);
 		
-		if ($count > 0) {
-			$statements = PremiumDataService::getAccountStatementsOfUser($this->_websoccer, $this->_db, $userId, $paginator->getFirstIndex(), $eps);
-		} else {
-			$statements = array();
-		}
+		if ($count > 0) $statements = PremiumDataService::getAccountStatementsOfUser($this->_websoccer, $this->_db, $userId, $paginator->getFirstIndex(), $eps);
+		else $statements = array();
 		
-		return array("statements" => $statements, "paginator" => $paginator,
-				"payments" => PremiumDataService::getPaymentsOfUser($this->_websoccer, $this->_db, $userId, 5));
+		return array('statements' => $statements, 'paginator' => $paginator,
+				'payments' => PremiumDataService::getPaymentsOfUser($this->_websoccer, $this->_db, $userId, 5));
 		
 	}
-	
 }
-?>

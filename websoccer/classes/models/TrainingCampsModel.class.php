@@ -42,7 +42,7 @@ class TrainingCampsModel implements IModel {
 		$user = $this->_websoccer->getUser();
 		$teamId = $user->getClubId($this->_websoccer, $this->_db);
 		if ($teamId < 1) {
-			throw new Exception($this->_i18n->getMessage("feature_requires_team"));
+			throw new Exception($this->_i18n->getMessage('feature_requires_team'));
 		}
 		
 		$camps = array();
@@ -54,23 +54,19 @@ class TrainingCampsModel implements IModel {
 		if (count($bookedCamps)) {
 			
 			$bookedCamp = $bookedCamps[0];
-			if ($bookedCamp["date_end"] < $this->_websoccer->getNowAsTimestamp()) {
+			if ($bookedCamp['date_end'] < $this->_websoccer->getNowAsTimestamp()) {
 				TrainingcampsDataService::executeCamp($this->_websoccer, $this->_db, $teamId, $bookedCamp);
 				$bookedCamp = array();
-			} else {
+			}
+			else {
 				$listCamps = FALSE;
 			}
 			
 		}
 		
 		// provide camps to book
-		if ($listCamps) {
-			$camps = TrainingcampsDataService::getCamps($this->_websoccer, $this->_db);
-		}
+		if ($listCamps) $camps = TrainingcampsDataService::getCamps($this->_websoccer, $this->_db);
 		
-		return array("bookedCamp" => $bookedCamp, "camps" => $camps);
+		return array('bookedCamp' => $bookedCamp, 'camps' => $camps);
 	}
-	
 }
-
-?>

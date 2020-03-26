@@ -41,25 +41,17 @@ class FinancesModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$teamId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
-		if ($teamId < 1) {
-			throw new Exception($this->_i18n->getMessage("feature_requires_team"));
-		}
+		if ($teamId < 1) throw new Exception($this->_i18n->getMessage('feature_requires_team'));
 		
 		$team = TeamsDataService::getTeamSummaryById($this->_websoccer, $this->_db, $teamId);
 		
 		$count = BankAccountDataService::countAccountStatementsOfTeam($this->_websoccer, $this->_db, $teamId);
-		$eps = $this->_websoccer->getConfig("entries_per_page");
+		$eps = $this->_websoccer->getConfig('entries_per_page');
 		$paginator = new Paginator($count, $eps, $this->_websoccer);
 		
-		if ($count > 0) {
-			$statements = BankAccountDataService::getAccountStatementsOfTeam($this->_websoccer, $this->_db, $teamId, $paginator->getFirstIndex(), $eps);
-		} else {
-			$statements = array();
-		}
+		if ($count > 0) $statements = BankAccountDataService::getAccountStatementsOfTeam($this->_websoccer, $this->_db, $teamId, $paginator->getFirstIndex(), $eps);
+		else $statements = array();
 		
-		return array("budget" => $team["team_budget"], "statements" => $statements, "paginator" => $paginator);
+		return array('budget' => $team['team_budget'], 'statements' => $statements, 'paginator' => $paginator);
 	}
-	
 }
-
-?>

@@ -74,11 +74,7 @@ class ConfigCacheFileWriter {
 		}		
 		
 		$this->_buildModulesConfig();
-		
-		$this->_writeFileEnd($this->_frontCacheFileWriter);
-		$this->_writeFileEnd($this->_adminCacheFileWriter);
-		$this->_writeFileEnd($this->_settingsCacheFileWriter);
-		$this->_writeFileEnd($this->_eventsCacheFileWriter);
+
 		foreach ($this->_supportedLanguages as $language) {
 			$this->_writeMsgFileEnd($this->_messagesFileWriters[$language]);
 			$this->_writeMsgFileEnd($this->_adminMessagesFileWriters[$language]);
@@ -105,14 +101,8 @@ class ConfigCacheFileWriter {
 		$fileWriter->writeLine('$msg = $msg + array(');
 	}
 	
-	private function _writeFileEnd($fileWriter) {
-		$fileWriter->writeLine('?>');
-	}	
-	
 	private function _writeMsgFileEnd($fileWriter) {
 		$fileWriter->writeLine(');');
-		$this->_writeFileEnd($fileWriter);
-		
 	}
 	
 	private function _buildModulesConfig() {
@@ -123,27 +113,19 @@ class ConfigCacheFileWriter {
 				
 				foreach ($files as $file) {
 					$pathToFile = FOLDER_MODULES .'/'. $module .'/' . $file;
-					if ($file == MODULE_CONFIG_FILENAME) {
-						$this->_processModule($pathToFile, $module);
-					} else if (StringUtil::startsWith($file, 'messages_')) {
-						$this->_processMessages($pathToFile, $this->_messagesFileWriters);
-					} else if (StringUtil::startsWith($file, 'adminmessages_')) {
-						$this->_processMessages($pathToFile, $this->_adminMessagesFileWriters);
-					} else if (StringUtil::startsWith($file, 'entitymessages_')) {
-						$this->_processMessages($pathToFile, $this->_entityMessagesFileWriters);
-					}						
+					if ($file == MODULE_CONFIG_FILENAME) $this->_processModule($pathToFile, $module);
+					elseif (StringUtil::startsWith($file, 'messages_')) $this->_processMessages($pathToFile, $this->_messagesFileWriters);
+					elseif (StringUtil::startsWith($file, 'adminmessages_')) $this->_processMessages($pathToFile, $this->_adminMessagesFileWriters);
+					elseif (StringUtil::startsWith($file, 'entitymessages_')) $this->_processMessages($pathToFile, $this->_entityMessagesFileWriters);
 				}
 			}
-			
 		}
 	}
 	
 	private function _processModule($file, $module) {
 		$doc = new DOMDocument();
 		$loaded = @$doc->load($file, LIBXML_DTDLOAD|LIBXML_DTDVALID);
-		if (!$loaded) {
-			throw new Exception('Could not load XML config file: ' + $file);
-		}
+		if (!$loaded) throw new Exception('Could not load XML config file: ' + $file);
 		
 		// validate (will throw warnings in development mode)
 		$isValid = $doc->validate();
@@ -166,7 +148,7 @@ class ConfigCacheFileWriter {
 	
 	private function _buildConfigLine($itemname, $keyAttribute, $xml, $module) {
 		
-		if ($itemname == 'eventlistener') {
+		if ($itemname === 'eventlistener') {
 			$line = '$'. $itemname .'[\''. $xml->getAttribute('event') . '\'][]';
 		} else {
 			$id = $xml->getAttribute($keyAttribute);
@@ -193,14 +175,13 @@ class ConfigCacheFileWriter {
 			$first = TRUE;
 			foreach ($children as $child) {
 				if ($child->nodeName == $itemname) {
-					if (!$first) {
-						$childrenIds .= ',';
-					}
+					if (!$first) $childrenIds .= ',';
+
 					$childrenIds .= $child->getAttribute($keyAttribute);
 					$first = FALSE;
-					
 					// file references
-				} else if ($child->nodeName == 'script' || $child->nodeName == 'css') {
+				}
+				elseif ($child->nodeName === 'script' || $child->nodeName === 'css') {
 					$childattrs = $child->attributes;
 					$resourceRef = array();
 					foreach ($childattrs as $attr) {
@@ -209,22 +190,19 @@ class ConfigCacheFileWriter {
 					$itemAttrs[$child->nodeName . 's'][] = $resourceRef;
 				}
 			}
-			if (!$first) {
-				$itemAttrs['childrenIds'] = $childrenIds;
-			}
+			if (!$first) $itemAttrs['childrenIds'] = $childrenIds;
 		}
 		$itemAttrs['module'] = $module;
 		
 		$line .= ' = \'' . json_encode($itemAttrs, JSON_HEX_QUOT) . '\';';
 		
 		// handle new setting
-		if ($itemname == 'setting') {
+		if ($itemname === 'setting') {
 			global $conf;
 			if (!isset($conf[$id])) {
 				$defaultValue = '';
-				if ($xml->hasAttribute('default')) {
-					$defaultValue = $xml->getAttribute('default');
-				}
+				if ($xml->hasAttribute('default')) $defaultValue = $xml->getAttribute('default');
+
 				$this->_newSettings[$id] = $defaultValue;
 			}
 		}
@@ -235,9 +213,7 @@ class ConfigCacheFileWriter {
 	private function _processMessages($file, $fileWriters) {
 		$doc = new DOMDocument();
 		$loaded = @$doc->load($file);
-		if (!$loaded) {
-			throw new Exception('Could not load XML messages file: ' + $file);
-		}
+		if (!$loaded) throw new Exception('Could not load XML messages file: ' + $file);
 		
 		$lang = substr($file, strrpos($file, '_') + 1, 2);
 	
@@ -249,7 +225,6 @@ class ConfigCacheFileWriter {
 				$line = '\''. $message->getAttribute('id') . '\' => \''. addslashes($this->_getInnerHtml($message)) . '\',';
 				$fileWriter->writeLine($line);
 			}
-			
 		}
 	}	
 	
@@ -264,26 +239,18 @@ class ConfigCacheFileWriter {
 	}
 	
 	function __destruct() {
-		if ($this->_frontCacheFileWriter) {
-			$this->_frontCacheFileWriter->close();
-		}
-		if ($this->_adminCacheFileWriter) {
-			$this->_adminCacheFileWriter->close();
-		}
-		if ($this->_settingsCacheFileWriter) {
-			$this->_settingsCacheFileWriter->close();
-		}
+		if ($this->_frontCacheFileWriter) $this->_frontCacheFileWriter->close();
+
+		if ($this->_adminCacheFileWriter) $this->_adminCacheFileWriter->close();
+
+		if ($this->_settingsCacheFileWriter) $this->_settingsCacheFileWriter->close();
+
 		foreach ($this->_supportedLanguages as $language) {
-			if ($this->_messagesFileWriters[$language]) {
-				$this->_messagesFileWriters[$language]->close();
-			}
-			if ($this->_adminMessagesFileWriters[$language]) {
-				$this->_adminMessagesFileWriters[$language]->close();
-			}	
-			if ($this->_entityMessagesFileWriters[$language]) {
-				$this->_entityMessagesFileWriters[$language]->close();
-			}		
+			if ($this->_messagesFileWriters[$language]) $this->_messagesFileWriters[$language]->close();
+
+			if ($this->_adminMessagesFileWriters[$language]) $this->_adminMessagesFileWriters[$language]->close();
+
+			if ($this->_entityMessagesFileWriters[$language]) $this->_entityMessagesFileWriters[$language]->close();
 		}		
 	}	
 }
-?>

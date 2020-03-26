@@ -41,24 +41,19 @@ class MatchChangesModel extends FormationModel {
 	public function getTemplateParameters() {
 		
 		$matchId = (int) $this->_websoccer->getRequestParameter('id');
-		if ($matchId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if ($matchId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$match = MatchesDataService::getMatchSubstitutionsById($this->_websoccer, $this->_db, $matchId);
 		
-		if ($match['match_simulated']) {
-			throw new Exception($this->_i18n->getMessage('match_details_match_completed'));
-		}
+		if ($match['match_simulated']) throw new Exception($this->_i18n->getMessage('match_details_match_completed'));
 		
 		$teamId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 		if ($match['match_home_id'] !== $teamId && $match['match_guest_id'] !== $teamId) {
 			$teamId = NationalteamsDataService::getNationalTeamManagedByCurrentUser($this->_websoccer, $this->_db);
 		}
 		
-		if ($teamId !== $match['match_home_id']  && $match['match_guest_id'] !== $teamId) {
-			throw new Exception('illegal match');
-		}
+		if ($teamId !== $match['match_home_id']  && $match['match_guest_id'] !== $teamId) throw new Exception('illegal match');
+
 		$teamPrefix = ($teamId == $match['match_home_id']) ? 'home' : 'guest';
 		
 		$players = MatchesDataService::getMatchPlayerRecordsByField($this->_websoccer, $this->_db, $matchId, $teamId);
@@ -67,29 +62,17 @@ class MatchChangesModel extends FormationModel {
 		
 		$formation = array();
 		
-		if ($this->_websoccer->getRequestParameter('freekickplayer')) {
-			$formation['freekickplayer'] = $this->_websoccer->getRequestParameter('freekickplayer');
-		} else {
-			$formation['freekickplayer'] = $match['match_' . $teamPrefix . '_freekickplayer'];
-		}
+		if ($this->_websoccer->getRequestParameter('freekickplayer')) $formation['freekickplayer'] = $this->_websoccer->getRequestParameter('freekickplayer');
+		else $formation['freekickplayer'] = $match['match_' . $teamPrefix . '_freekickplayer'];
 			
-		if ($this->_websoccer->getRequestParameter('offensive')) {
-			$formation['offensive'] = $this->_websoccer->getRequestParameter('offensive');
-		} else {
-			$formation['offensive'] = $match['match_' . $teamPrefix . '_offensive'];
-		}
+		if ($this->_websoccer->getRequestParameter('offensive')) $formation['offensive'] = $this->_websoccer->getRequestParameter('offensive');
+		else $formation['offensive'] = $match['match_' . $teamPrefix . '_offensive'];
 		
-		if ($this->_websoccer->getRequestParameter('longpasses')) {
-			$formation['longpasses'] = $this->_websoccer->getRequestParameter('longpasses');
-		} else {
-			$formation['longpasses'] = $match['match_' . $teamPrefix . '_longpasses'];
-		}
+		if ($this->_websoccer->getRequestParameter('longpasses')) $formation['longpasses'] = $this->_websoccer->getRequestParameter('longpasses');
+		else $formation['longpasses'] = $match['match_' . $teamPrefix . '_longpasses'];
 		
-		if ($this->_websoccer->getRequestParameter('counterattacks')) {
-			$formation['counterattacks'] = $this->_websoccer->getRequestParameter('counterattacks');
-		} else {
-			$formation['counterattacks'] = $match['match_' . $teamPrefix . '_counterattacks'];
-		}
+		if ($this->_websoccer->getRequestParameter('counterattacks')) $formation['counterattacks'] = $this->_websoccer->getRequestParameter('counterattacks');
+		else $formation['counterattacks'] = $match['match_' . $teamPrefix . '_counterattacks'];
 		
 		// get existing formation
 		$playerNo = 0;
@@ -136,11 +119,8 @@ class MatchChangesModel extends FormationModel {
 			$formation['bench' . $benchNo] = $player['id'];
 		}
 		for ($benchNo = 1; $benchNo <= 5; $benchNo++) {
-			if ($this->_websoccer->getRequestParameter('bench' . $benchNo)) {
-				$formation['bench' . $benchNo] = $this->_websoccer->getRequestParameter('bench' . $benchNo);
-			} else if (!isset($formation['bench' . $benchNo])) {
-				$formation['bench' . $benchNo] = '';
-			}
+			if ($this->_websoccer->getRequestParameter('bench' . $benchNo)) $formation['bench' . $benchNo] = $this->_websoccer->getRequestParameter('bench' . $benchNo);
+			elseif (!isset($formation['bench' . $benchNo])) $formation['bench' . $benchNo] = '';
 		}
 		
 		// subs
@@ -151,13 +131,15 @@ class MatchChangesModel extends FormationModel {
 				$formation['sub' . $subNo .'_minute'] = $this->_websoccer->getRequestParameter('sub' . $subNo .'_minute');
 				$formation['sub' . $subNo .'_condition'] = $this->_websoccer->getRequestParameter('sub' . $subNo .'_condition');
 				$formation['sub' . $subNo .'_position'] = $this->_websoccer->getRequestParameter('sub' . $subNo .'_position');
-			} else if (isset($match[$teamPrefix . '_sub' . $subNo .'_out'])) {
+			}
+			elseif (isset($match[$teamPrefix . '_sub' . $subNo .'_out'])) {
 				$formation['sub' . $subNo .'_out'] = $match[$teamPrefix . '_sub' . $subNo .'_out'];
 				$formation['sub' . $subNo .'_in'] = $match[$teamPrefix . '_sub' . $subNo .'_in'];
 				$formation['sub' . $subNo .'_minute'] = $match[$teamPrefix . '_sub' . $subNo .'_minute'];
 				$formation['sub' . $subNo .'_condition'] = $match[$teamPrefix . '_sub' . $subNo .'_condition'];
 				$formation['sub' . $subNo .'_position'] = $match[$teamPrefix . '_sub' . $subNo .'_position'];
-			} else {
+			}
+			else {
 				$formation['sub' . $subNo .'_out'] = '';
 				$formation['sub' . $subNo .'_in'] = '';
 				$formation['sub' . $subNo .'_minute'] = '';
@@ -168,7 +150,4 @@ class MatchChangesModel extends FormationModel {
 		
 		return array('setup' => $setup, 'players' => $players, 'formation' => $formation, 'minute' => $match['match_minutes']);
 	}
-	
 }
-
-?>

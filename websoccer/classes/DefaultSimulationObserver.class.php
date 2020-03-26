@@ -66,15 +66,11 @@ class DefaultSimulationObserver implements ISimulationObserver {
 	public function onShootFailure(SimulationMatch $match, SimulationPlayer $scorer, SimulationPlayer $goaly) {
 		
 		// downgrade striker, if he isno hero yet (= scored at least two goals)
-		if ($scorer->getGoals() < 3) {
-			$scorer->downgradeMark(MARK_DOWNGRADE_SHOOTFAILURE);
-		}
+		if ($scorer->getGoals() < 3) $scorer->downgradeMark(MARK_DOWNGRADE_SHOOTFAILURE);
 		
 		$goaly->improveMark(MARK_IMPROVE_SHOOTFAILURE_GOALY);
 		// consider goals against goaly, in order to prevent goalies in team of the day, even though team lost very high.
-		if ($goaly->team->getGoals() > 3) {
-			$goaly->setMark(max(2.0, $goaly->getMark()));
-		}
+		if ($goaly->team->getGoals() > 3) $goaly->setMark(max(2.0, $goaly->getMark()));
 		
 		$scorer->setShoots($scorer->getShoots() + 1);
 	}
@@ -87,7 +83,8 @@ class DefaultSimulationObserver implements ISimulationObserver {
 		// show mercy when player already is a hero
 		if ($looser->getGoals() > 0 && $looser->getGoals() < 3 && $looser->getAssists() > 0 && $looser->getAssists() < 3) {
 			$looser->downgradeMark(MARK_DOWNGRADE_TACKLE_LOOSER * 0.5);
-		} elseif ($looser->getGoals() < 3 && $looser->getAssists() < 3) {
+		}
+		elseif ($looser->getGoals() < 3 && $looser->getAssists() < 3) {
 			$looser->downgradeMark(MARK_DOWNGRADE_TACKLE_LOOSER);
 		}
 		
@@ -130,10 +127,7 @@ class DefaultSimulationObserver implements ISimulationObserver {
 		$substituted = SimulationHelper::createUnplannedSubstitutionForPlayer($match->minute + 1, $player);
 			
 		// not possible, hence just remove player
-		if (!$substituted) {
-			$player->team->removePlayer($player);
-		}
-		
+		if (!$substituted) $player->team->removePlayer($player);
 	}
 	
 	/**
@@ -171,7 +165,8 @@ class DefaultSimulationObserver implements ISimulationObserver {
 		
 			// update goals
 			$player->team->setGoals($player->team->getGoals() + 1);
-		} else {
+		}
+		else {
 			$player->downgradeMark(MARK_DOWNGRADE_SHOOTFAILURE);
 			$goaly->improveMark(MARK_IMPROVE_SHOOTFAILURE_GOALY);
 		}
@@ -205,12 +200,10 @@ class DefaultSimulationObserver implements ISimulationObserver {
 			// update goals
 			$player->team->setGoals($player->team->getGoals() + 1);
 			$player->setGoals($player->getGoals() + 1);
-		} else {
+		}
+		else {
 			$player->downgradeMark(MARK_DOWNGRADE_SHOOTFAILURE);
 			$goaly->improveMark(MARK_IMPROVE_SHOOTFAILURE_GOALY);
 		}
-	
 	}
-	
 }
-?>

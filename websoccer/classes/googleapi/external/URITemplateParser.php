@@ -190,7 +190,8 @@ class URI_Template_Parser {
     } else {
       if ($exp->operator == '?') {
         $val = $var->name . (isset($var->data) ? '=' : '');
-      } else if ($exp->operator == ';') {
+      }
+      elseif ($exp->operator == ';') {
         $val = $var->name . ($var->data ? '=' : '');
       }
       $val .= rawurlencode($var->data);

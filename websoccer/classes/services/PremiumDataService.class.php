@@ -38,7 +38,7 @@ class PremiumDataService {
 		
 		$fromTable = $websoccer->getConfig('db_prefix') . '_premiumstatement';
 		
-		$whereCondition = 'user_id = %d';
+		$whereCondition = 'user_id = \'%d\'';
 		
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $userId);
 		$statements = $result->fetch_array();
@@ -67,7 +67,7 @@ class PremiumDataService {
 		
 		$fromTable = $websoccer->getConfig('db_prefix') . '_premiumstatement';
 		
-		$whereCondition = 'user_id = %d ORDER BY created_date DESC';
+		$whereCondition = 'user_id = \'%d\' ORDER BY created_date DESC';
 		
 		$result = $db->querySelect('*', $fromTable, $whereCondition, $userId, $limit);
 		
@@ -97,15 +97,10 @@ class PremiumDataService {
 		}
 		
 		$user = UsersDataService::getUserById($websoccer, $db, $userId);
-		if (!isset($user['premium_balance'])) {
-			throw new Exception('user not found: ' . $userId);
-		}
+		if (!isset($user['premium_balance'])) throw new Exception('user not found: ' . $userId);
 		
-		if ($amount < 0) {
-			throw new Exception('amount illegal: ' . $amount);
-		} else {
-			self::createTransaction($websoccer, $db, $user, $userId, $amount, $subject, $data);
-		}
+		if ($amount < 0) throw new Exception('amount illegal: ' . $amount);
+		else self::createTransaction($websoccer, $db, $user, $userId, $amount, $subject, $data);
 		
 	}
 	
@@ -127,13 +122,9 @@ class PremiumDataService {
 		}
 		
 		$user = UsersDataService::getUserById($websoccer, $db, $userId);
-		if (!isset($user['premium_balance'])) {
-			throw new Exception('user not found: ' . $userId);
-		}
+		if (!isset($user['premium_balance'])) throw new Exception('user not found: ' . $userId);
 	
-		if ($amount < 0) {
-			throw new Exception('amount illegal: ' . $amount);
-		}
+		if ($amount < 0) throw new Exception('amount illegal: ' . $amount);
 		
 		// is balance enough?
 		if ($user['premium_balance'] < $amount) {
@@ -163,14 +154,12 @@ class PremiumDataService {
 		$newBudget = $user['premium_balance'] + $amount;
 		$updateColumns = array('premium_balance' => $newBudget);
 		$fromTable = $websoccer->getConfig('db_prefix') .'_user';
-		$whereCondition = 'id = %d';
+		$whereCondition = 'id = \'%d\'';
 		$parameters = $userId;
 		$db->queryUpdate($updateColumns, $fromTable, $whereCondition, $parameters);
 		
 		// also update user profile, if executed by user.
-		if ($userId == $websoccer->getUser()->id) {
-			$websoccer->getUser()->premiumBalance = $newBudget;
-		}
+		if ($userId == $websoccer->getUser()->id) $websoccer->getUser()->premiumBalance = $newBudget;
 	}
 	
 	/**
@@ -185,9 +174,7 @@ class PremiumDataService {
 	 */
 	public static function createPaymentAndCreditPremium(WebSoccer $websoccer, DbConnection $db, $userId, $amount, $subject) {
 		
-		if ($amount <= 0) {
-			throw new Exception('Illegal amount: ' . $amount);
-		}
+		if ($amount <= 0) throw new Exception('Illegal amount: ' . $amount);
 		
 		$realAmount = $amount * 100;
 		
@@ -232,7 +219,7 @@ class PremiumDataService {
 	public static function getPaymentsOfUser(WebSoccer $websoccer, DbConnection $db, $userId, $limit) {
 	
 		$fromTable = $websoccer->getConfig('db_prefix') . '_premiumpayment';
-		$whereCondition = 'user_id = %d ORDER BY created_date DESC';
+		$whereCondition = 'user_id = \'%d\' ORDER BY created_date DESC';
 	
 		$result = $db->querySelect('*', $fromTable, $whereCondition, $userId, $limit);
 	
@@ -246,4 +233,3 @@ class PremiumDataService {
 		return $statements;
 	}
 }
-?>

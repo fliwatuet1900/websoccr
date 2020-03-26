@@ -88,7 +88,4 @@ class TicketsComputedEvent extends AbstractEvent {
 		$this->rateSeatsGrand =& $rateSeatsGrand;
 		$this->rateVip =& $rateVip;
 	}
-
 }
-
-?>

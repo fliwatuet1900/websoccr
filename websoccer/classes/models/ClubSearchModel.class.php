@@ -40,13 +40,10 @@ class ClubSearchModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		$query = $this->_websoccer->getRequestParameter("query");
+		$query = $this->_websoccer->getRequestParameter('query');
 		
 		$teams = TeamsDataService::findTeamNames($this->_websoccer, $this->_db, $query);
 		
-		return array("items" => $teams);
+		return array('items' => $teams);
 	}
-	
 }
-
-?>

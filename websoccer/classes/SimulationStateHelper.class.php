@@ -159,9 +159,7 @@ class SimulationStateHelper {
 	
 	private static function updateMatch(WebSoccer $websoccer, DbConnection $db, SimulationMatch $match) {
 		
-		if ($match->isCompleted) {
-			$columns['berechnet'] = 1;
-		}
+		if ($match->isCompleted) $columns['berechnet'] = 1;
 		
 		$columns['minutes'] = $match->minute;
 		$columns['soldout'] = ($match->isSoldOut) ? '1' : '0';
@@ -186,17 +184,11 @@ class SimulationStateHelper {
 		$columns['home_morale'] = $match->homeTeam->morale;
 		$columns['gast_morale'] = $match->guestTeam->morale;
 		
-		if ($match->getPlayerWithBall() != null) {
-			$columns['player_with_ball'] = $match->getPlayerWithBall()->id;
-		} else {
-			$columns['player_with_ball'] = 0;
-		}
+		if ($match->getPlayerWithBall() != null) $columns['player_with_ball'] = $match->getPlayerWithBall()->id;
+		else $columns['player_with_ball'] = 0;
 		
-		if ($match->getPreviousPlayerWithBall() != null) {
-			$columns['prev_player_with_ball'] = $match->getPreviousPlayerWithBall()->id;
-		} else {
-			$columns['prev_player_with_ball'] = 0;
-		}
+		if ($match->getPreviousPlayerWithBall() != null) $columns['prev_player_with_ball'] = $match->getPreviousPlayerWithBall()->id;
+		else $columns['prev_player_with_ball'] = 0;
 		
 		$columns['home_freekickplayer'] = ($match->homeTeam->freeKickPlayer != NULL) ? $match->homeTeam->freeKickPlayer->id : '';
 		$columns['gast_freekickplayer'] = ($match->guestTeam->freeKickPlayer != NULL) ? $match->guestTeam->freeKickPlayer->id : '';
@@ -367,17 +359,10 @@ class SimulationStateHelper {
 			// add player
 			self::$_addedPlayers[$player->id] = $player;
 			
-			if ($playerinfo['field_area'] == 'Ausgewechselt') {
-				$team->removedPlayers[$player->id] = $player;
-			} else if ($playerinfo['field_area'] == 'Ersatzbank') {
-				$team->playersOnBench[$player->id] = $player;
-			} else {
-				$team->positionsAndPlayers[$player->position][] = $player;
-			}
+			if ($playerinfo['field_area'] == 'Ausgewechselt') $team->removedPlayers[$player->id] = $player;
+			elseif ($playerinfo['field_area'] == 'Ersatzbank') $team->playersOnBench[$player->id] = $player;
+			else $team->positionsAndPlayers[$player->position][] = $player;
 		}
 		$result->free();
-		
 	}
 }
-
-?>

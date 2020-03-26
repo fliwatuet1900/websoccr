@@ -61,7 +61,7 @@ class PremiumTransactionConverter implements IConverter {
 			$db = DbConnection::getInstance();
 			$columns = 'premium_balance';
 			$fromTable = $this->_websoccer->getConfig('db_prefix') .'_user';
-			$whereCondition = 'id = %d';
+			$whereCondition = 'id = \'%d\'';
 			$result = $db->querySelect($columns, $fromTable, $whereCondition, $_POST['user_id'], 1);
 			$user = $result->fetch_array();
 			$result->free();
@@ -74,7 +74,4 @@ class PremiumTransactionConverter implements IConverter {
 		
 		return $amount;
 	}
-	
 }
-
-?>

@@ -86,7 +86,4 @@ class WordpressUserLoginMethod implements IUserLoginMethod {
 		// create new user
 		return UsersDataService::createLocalUser($this->_websoccer, $this->_db, $wpUser['user_login'], $userEmail);
 	}
-	
 }
-
-?>

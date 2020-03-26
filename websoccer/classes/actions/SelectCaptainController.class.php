@@ -46,42 +46,39 @@ class SelectCaptainController implements IActionController {
 		$team = TeamsDataService::getTeamById($this->_websoccer, $this->_db, $clubId);
 		
 		// check if it is own player
-		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters["id"]);
-		if ($clubId != $player["team_id"]) {
-			throw new Exception("nice try");
+		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters['id']);
+		if ($clubId != $player['team_id']) {
+			throw new Exception('nice try');
 		}
 		
-		$this->_db->queryUpdate(array("captain_id" => $parameters["id"]), 
-				$this->_websoccer->getConfig("db_prefix") . "_verein", "id = %d", $clubId);
+		$this->_db->queryUpdate(array('captain_id' => $parameters['id']), 
+				$this->_websoccer->getConfig('db_prefix') . '_verein', 'id = \'%d\'', $clubId);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS,
-				$this->_i18n->getMessage("myteam_player_select_as_captain_success"),
-				""));
+				$this->_i18n->getMessage('myteam_player_select_as_captain_success'),
+				''));
 		
 		// check if captain has been changed and show disappointment
-		if ($team["captain_id"] && $team["captain_id"] != $parameters["id"]) {
+		if ($team['captain_id'] && $team['captain_id'] != $parameters['id']) {
 			
-			$oldPlayer = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $team["captain_id"]);
+			$oldPlayer = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $team['captain_id']);
 			
 			// maybe player has moved to new team, then just ignore it
-			if ($oldPlayer["team_id"] == $clubId) {
+			if ($oldPlayer['team_id'] == $clubId) {
 				
-				$newSatisfaction = round($oldPlayer["player_strength_satisfaction"] * 0.6);
-				$this->_db->queryUpdate(array("w_zufriedenheit" => $newSatisfaction),
-						$this->_websoccer->getConfig("db_prefix") . "_spieler", "id = %d", $oldPlayer["player_id"]);
+				$newSatisfaction = round($oldPlayer['player_strength_satisfaction'] * 0.6);
+				$this->_db->queryUpdate(array('w_zufriedenheit' => $newSatisfaction),
+						$this->_websoccer->getConfig('db_prefix') . '_spieler', 'id = \'%d\'', $oldPlayer['player_id']);
 				
-				$playername = (strlen($oldPlayer["player_pseudonym"])) ? $oldPlayer["player_pseudonym"] : $oldPlayer["player_firstname"] . " " . $oldPlayer["player_lastname"];
+				$playername = (strlen($oldPlayer['player_pseudonym'])) ? $oldPlayer['player_pseudonym'] : $oldPlayer['player_firstname'] . ' ' . $oldPlayer['player_lastname'];
 				
 				$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_WARNING,
-						$this->_i18n->getMessage("myteam_player_select_as_captain_warning_old_captain", $playername),
-						""));
+						$this->_i18n->getMessage('myteam_player_select_as_captain_warning_old_captain', $playername),
+						''));
 			}
 		}
 		
 		return null;
 	}
-	
 }
-
-?>

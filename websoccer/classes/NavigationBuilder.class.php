@@ -48,10 +48,7 @@ class NavigationBuilder {
 		
 		// sort children
 		foreach ($items as $item) {
-			if ($item->children != null) {
-				usort($item->children, array('NavigationBuilder', 'sortByWeight'));
-			}
-			
+			if ($item->children != null) usort($item->children, array('NavigationBuilder', 'sortByWeight'));
 		}
 		
 		return $items;
@@ -104,9 +101,7 @@ class NavigationBuilder {
 	
 	private static function _addToItems(&$items, &$addedItemsCache, $item, $itemWeight, $itemParent) {
 		$listToAdd = &$items;
-		if ($itemParent != null) {
-			$listToAdd = &$addedItemsCache[$itemParent]->children;
-		}
+		if ($itemParent != null) $listToAdd = &$addedItemsCache[$itemParent]->children;
 		
 		$addedItemsCache[$item->pageId] = $item;
 		$listToAdd[] = $item;
@@ -121,7 +116,4 @@ class NavigationBuilder {
 	static function sortByWeight($a, $b) {
 		return $a->weight - $b->weight;
 	}
-	
 }
-
-?>

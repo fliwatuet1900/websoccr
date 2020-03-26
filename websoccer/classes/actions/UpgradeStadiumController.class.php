@@ -47,9 +47,9 @@ class UpgradeStadiumController implements IActionController {
 		}
 		
 		// validate type parameter
-		$type = $parameters["type"];
-		if (!in_array($type, array("pitch", "videowall", "seatsquality", "vipquality"))) {
-			throw new Exception("illegal parameter: type");
+		$type = $parameters['type'];
+		if (!in_array($type, array('pitch', 'videowall', 'seatsquality', 'vipquality'))) {
+			throw new Exception('illegal parameter: type');
 		}
 		
 		$stadium = StadiumsDataService::getStadiumByTeamId($this->_websoccer, $this->_db, $teamId);
@@ -57,42 +57,35 @@ class UpgradeStadiumController implements IActionController {
 			return null;
 		}
 		
-		$existingLevel = $stadium["level_" . $type];
+		$existingLevel = $stadium['level_' . $type];
 		
 		// upgradable?
-		if ($existingLevel >= 5) {
-			throw new Exception($this->_i18n->getMessage("stadium_upgrade_err_not_upgradable"));
-		}
+		if ($existingLevel >= 5) throw new Exception($this->_i18n->getMessage('stadium_upgrade_err_not_upgradable'));
 		
 		// can user afford it?
 		$costs = StadiumsDataService::computeUpgradeCosts($this->_websoccer, $type, $stadium);
 		$team = TeamsDataService::getTeamSummaryById($this->_websoccer, $this->_db, $teamId);
 		
-		if ($team["team_budget"] <= $costs) {
-			throw new Exception($this->_i18n->getMessage("stadium_extend_err_too_expensive"));
-		}
+		if ($team['team_budget'] <= $costs) throw new Exception($this->_i18n->getMessage('stadium_extend_err_too_expensive'));
 		
 		// debit money
 		BankAccountDataService::debitAmount($this->_websoccer, $this->_db, $teamId,
 			$costs,
-			"stadium_upgrade_transaction_subject",
-			$stadium["name"]);
+			'stadium_upgrade_transaction_subject',
+			$stadium['name']);
 		
 		// update stadium
-		$maintenanceDue = (int) $this->_websoccer->getConfig("stadium_maintenanceinterval_" . $type);
+		$maintenanceDue = (int) $this->_websoccer->getConfig('stadium_maintenanceinterval_' . $type);
 		$this->_db->queryUpdate(array(
-				"level_" . $type => $existingLevel + 1,
-				"maintenance_" . $type => $maintenanceDue
-				), $this->_websoccer->getConfig("db_prefix") . "_stadion", "id = %d", $stadium["stadium_id"]);
+				'level_' . $type => $existingLevel + 1,
+				'maintenance_' . $type => $maintenanceDue
+				), $this->_websoccer->getConfig('db_prefix') . '_stadion', 'id = \'%d\'', $stadium['stadium_id']);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("stadium_upgrade_success"),
-				$this->_i18n->getMessage("stadium_upgrade_success_details")));
+				$this->_i18n->getMessage('stadium_upgrade_success'),
+				$this->_i18n->getMessage('stadium_upgrade_success_details')));
 		
-		return "stadium";
+		return 'stadium';
 	}
-	
 }
-
-?>

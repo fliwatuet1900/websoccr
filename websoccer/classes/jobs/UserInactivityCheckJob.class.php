@@ -40,5 +40,3 @@ class UserInactivityCheckJob extends AbstractJob {
 		
 	}
 }
-
-?>

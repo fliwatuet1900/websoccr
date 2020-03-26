@@ -36,21 +36,16 @@ class YouthPlayersOfTeamModel implements IModel {
 	}
 	
 	public function renderView() {
-		return $this->_websoccer->getConfig("youth_enabled");
+		return $this->_websoccer->getConfig('youth_enabled');
 	}
 	
 	public function getTemplateParameters() {
 		
-		$teamId = $this->_websoccer->getRequestParameter("teamid");
+		$teamId = $this->_websoccer->getRequestParameter('teamid');
 		
 		$players = array();
-		if ($teamId > 0) {
-			$players = YouthPlayersDataService::getYouthPlayersOfTeam($this->_websoccer, $this->_db, $teamId);
-		}
+		if ($teamId > 0) $players = YouthPlayersDataService::getYouthPlayersOfTeam($this->_websoccer, $this->_db, $teamId);
 		
-		return array("players" => $players);
+		return array('players' => $players);
 	}
-	
 }
-
-?>

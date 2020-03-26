@@ -41,77 +41,68 @@ class ExtendContractController implements IActionController {
 		$clubId = $user->getClubId($this->_websoccer, $this->_db);
 		
 		// check if it is own player
-		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters["id"]);
-		if ($clubId != $player["team_id"]) {
-			throw new Exception("nice try");
-		}
+		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters['id']);
+		if ($clubId != $player['team_id']) throw new Exception('nice try');
 		
 		// if player is not happy at club, he does not want to extend at all
-		$satisfaction = $player["player_strength_satisfaction"];
-		if ($satisfaction < MINIMUM_SATISFACTION_FOR_EXTENSION) {
-			throw new Exception($this->_i18n->getMessage("extend-contract_player_is_unhappy"));
-		}
+		$satisfaction = $player['player_strength_satisfaction'];
+		if ($satisfaction < MINIMUM_SATISFACTION_FOR_EXTENSION) throw new Exception($this->_i18n->getMessage('extend-contract_player_is_unhappy'));
 		
 		// check if player is already on market
-		if ($player["player_transfermarket"]) {
-			throw new Exception($this->_i18n->getMessage("sell_player_already_on_list"));
-		}
+		if ($player['player_transfermarket']) throw new Exception($this->_i18n->getMessage('sell_player_already_on_list'));
 		
 		// no salary decrease
-		if ($parameters["salary"] < $player["player_contract_salary"]) {
-			throw new Exception($this->_i18n->getMessage("extend-contract_lower_than_current_salary"));
-		}
+		if ($parameters['salary'] < $player['player_contract_salary']) throw new Exception($this->_i18n->getMessage('extend-contract_lower_than_current_salary'));
 		
-		$averageSalary = $this->getAverageSalary($player["player_strength"]);
+		$averageSalary = $this->getAverageSalary($player['player_strength']);
 		
 		// if salary is already higher than average, then just expect 10% more
-		if ($player["player_contract_salary"] > $averageSalary) {
+		if ($player['player_contract_salary'] > $averageSalary) {
 			$salaryFactor = 1.10;
-		} else {
+		}
+		else {
 			// make minimum salary dependent on happiness
 			$salaryFactor = (200 - $satisfaction) / 100;
 		}
 		$salaryFactor = max(1.1, $salaryFactor);
-		$minSalary = round($player["player_contract_salary"] * $salaryFactor);
+		$minSalary = round($player['player_contract_salary'] * $salaryFactor);
 			
 		// the salary should be at least 90% of the average, except if this would douple the salary
-		if ($averageSalary < ($parameters["salary"] * 2)) {
+		if ($averageSalary < ($parameters['salary'] * 2)) {
 			$minSalaryOfAverage = round(0.9 * $averageSalary);
 			$minSalary = max($minSalary, $minSalaryOfAverage);
 		}
 		
-		if ($parameters["salary"] < $minSalary) {
+		if ($parameters['salary'] < $minSalary) {
 			// decrease satisfaction
-			$this->decreaseSatisfaction($player["player_id"], $player["player_strength_satisfaction"]);
-			throw new Exception($this->_i18n->getMessage("extend-contract_salary_too_low"));
+			$this->decreaseSatisfaction($player['player_id'], $player['player_strength_satisfaction']);
+			throw new Exception($this->_i18n->getMessage('extend-contract_salary_too_low'));
 		}
 		
 		// check if club can pay this salary
-		TeamsDataService::validateWhetherTeamHasEnoughBudgetForSalaryBid($this->_websoccer, $this->_db, $this->_i18n, $clubId, $parameters["salary"]);
+		TeamsDataService::validateWhetherTeamHasEnoughBudgetForSalaryBid($this->_websoccer, $this->_db, $this->_i18n, $clubId, $parameters['salary']);
 		
 		// check goal bonus
-		$minGoalBonus = $player["player_contract_goalbonus"] * 1.3;
-		if ($parameters["goal_bonus"] < $minGoalBonus) {
-			throw new Exception($this->_i18n->getMessage("extend-contract_goalbonus_too_low"));
-		}
+		$minGoalBonus = $player['player_contract_goalbonus'] * 1.3;
+		if ($parameters['goal_bonus'] < $minGoalBonus) throw new Exception($this->_i18n->getMessage('extend-contract_goalbonus_too_low'));
 		
-		$this->updatePlayer($player["player_id"], $player["player_strength_satisfaction"], $parameters["salary"], $parameters["goal_bonus"], $parameters["matches"]);
+		$this->updatePlayer($player['player_id'], $player['player_strength_satisfaction'], $parameters['salary'], $parameters['goal_bonus'], $parameters['matches']);
 		
 		// reset inactivity
 		UserInactivityDataService::resetContractExtensionField($this->_websoccer, $this->_db, $user->id);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("extend-contract_success"),
-				""));
+				$this->_i18n->getMessage('extend-contract_success'),
+				''));
 		
 		return null;
 	}
 	
 	private function getAverageSalary($playerStrength) {
-		$columns = "AVG(vertrag_gehalt) AS average_salary";
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_spieler";
-		$whereCondition = "w_staerke >= %d AND w_staerke <= %d AND status = 1";
+		$columns = 'AVG(vertrag_gehalt) AS average_salary';
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_spieler';
+		$whereCondition = 'w_staerke >= \'%d\' AND w_staerke <= \'%d\' AND status = \'1\'';
 		
 		$parameters = array($playerStrength - 10, $playerStrength + 10);
 		
@@ -119,8 +110,8 @@ class ExtendContractController implements IActionController {
 		$avg = $result->fetch_array();
 		$result->free();
 		
-		if (isset($avg["average_salary"])) {
-			return $avg["average_salary"];
+		if (isset($avg['average_salary'])) {
+			return $avg['average_salary'];
 		}
 		
 		return $playerStrength;
@@ -132,9 +123,9 @@ class ExtendContractController implements IActionController {
 		}
 		
 		$newValue = $oldValue - SATISFACTION_DECREASE;
-		$columns["w_zufriedenheit"] = $newValue;
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_spieler";
-		$whereCondition = "id = %d";
+		$columns['w_zufriedenheit'] = $newValue;
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_spieler';
+		$whereCondition = 'id = \'%d\'';
 		$parameters = $playerId;
 		
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameters);
@@ -143,18 +134,15 @@ class ExtendContractController implements IActionController {
 	public function updatePlayer($playerId, $oldSatisfaction, $newSalary, $newGoalBonus, $newMatches) {
 		$satisfaction = min(100, $oldSatisfaction + SATISFACTION_INCREASE);
 		
-		$columns["w_zufriedenheit"] = $satisfaction;
-		$columns["vertrag_gehalt"] = $newSalary;
-		$columns["vertrag_torpraemie"] = $newGoalBonus;
-		$columns["vertrag_spiele"] = $newMatches;
+		$columns['w_zufriedenheit'] = $satisfaction;
+		$columns['vertrag_gehalt'] = $newSalary;
+		$columns['vertrag_torpraemie'] = $newGoalBonus;
+		$columns['vertrag_spiele'] = $newMatches;
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_spieler";
-		$whereCondition = "id = %d";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_spieler';
+		$whereCondition = 'id = %d';
 		$parameters = $playerId;
 		
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameters);
 	}
-	
 }
-
-?>

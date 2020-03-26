@@ -46,12 +46,9 @@ class ReturnFromAbsenceController implements IActionController {
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("absence_return_success"),
-				""));
+				$this->_i18n->getMessage('absence_return_success'),
+				''));
 		
-		return "office";
+		return 'office';
 	}
-	
 }
-
-?>

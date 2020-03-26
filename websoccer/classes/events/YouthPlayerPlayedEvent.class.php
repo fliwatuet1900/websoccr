@@ -51,7 +51,4 @@ class YouthPlayerPlayedEvent extends AbstractEvent {
 		$this->player = $player;
 		$this->strengthChange =& $strengthChange;
 	}
-
 }
-
-?>

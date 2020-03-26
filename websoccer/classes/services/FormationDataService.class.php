@@ -35,7 +35,7 @@ class FormationDataService {
 	 * @return array previously set formation.
 	 */
 	public static function getFormationByTeamId(WebSoccer $websoccer, DbConnection $db, $teamId, $matchId) {
-		$whereCondition = 'verein_id = %d AND match_id = %d';
+		$whereCondition = 'verein_id = \'%d\' AND match_id = \'%d\'';
 		$parameters = array($teamId, $matchId);
 		
 		return self::_getFormationByCondition($websoccer, $db, $whereCondition, $parameters);
@@ -51,7 +51,7 @@ class FormationDataService {
 	 * @return array formation.
 	 */
 	public static function getFormationByTemplateId(WebSoccer $websoccer, DbConnection $db, $teamId, $templateId) {
-		$whereCondition = 'id = %d AND verein_id = %d';
+		$whereCondition = 'id = \'%d\' AND verein_id = \'%d\'';
 		$parameters = array($templateId, $teamId);
 		return self::_getFormationByCondition($websoccer, $db, $whereCondition, $parameters);
 	}
@@ -119,15 +119,15 @@ class FormationDataService {
 		
 		if (!$isNationalteam) {
 			$fromTable = $websoccer->getConfig('db_prefix') . '_spieler';
-			$whereCondition = 'verein_id = %d AND gesperrt';
-			if ($isCupMatch) {
-				$whereCondition .= '_cups';
-			}
-			$whereCondition .= ' = 0 AND verletzt = 0 AND status = 1';
-		} else {
+			$whereCondition = 'verein_id = \'%d\' AND gesperrt';
+			if ($isCupMatch) $whereCondition .= '_cups';
+
+			$whereCondition .= ' = \'0\' AND verletzt = \'0\' AND status = \'1\'';
+		}
+		else {
 			$fromTable = $websoccer->getConfig('db_prefix') . '_spieler AS P';
 			$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_nationalplayer AS NP ON NP.player_id = P.id';
-			$whereCondition = 'NP.team_id = %d AND gesperrt_nationalteam = 0 AND verletzt = 0 AND status = 1';
+			$whereCondition = 'NP.team_id = \'%d\' AND gesperrt_nationalteam = \'0\' AND verletzt = \'0\' AND status = \'1\'';
 		}
 		
 		$whereCondition .=	' ORDER BY '. $sortColumn . ' ' . $sortDirection;
@@ -141,7 +141,8 @@ class FormationDataService {
 			$openPositions['IV'] = $setupDefense;
 			$openPositions['LV'] = 0;
 			$openPositions['RV'] = 0;
-		} else {
+		}
+		else {
 			$openPositions['LV'] = 1;
 			$openPositions['RV'] = 1;
 			$openPositions['IV'] = $setupDefense - 2;
@@ -154,18 +155,22 @@ class FormationDataService {
 		// midfield positions
 		if ($setupMidfield == 1) {
 			$openPositions['ZM'] = 1;
-		} else if ($setupMidfield == 2) {
+		}
+		elseif ($setupMidfield == 2) {
 			$openPositions['LM'] = 1;
 			$openPositions['RM'] = 1;
-		} else if ($setupMidfield == 3) {
+		}
+		elseif ($setupMidfield == 3) {
 			$openPositions['LM'] = 1;
 			$openPositions['ZM'] = 1;
 			$openPositions['RM'] = 1;
-		} else if ($setupMidfield >= 4) {
+		}
+		elseif ($setupMidfield >= 4) {
 			$openPositions['LM'] = 1;
 			$openPositions['ZM'] = $setupMidfield - 2;
 			$openPositions['RM'] = 1;
-		} else {
+		}
+		else {
 			$openPositions['LM'] = 0;
 			$openPositions['ZM'] = 0;
 			$openPositions['RM'] = 0;
@@ -178,7 +183,8 @@ class FormationDataService {
 		if ($setupOutsideforward == 2) {
 			$openPositions['LS'] = 1;
 			$openPositions['RS'] = 1;
-		} else {
+		}
+		else {
 			$openPositions['LS'] = 0;
 			$openPositions['RS'] = 0;
 		}
@@ -192,15 +198,10 @@ class FormationDataService {
 			// handle players without main position (all-rounder)
 			if (!strlen($player['position_main'])) {
 				
-				if ($player['position'] == 'Torwart') {
-					$possiblePositions = array('T');
-				} elseif ($player['position'] == 'Abwehr') {
-					$possiblePositions = array('LV', 'IV', 'RV');
-				} elseif ($player['position'] == 'Mittelfeld') {
-					$possiblePositions = array('RM', 'ZM', 'LM', 'RM', 'DM', 'OM');
-				} else {
-					$possiblePositions = array('LS', 'MS', 'RS');
-				}
+				if ($player['position'] == 'Torwart') $possiblePositions = array('T');
+				elseif ($player['position'] == 'Abwehr') $possiblePositions = array('LV', 'IV', 'RV');
+				elseif ($player['position'] == 'Mittelfeld') $possiblePositions = array('RM', 'ZM', 'LM', 'RM', 'DM', 'OM');
+				else $possiblePositions = array('LS', 'MS', 'RS');
 				
 				foreach($possiblePositions as $possiblePosition) {
 					if ($openPositions[$possiblePosition]) {
@@ -212,16 +213,15 @@ class FormationDataService {
 				}
 				
 				// add at main position
-			} elseif (strlen($player['position_main']) && isset($openPositions[$player['position_main']]) && $openPositions[$player['position_main']]) {
+			}
+			elseif (strlen($player['position_main']) && isset($openPositions[$player['position_main']]) && $openPositions[$player['position_main']]) {
 				$openPositions[$player['position_main']] = $openPositions[$player['position_main']] - 1;
 				$players[] = array('id' => $player['id'], 'position' => $player['position_main']);
 				$added = TRUE;
 			}
 			
 			// remember player for later if no space on his main position. Might be used with his secondary position, if he has any.
-			if (!$added && strlen($player['position_second'])) {
-				$unusedPlayers[] = $player;
-			}
+			if (!$added && strlen($player['position_second'])) $unusedPlayers[] = $player;
 			
 		}
 		$result->free();
@@ -235,13 +235,10 @@ class FormationDataService {
 						unset($unusedPlayer[$playerIndex]);
 						break;
 					}
-					
 				}
 			}
 		}
 		
 		return $players;
 	}
-	
 }
-?>

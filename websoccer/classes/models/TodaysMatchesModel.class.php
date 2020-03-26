@@ -47,16 +47,12 @@ class TodaysMatchesModel implements IModel {
 		$count = MatchesDataService::countTodaysMatches($this->_websoccer, $this->_db);
 		
 		if ($count) {
-			$eps = $this->_websoccer->getConfig("entries_per_page");
+			$eps = $this->_websoccer->getConfig('entries_per_page');
 			$paginator = new Paginator($count, $eps, $this->_websoccer);
 			
 			$matches = MatchesDataService::getTodaysMatches($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps);
 		}
 		
-		return array("matches" => $matches, "paginator" => $paginator);
+		return array('matches' => $matches, 'paginator' => $paginator);
 	}
-	
-	
 }
-
-?>

@@ -39,9 +39,8 @@ class I18n {
 	 * @return the only instance during current request.
 	 */
 	public static function getInstance($supportedLanguages) {
-		if(self::$_instance == NULL) {
-			self::$_instance = new I18n($supportedLanguages);
-		}
+		if(self::$_instance == NULL) self::$_instance = new I18n($supportedLanguages);
+
 		return self::$_instance;
 	}
 	
@@ -56,19 +55,18 @@ class I18n {
 			if (isset($_SESSION[LANG_SESSION_PARAM])) {
 				$lang = $_SESSION[LANG_SESSION_PARAM];
 			// from browser
-			}elseif (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+			}
+			elseif (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
 				$lang = strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
-			} else {
+			}
+			else {
 				// return default language
 				$lang = $this->_supportedLanguages[0];
 			}
 			
-			if (!in_array($lang, $this->_supportedLanguages)) {
-				$lang = $this->_supportedLanguages[0];
-			}
+			if (!in_array($lang, $this->_supportedLanguages)) $lang = $this->_supportedLanguages[0];
 			
 			$this->_currentLanguage = $lang;
-			
 		}
 		return $this->_currentLanguage;
 	}
@@ -82,9 +80,8 @@ class I18n {
 		}
 		
 		$lang = strtolower($language);
-		if (!in_array($lang, $this->_supportedLanguages)) {
-			$lang = $this->getCurrentLanguage();
-		}
+		if (!in_array($lang, $this->_supportedLanguages)) $lang = $this->getCurrentLanguage();
+
 		$_SESSION[LANG_SESSION_PARAM] = $lang;
 		$this->_currentLanguage = $lang;
 	}	
@@ -102,9 +99,8 @@ class I18n {
 		}
 		
 		$message = stripslashes($msg[$messageKey]);
-		if ($paramaters != null) {
-			$message = sprintf($message, $paramaters);
-		}
+		if ($paramaters != null) $message = sprintf($message, $paramaters);
+
 		return $message;
 	}
 	
@@ -137,7 +133,5 @@ class I18n {
 	// hide constructor
 	private function __construct($supportedLanguages) {
 		$this->_supportedLanguages = array_map('trim', explode(',', $supportedLanguages));
-	}	
-
+	}
 }
-?>

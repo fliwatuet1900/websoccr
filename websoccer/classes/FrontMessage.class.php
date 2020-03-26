@@ -61,7 +61,4 @@ class FrontMessage {
 		$this->title = $title;
 		$this->message = $message;
 	}
-	
 }
-
-?>

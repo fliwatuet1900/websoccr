@@ -35,7 +35,7 @@ class MyYouthTeamModel implements IModel {
 	}
 	
 	public function renderView() {
-		return $this->_websoccer->getConfig("youth_enabled");
+		return $this->_websoccer->getConfig('youth_enabled');
 	}
 	
 	public function getTemplateParameters() {
@@ -48,13 +48,10 @@ class MyYouthTeamModel implements IModel {
 			$noOfPlayers = count($players);
 			for ($playerIndex = 0; $playerIndex < $noOfPlayers; $playerIndex++) {
 				
-				$players[$playerIndex]["nation_flagfile"] = PlayersDataService::getFlagFilename($players[$playerIndex]["nation"]);
+				$players[$playerIndex]['nation_flagfile'] = PlayersDataService::getFlagFilename($players[$playerIndex]['nation']);
 			}
 		}
 		
-		return array("players" => $players);
+		return array('players' => $players);
 	}
-	
 }
-
-?>

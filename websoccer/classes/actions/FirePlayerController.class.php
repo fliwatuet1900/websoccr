@@ -42,7 +42,7 @@ class FirePlayerController implements IActionController {
 	 */
 	public function executeAction($parameters) {
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig("enable_player_resignation")) {
+		if (!$this->_websoccer->getConfig('enable_player_resignation')) {
 			return;
 		}
 		
@@ -51,67 +51,60 @@ class FirePlayerController implements IActionController {
 		$clubId = $user->getClubId($this->_websoccer, $this->_db);
 		
 		// check if it is own player
-		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters["id"]);
-		if ($clubId != $player["team_id"]) {
-			throw new Exception("nice try");
-		}
+		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters['id']);
+		if ($clubId != $player['team_id']) throw new Exception('nice try');
 		
 		// check violation of minimum team size
 		$teamSize = $this->getTeamSize($clubId);
-		if ($teamSize <= $this->_websoccer->getConfig("transfermarket_min_teamsize")) {
-			throw new Exception($this->_i18n->getMessage("sell_player_teamsize_too_small", $teamSize));
+		if ($teamSize <= $this->_websoccer->getConfig('transfermarket_min_teamsize')) {
+			throw new Exception($this->_i18n->getMessage('sell_player_teamsize_too_small', $teamSize));
 		}
 		
 		// check and withdraw compensation
-		if ($this->_websoccer->getConfig("player_resignation_compensation_matches") > 0) {
-			$compensation = $this->_websoccer->getConfig("player_resignation_compensation_matches") * $player["player_contract_salary"];
+		if ($this->_websoccer->getConfig('player_resignation_compensation_matches') > 0) {
+			$compensation = $this->_websoccer->getConfig('player_resignation_compensation_matches') * $player['player_contract_salary'];
 			
 			$team = TeamsDataService::getTeamSummaryById($this->_websoccer, $this->_db, $clubId);
-			if ($team["team_budget"] <= $compensation) {
-				throw new Exception($this->_i18n->getMessage("fireplayer_tooexpensive"));
-			}
+			if ($team['team_budget'] <= $compensation) throw new Exception($this->_i18n->getMessage('fireplayer_tooexpensive'));
 			
-			BankAccountDataService::debitAmount($this->_websoccer, $this->_db, $clubId, $compensation, "fireplayer_compensation_subject", 
-				$player["player_firstname"] . " " . $player["player_lastname"]);
+			BankAccountDataService::debitAmount($this->_websoccer, $this->_db, $clubId, $compensation, 'fireplayer_compensation_subject', 
+				$player['player_firstname'] . ' ' . $player['player_lastname']);
 			
 		}
 		
-		$this->updatePlayer($player["player_id"]);
+		$this->updatePlayer($player['player_id']);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("fireplayer_success"),
-				""));
+				$this->_i18n->getMessage('fireplayer_success'),
+				''));
 		
 		return null;
 	}
 	
 	private function updatePlayer($playerId) {
 		
-		$columns["verein_id"] = "";
-		$columns["vertrag_spiele"] = 0;
+		$columns['verein_id'] = '';
+		$columns['vertrag_spiele'] = 0;
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_spieler";
-		$whereCondition = "id = %d";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_spieler';
+		$whereCondition = 'id = \'%d\'';
 		$parameters = $playerId;
 		
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameters);
 	}
 	
 	private function getTeamSize($clubId) {
-		$columns = "COUNT(*) AS number";
+		$columns = 'COUNT(*) AS number';
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_spieler";
-		$whereCondition = "verein_id = %d AND status = 1 AND transfermarkt != 1";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_spieler';
+		$whereCondition = 'verein_id = \'%d\' AND status = \'1\' AND transfermarkt != \'1\'';
 		$parameters = $clubId;
 		
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $parameters);
 		$players = $result->fetch_array();
 		$result->free();
 		
-		return $players["number"];
+		return $players['number'];
 	}
-	
 }
-
-?>

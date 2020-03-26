@@ -38,27 +38,22 @@ class MarkAsUnsellableController implements IActionController {
 		$clubId = $user->getClubId($this->_websoccer, $this->_db);
 		
 		// check if it is own player
-		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters["id"]);
-		if ($clubId != $player["team_id"]) {
-			throw new Exception("nice try");
-		}
+		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters['id']);
+		if ($clubId != $player['team_id']) throw new Exception('nice try');
 		
-		$columns["unsellable"] = 1;
+		$columns['unsellable'] = 1;
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_spieler";
-		$whereCondition = "id = %d";
-		$parameters = $parameters["id"];
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_spieler';
+		$whereCondition = 'id = \'%d\'';
+		$parameters = $parameters['id'];
 		
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameters);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("myteam_unsellable_player_success"),
-				""));
+				$this->_i18n->getMessage('myteam_unsellable_player_success'),
+				''));
 		
 		return null;
 	}
-	
 }
-
-?>

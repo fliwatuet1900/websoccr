@@ -54,7 +54,7 @@ class AbsenceModel implements IModel {
 		$deputyName = "";
 		if ($absence && $absence['deputy_id']) {
 			$result = $this->_db->querySelect('nick', $this->_websoccer->getConfig('db_prefix') . '_user',
-					'id = %d', $absence['deputy_id']);
+					'id = \'%d\'', $absence['deputy_id']);
 			$deputy = $result->fetch_array();
 			$result->free();
 			$deputyName = $deputy['nick'];
@@ -62,7 +62,4 @@ class AbsenceModel implements IModel {
 		
 		return array('currentAbsence' => $absence, 'deputyName' => $deputyName);
 	}
-	
 }
-
-?>

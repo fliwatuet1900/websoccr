@@ -70,7 +70,8 @@ class Bootstrap3Skin implements ISkin {
 			$files[] = $dir . 'jquery.blockUI.js';
 			$files[] = $dir . 'typeahead/typeahead.jquery.min.js';
 			$files[] = $dir . 'wsbase.js';
-		} else {
+		}
+		else {
 			$files[] = $dir . 'websoccerBootstrap3.min.js';
 		}
 		
@@ -102,5 +103,3 @@ class Bootstrap3Skin implements ISkin {
 		return 'Bootstrap3Skin';
 	}
 }
-
-?>

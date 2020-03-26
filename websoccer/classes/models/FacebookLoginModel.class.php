@@ -35,14 +35,11 @@ class FacebookLoginModel implements IModel {
 	}
 	
 	public function renderView() {
-		return $this->_websoccer->getConfig("facebook_enable_login");
+		return $this->_websoccer->getConfig('facebook_enable_login');
 	}
 	
 	public function getTemplateParameters() {
 		
-		return array("loginurl" => FacebookSdk::getInstance($this->_websoccer)->getLoginUrl());
+		return array('loginurl' => FacebookSdk::getInstance($this->_websoccer)->getLoginUrl());
 	}
-	
 }
-
-?>

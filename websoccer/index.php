@@ -26,11 +26,11 @@ include(BASE_FOLDER . '/frontbase.inc.php');
 
 // offline mode
 $isOffline = FALSE;
-if ($website->getConfig('offline') == 'offline') {
+if ($website->getConfig('offline') === 'offline') {
 	$isOffline = TRUE;
-	
 	// is recurring offline mode active?
-} else {
+}
+else {
 	$offlineTimeSpansConfig = $website->getConfig('offline_times');
 	if (strlen($offlineTimeSpansConfig)) {
 		
@@ -49,22 +49,21 @@ if ($website->getConfig('offline') == 'offline') {
 				break;
 			}
 		}
-		
 	}
 }
 
 if ($isOffline) {
 	$parameters['offline_message'] = nl2br($website->getConfig('offline_text'));
 	echo $website->getTemplateEngine($i18n)->loadTemplate('views/offline')->render($parameters);
-	
 	// show page
-} else {
+}
+else {
 	
 	// check once per session if a new badge for user is applicable
 	if (!isset($_SESSION['badgechecked']) && $website->getUser()->getRole() == ROLE_USER
 			&& $website->getUser()->getClubId($website, $db)) {
 		$userId = $website->getUser()->id;
-		$result = $db->querySelect('datum_anmeldung', $website->getConfig('db_prefix') . '_user', 'id = %d', $userId);
+		$result = $db->querySelect('datum_anmeldung', $website->getConfig('db_prefix') . '_user', 'id = \'%d\'', $userId);
 		$userinfo = $result->fetch_array();
 		$result->free();
 		
@@ -89,16 +88,16 @@ if ($isOffline) {
 	if ($actionId !== NULL) {
 		try {
 			$targetId = ActionHandler::handleAction($website, $db, $i18n, $actionId);
-			if ($targetId != null) {
-				$pageId = $targetId;
-			}
-		} catch (ValidationException $ve) {
+			if ($targetId != null) $pageId = $targetId;
+		}
+		catch (ValidationException $ve) {
 			$validationMessages = $ve->getMessages();
 			
 			$website->addFrontMessage(new FrontMessage(MESSAGE_TYPE_ERROR, 
 					$i18n->getMessage('validation_error_box_title'), 
 					$i18n->getMessage('validation_error_box_message')));
-		} catch (Exception $e) {
+		}
+		catch (Exception $e) {
 			$website->addFrontMessage(new FrontMessage(MESSAGE_TYPE_ERROR,
 					$i18n->getMessage('errorpage_title'),
 					$e->getMessage()));
@@ -119,7 +118,8 @@ if ($isOffline) {
 	$viewHandler = new ViewHandler($website, $db, $i18n, $page, $block, $validationMessages);
 	try {
 		echo $viewHandler->handlePage($pageId, $parameters);
-	} catch (AccessDeniedException $e) {
+	}
+	catch (AccessDeniedException $e) {
 		
 		// show log-in form for user
 		if ($website->getUser()->getRole() == ROLE_GUEST) {
@@ -127,10 +127,12 @@ if ($isOffline) {
 					$e->getMessage(),
 					''));
 			echo $viewHandler->handlePage('login', $parameters);
-		} else {
+		}
+		else {
 			renderErrorPage($website, $i18n, $viewHandler, $e->getMessage(), $parameters);
 		}
-	} catch (Exception $e) {
+	}
+	catch (Exception $e) {
 		renderErrorPage($website, $i18n, $viewHandler, $e->getMessage(), $parameters);
 	}
 }
@@ -140,5 +142,3 @@ function renderErrorPage($website, $i18n, $viewHandler, $message, $parameters) {
 	$parameters['message'] = '';
 	echo $website->getTemplateEngine($i18n, $viewHandler)->loadTemplate('error')->render($parameters);
 }
-
-?>

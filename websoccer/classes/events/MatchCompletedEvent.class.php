@@ -39,13 +39,9 @@ class MatchCompletedEvent extends AbstractEvent {
 	 * @param I18n $i18n Messages context.
 	 * @param SimulationMatch $match Match data model.
 	 */
-	function __construct(WebSoccer $websoccer, DbConnection $db, I18n $i18n,
-			SimulationMatch $match) {
+	function __construct(WebSoccer $websoccer, DbConnection $db, I18n $i18n, SimulationMatch $match) {
 		parent::__construct($websoccer, $db, $i18n);
 		
 		$this->match = $match;
 	}
-
 }
-
-?>

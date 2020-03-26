@@ -37,7 +37,7 @@ class TeamsDataService {
 		$fromTable = self::_getFromPart($websoccer);
 		
 		// where
-		$whereCondition = 'C.id = %d AND C.status = 1';
+		$whereCondition = 'C.id = \'%d\' AND C.status = \'1\'';
 		$parameters = $teamId;
 	
 		// select
@@ -120,7 +120,7 @@ class TeamsDataService {
 		$fromTable .= ' LEFT JOIN ' . $tablePrefix . '_liga AS L ON C.liga_id = L.id';
 		
 		// where
-		$whereCondition = 'C.status = 1 AND C.id = %d';
+		$whereCondition = 'C.status = \'1\' AND C.id = \'%d\'';
 		$parameters = $teamId;
 		
 		// select
@@ -153,7 +153,7 @@ class TeamsDataService {
 		
 		// get current season
 		$result = $db->querySelect('id', $websoccer->getConfig('db_prefix') .'_saison',
-				'liga_id = %d AND beendet = \'0\' ORDER BY name DESC', $leagueId, 1);
+				'liga_id = \'%d\' AND beendet = \'0\' ORDER BY name DESC', $leagueId, 1);
 		$season = $result->fetch_array();
 		$result->free();
 		
@@ -187,7 +187,7 @@ class TeamsDataService {
 		$columns['PREVDAY.rank'] = 'previous_rank';
 		
 		// order by
-		$whereCondition = 'C.liga_id = %d AND C.status = \'1\' ORDER BY score DESC, goals_diff DESC, wins DESC, draws DESC, goals DESC, name ASC';
+		$whereCondition = 'C.liga_id = \'%d\' AND C.status = \'1\' ORDER BY score DESC, goals_diff DESC, wins DESC, draws DESC, goals DESC, name ASC';
 		$parameters = $leagueId;
 		
 		$teams = array();
@@ -201,7 +201,7 @@ class TeamsDataService {
 			
 			$queryTemplate = 'REPLACE INTO ' . $websoccer->getConfig('db_prefix') . '_leaguehistory ';
 			$queryTemplate .= '(team_id, season_id, user_id, matchday, rank) ';
-			$queryTemplate .= 'VALUES (%d, ' . $season['id'] . ', %s, %d, %d);';
+			$queryTemplate .= 'VALUES (\'%d\', \'' . $season['id'] . '\', \'%s\', \'%d\', \'%d\');';
 		}
 		
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters);
@@ -236,7 +236,7 @@ class TeamsDataService {
 		$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_verein AS C ON C.id = S.team_id';
 		$fromTable .= ' LEFT JOIN ' . $websoccer->getConfig('db_prefix') . '_user AS U ON C.user_id = U.id';
 		
-		$whereCondition = 'S.season_id = %d';
+		$whereCondition = 'S.season_id = \'%d\'';
 		$parameters = $seasonId;
 		
 		$columns['C.id'] = 'id';
@@ -244,11 +244,8 @@ class TeamsDataService {
 		$columns['C.bild'] = 'picture';
 		
 		$fieldPrefix = 'total';
-		if ($type == 'home') {
-			$fieldPrefix = 'home';
-		} else if ($type == 'guest') {
-			$fieldPrefix = 'guest';
-		}
+		if ($type === 'home') $fieldPrefix = 'home';
+		elseif ($type === 'guest') $fieldPrefix = 'guest';
 		
 		$columns['S.' . $fieldPrefix . '_points'] = 'score';
 		$columns['S.' . $fieldPrefix . '_goals'] = 'goals';
@@ -292,7 +289,7 @@ class TeamsDataService {
 		$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_saison AS SEASON ON SEASON.id = S.season_id';
 		$fromTable .= ' LEFT JOIN ' . $websoccer->getConfig('db_prefix') . '_user AS U ON C.user_id = U.id';
 	
-		$whereCondition = 'SEASON.liga_id = %d';
+		$whereCondition = 'SEASON.liga_id = \'%d\'';
 		$parameters = $leagueId;
 	
 		$columns['C.id'] = 'id';
@@ -300,11 +297,8 @@ class TeamsDataService {
 		$columns['C.bild'] = 'picture';
 	
 		$fieldPrefix = 'total';
-		if ($type == 'home') {
-			$fieldPrefix = 'home';
-		} else if ($type == 'guest') {
-			$fieldPrefix = 'guest';
-		}
+		if ($type === 'home') $fieldPrefix = 'home';
+		elseif ($type === 'guest') $fieldPrefix = 'guest';
 	
 		$columns['SUM(S.' . $fieldPrefix . '_points)'] = 'score';
 		$columns['SUM(S.' . $fieldPrefix . '_goals)'] = 'goals';
@@ -351,7 +345,7 @@ class TeamsDataService {
 	
 		$columns = $subQuery . ' + 1 AS RNK';
 		$fromTable = $websoccer->getConfig('db_prefix') . '_verein AS T1';
-		$whereCondition = 'T1.id = %d';
+		$whereCondition = 'T1.id = \'%d\'';
 		
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $teamId);
 		$teamRank = $result->fetch_array();
@@ -375,7 +369,7 @@ class TeamsDataService {
 		$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_liga AS L ON C.liga_id = L.id';
 		$fromTable .= ' LEFT JOIN ' . $websoccer->getConfig('db_prefix') . '_stadion AS S ON C.stadion_id = S.id';
 		
-		$whereCondition = 'nationalteam != \'1\' AND (C.user_id = 0 OR C.user_id IS NULL OR C.interimmanager = \'1\') AND C.status = 1';
+		$whereCondition = 'nationalteam != \'1\' AND (C.user_id = \'0\' OR C.user_id IS NULL OR C.interimmanager = \'1\') AND C.status = \'1\'';
 		
 		$columns['C.id'] = 'team_id';
 		$columns['C.name'] = 'team_name';
@@ -414,7 +408,7 @@ class TeamsDataService {
 	 */
 	public static function countTeamsWithoutManager(WebSoccer $websoccer, DbConnection $db) {
 		$result = $db->querySelect('COUNT(*) AS hits', $websoccer->getConfig('db_prefix') . '_verein',
-				'(user_id = 0 OR user_id IS NULL) AND status = 1');
+				'(user_id = \'0\' OR user_id IS NULL) AND status = \'1\'');
 		$teams = $result->fetch_array();
 		$result->free();
 	
@@ -435,7 +429,7 @@ class TeamsDataService {
 	public static function findTeamNames(WebSoccer $websoccer, DbConnection $db, $query) {
 		$columns = 'name';
 		$fromTable = $websoccer->getConfig('db_prefix') . '_verein';
-		$whereCondition = 'UPPER(name) LIKE \'%s%%\' AND status = 1';
+		$whereCondition = 'UPPER(name) LIKE \'%%%s%%\' AND status = \'1\'';
 		
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, strtoupper($query), 10);
 		
@@ -460,7 +454,7 @@ class TeamsDataService {
 		$columns = 'COUNT(*) AS number';
 	
 		$fromTable = $websoccer->getConfig('db_prefix') .'_spieler';
-		$whereCondition = 'verein_id = %d AND status = \'1\' AND transfermarkt != \'1\' AND lending_fee = 0';
+		$whereCondition = 'verein_id = \'%d\' AND status = \'1\' AND transfermarkt != \'1\' AND lending_fee = \'0\'';
 		$parameters = $clubId;
 	
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters);
@@ -482,7 +476,7 @@ class TeamsDataService {
 		$columns = 'SUM(vertrag_gehalt) AS salary';
 	
 		$fromTable = $websoccer->getConfig('db_prefix') .'_spieler';
-		$whereCondition = 'verein_id = %d AND status = \'1\'';
+		$whereCondition = 'verein_id = \'%d\' AND status = \'1\'';
 		$parameters = $clubId;
 	
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters);
@@ -502,7 +496,7 @@ class TeamsDataService {
 	 * @return int ID of team captain. 0 if no captain available.
 	 */
 	public static function getTeamCaptainIdOfTeam(WebSoccer $websoccer, DbConnection $db, $clubId) {
-		$result = $db->querySelect('captain_id', $websoccer->getConfig('db_prefix') .'_verein', 'id = %d', $clubId);
+		$result = $db->querySelect('captain_id', $websoccer->getConfig('db_prefix') .'_verein', 'id = \'%d\'', $clubId);
 		$team = $result->fetch_array();
 		$result->free();
 		
@@ -522,16 +516,14 @@ class TeamsDataService {
 	public static function validateWhetherTeamHasEnoughBudgetForSalaryBid(WebSoccer $websoccer, DbConnection $db, I18n $i18n, $clubId, $salary) {
 		
 		// get salary sum of all players
-		$result = $db->querySelect('SUM(vertrag_gehalt) AS salary_sum', $websoccer->getConfig('db_prefix') .'_spieler', 'verein_id = %d', $clubId);
+		$result = $db->querySelect('SUM(vertrag_gehalt) AS salary_sum', $websoccer->getConfig('db_prefix') .'_spieler', 'verein_id = \'%d\'', $clubId);
 		$players = $result->fetch_array();
 		$result->free();
 		
 		// check if team can afford at least X matches
 		$minBudget = ($players['salary_sum'] + $salary) * 2;
 		$team = self::getTeamSummaryById($websoccer, $db, $clubId);
-		if ($team['team_budget'] < $minBudget) {
-			throw new Exception($i18n->getMessage("extend-contract_cannot_afford_offer"));
-		}
+		if ($team['team_budget'] < $minBudget) throw new Exception($i18n->getMessage('extend-contract_cannot_afford_offer'));
 	}
 	
 	private static function _getFromPart(WebSoccer $websoccer) {
@@ -545,6 +537,4 @@ class TeamsDataService {
 		$fromTable .= ' LEFT JOIN ' . $tablePrefix . '_user AS DEPUTY ON C.user_id_actual = DEPUTY.id';
 		return $fromTable;
 	}
-	
 }
-?>

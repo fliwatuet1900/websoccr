@@ -85,7 +85,4 @@ class PlayerTrainedEvent extends AbstractEvent {
 		$this->effectStamina =& $effectStamina;
 		$this->effectSatisfaction =& $effectSatisfaction;
 	}
-
 }
-
-?>

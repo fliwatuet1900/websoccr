@@ -47,25 +47,15 @@ class NotificationsDataService {
 				'message_key' => $messageKey
 				);
 		
-		if ($messageData != null) {
-			$columns['message_data'] = json_encode($messageData);
-		}
+		if ($messageData != null) $columns['message_data'] = json_encode($messageData);
 		
-		if ($type != null) {
-			$columns['eventtype'] = $type;
-		}
+		if ($type != null) $columns['eventtype'] = $type;
 		
-		if ($targetPageId != null) {
-			$columns['target_pageid'] = $targetPageId;
-		}
+		if ($targetPageId != null) $columns['target_pageid'] = $targetPageId;
 		
-		if ($targetPageQueryString != null) {
-			$columns['target_querystr'] = $targetPageQueryString;
-		}
+		if ($targetPageQueryString != null) $columns['target_querystr'] = $targetPageQueryString;
 		
-		if ($teamId != null) {
-			$columns['team_id'] = $teamId;
-		}
+		if ($teamId != null) $columns['team_id'] = $teamId;
 		
 		$db->queryInsert($columns, $websoccer->getConfig('db_prefix') . '_notification');
 	}
@@ -82,7 +72,7 @@ class NotificationsDataService {
 	public static function countUnseenNotifications(WebSoccer $websoccer, DbConnection $db, $userId, $teamId) {
 		
 		$result = $db->querySelect('COUNT(*) AS hits', $websoccer->getConfig('db_prefix') . '_notification', 
-				'user_id = %d AND seen = \'0\' AND (team_id = %d OR team_id IS NULL)', array($userId, $teamId));
+				'user_id = \'%d\' AND seen = \'0\' AND (team_id = \'%d\' OR team_id IS NULL)', array($userId, $teamId));
 		$rows = $result->fetch_array();
 		$result->free();
 		
@@ -107,7 +97,7 @@ class NotificationsDataService {
 	public static function getLatestNotifications(WebSoccer $websoccer, DbConnection $db, I18n $i18n, $userId, $teamId, $limit) {
 		
 		$result = $db->querySelect('*', $websoccer->getConfig('db_prefix') . '_notification', 
-				'user_id = %d AND (team_id = %d OR team_id IS NULL) ORDER BY eventdate DESC', array($userId, $teamId), $limit);
+				'user_id = \'%d\' AND (team_id = \'%d\' OR team_id IS NULL) ORDER BY eventdate DESC', array($userId, $teamId), $limit);
 		
 		$notifications = array();
 		while ($row = $result->fetch_array()) {
@@ -119,11 +109,8 @@ class NotificationsDataService {
 					);
 			
 			// prepare message
-			if ($i18n->hasMessage($row['message_key'])) {
-				$message = $i18n->getMessage($row['message_key']);
-			} else {
-				$message = $row['message_key'];
-			}
+			if ($i18n->hasMessage($row['message_key'])) $message = $i18n->getMessage($row['message_key']);
+			else $message = $row['message_key'];
 			
 			// replace place holders
 			if (strlen($row['message_data'])) {
@@ -150,10 +137,8 @@ class NotificationsDataService {
 			}
 			
 			$notification['link'] = $link;
-			
 			$notifications[] = $notification;
 		}
 		return $notifications;
 	}
 }
-?>

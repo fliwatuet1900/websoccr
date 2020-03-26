@@ -52,11 +52,9 @@ class SimulationFormationHelper {
 		$columns['w_frische'] = 'freshness';
 		$columns['w_zufriedenheit'] = 'satisfaction';
 		
-		if ($websoccer->getConfig('players_aging') == 'birthday') {
-			$ageColumn = 'TIMESTAMPDIFF(YEAR,geburtstag,CURDATE())';
-		} else {
-			$ageColumn = 'age';
-		}
+		if ($websoccer->getConfig('players_aging') == 'birthday') $ageColumn = 'TIMESTAMPDIFF(YEAR,geburtstag,CURDATE())';
+		else $ageColumn = 'age';
+
 		$columns[$ageColumn] = 'age';
 		
 		// get players from usual team
@@ -65,17 +63,15 @@ class SimulationFormationHelper {
 			$whereCondition = 'verein_id = %d AND verletzt = 0 AND gesperrt = 0 AND status = 1 ORDER BY w_frische DESC';
 			$parameters = $team->id;
 			$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters);
-		} else {
+		}
+		else {
 			// national team: take best players of nation
 			$columnsStr = '';
 			
 			$firstColumn = TRUE;
 			foreach($columns as $dbName => $aliasName) {
-				if (!$firstColumn) {
-					$columnsStr = $columnsStr .', ';
-				} else {
-					$firstColumn = FALSE;
-				}
+				if (!$firstColumn) $columnsStr = $columnsStr .', ';
+				else $firstColumn = FALSE;
 			
 				$columnsStr = $columnsStr . $dbName. ' AS '. $aliasName;
 			}
@@ -126,10 +122,12 @@ class SimulationFormationHelper {
 						$mainPosition = 'RV';
 						$rvExists = TRUE;
 					}
-				} else {
+				}
+				else {
 					$lvExists = TRUE;
 				}
-			} elseif ($mainPosition == 'RV') {
+			}
+			elseif ($mainPosition == 'RV') {
 				if ($rvExists) {
 					$mainPosition = 'IV';
 					$ivPlayers++;
@@ -137,37 +135,46 @@ class SimulationFormationHelper {
 						$mainPosition = 'LV';
 						$lvExists = TRUE;
 					}
-				} else {
+				}
+				else {
 					$rvExists = TRUE;
 				}
-			} elseif ($mainPosition == 'IV') {
+			}
+			elseif ($mainPosition == 'IV') {
 				$ivPlayers++;
 				if ($ivPlayers == 3) {
 					if (!$rvExists) {
 						$mainPosition = 'RV';
 						$rvExists = TRUE;
-					} else {
+					}
+					else {
 						$mainPosition = 'LV';
 						$lvExists = TRUE;
 					}
 				}
-			} elseif ($mainPosition == 'LM') {
+			}
+			elseif ($mainPosition == 'LM') {
 				if ($lmExists) {
 					$mainPosition = 'ZM';
 					$zmPlayers++;
-				} else {
+				}
+				else {
 					$lmExists = TRUE;
 				}
-			} elseif ($mainPosition == 'RM') {
+			}
+			elseif ($mainPosition == 'RM') {
 				if ($rmExists) {
 					$mainPosition = 'ZM';
 					$zmPlayers++;
-				} else {
+				}
+				else {
 					$rmExists = TRUE;
 				}
-			} elseif ($mainPosition == 'LS' || $mainPosition == 'RS') {
+			}
+			elseif ($mainPosition == 'LS' || $mainPosition == 'RS') {
 				$mainPosition = 'MS';
-			} elseif ($mainPosition == 'ZM') {
+			}
+			elseif ($mainPosition == 'ZM') {
 				$zmPlayers++;
 				if ($zmPlayers > 2) {
 					$mainPosition = 'DM';
@@ -178,18 +185,12 @@ class SimulationFormationHelper {
 					3.0, $playerinfo['age'], $playerinfo['strength'], $playerinfo['technique'], $playerinfo['stamina'],
 					$playerinfo['freshness'], $playerinfo['satisfaction']);
 			
-			if (strlen($playerinfo['pseudonym'])) {
-				$player->name = $playerinfo['pseudonym'];
-			} else {
-				$player->name = $playerinfo['firstName'] . ' ' . $playerinfo['lastName'];
-			}
-			
+			if (strlen($playerinfo['pseudonym'])) $player->name = $playerinfo['pseudonym'];
+			else $player->name = $playerinfo['firstName'] . ' ' . $playerinfo['lastName'];
 			
 			$team->positionsAndPlayers[$player->position][] = $player;
 			SimulationStateHelper::createSimulationRecord($websoccer, $db, $matchId, $player);
 		}
 		$result->free();
 	}
-	
 }
-?>

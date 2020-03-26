@@ -51,7 +51,4 @@ class AdsModel implements IModel {
 		
 		return array();
 	}
-	
 }
-
-?>

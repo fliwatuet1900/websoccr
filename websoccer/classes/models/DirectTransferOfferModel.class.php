@@ -34,10 +34,8 @@ class DirectTransferOfferModel implements IModel {
 		$this->_i18n = $i18n;
 		$this->_websoccer = $websoccer;
 		
-		$playerId = (int) $this->_websoccer->getRequestParameter("id");
-		if ($playerId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		$playerId = (int) $this->_websoccer->getRequestParameter('id');
+		if ($playerId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$this->_player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $playerId);
 		
@@ -45,28 +43,25 @@ class DirectTransferOfferModel implements IModel {
 	
 	public function renderView() {
 		// is feature enabled?
-		if (!$this->_websoccer->getConfig("transferoffers_enabled")) {
+		if (!$this->_websoccer->getConfig('transferoffers_enabled')) {
 			return FALSE;
 		}
 		
 		// is player seallable and is playing in a team with a manager; and is not borrowed
-		return (!$this->_player["player_unsellable"] && $this->_player["team_user_id"] > 0 
-				&& $this->_player["team_user_id"] !== $this->_websoccer->getUser()->id
-				&& !$this->_player["player_transfermarket"]
-				&& $this->_player["lending_owner_id"] == 0);
+		return (!$this->_player['player_unsellable'] && $this->_player['team_user_id'] > 0 
+				&& $this->_player['team_user_id'] !== $this->_websoccer->getUser()->id
+				&& !$this->_player['player_transfermarket']
+				&& $this->_player['lending_owner_id'] == 0);
 	}
 	
 	public function getTemplateParameters() {
 		$players = array();
 		
-		if ($this->_websoccer->getRequestParameter("loadformdata")) {
+		if ($this->_websoccer->getRequestParameter('loadformdata')) {
 			$players = PlayersDataService::getPlayersOfTeamByPosition($this->_websoccer, $this->_db,
 					 $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db));
 		}
 		
-		return array("players" => $players, "player" => $this->_player);
+		return array('players' => $players, 'player' => $this->_player);
 	}
-	
 }
-
-?>

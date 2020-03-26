@@ -38,9 +38,7 @@ class FileWriter {
 	 */
 	function __construct($file, $truncateExistingFile = TRUE) {
 		$this->_filePointer = @fopen($file, ($truncateExistingFile) ? 'w' : 'a');
-		if ($this->_filePointer === FALSE) {
-			throw new Exception('Could not create or open file '. $file .'! Verify that the file or its folder is writable.');
-		}
+		if ($this->_filePointer === FALSE) throw new Exception('Could not create or open file '. $file .'! Verify that the file or its folder is writable.');
 	}
 	
 	/**
@@ -50,23 +48,17 @@ class FileWriter {
 	 * @throws Exception if line could not be written.
 	 */
 	public function writeLine($line) {
-		if (@fwrite($this->_filePointer, $line . PHP_EOL) === FALSE) {
-			throw new Exception('Could not write line \''. $line . '\' into file '. $file .'!');
-		}
+		if (@fwrite($this->_filePointer, $line . PHP_EOL) === FALSE) throw new Exception('Could not write line \''. $line . '\' into file '. $file .'!');
 	}
 	
 	/**
 	 * closes file writer.
 	 */
 	public function close() {
-		if ($this->_filePointer) {
-			@fclose($this->_filePointer);
-		}
+		if ($this->_filePointer) @fclose($this->_filePointer);
 	}
 	
 	function __destruct() {
 		$this->close();
 	}
-	
 }
-?>

@@ -44,11 +44,8 @@ class PluginMediator {
 	public static function dispatchEvent(AbstractEvent $event) {
 		if (self::$_eventlistenerConfigs == null) {
 			include(CONFIGCACHE_EVENTS);
-			if (isset($eventlistener)) {
-				self::$_eventlistenerConfigs = $eventlistener;
-			} else {
-				self::$_eventlistenerConfigs = array();
-			}
+			if (isset($eventlistener)) self::$_eventlistenerConfigs = $eventlistener;
+			else self::$_eventlistenerConfigs = array();
 		}
 		
 		// any event listener configured?
@@ -67,14 +64,8 @@ class PluginMediator {
 		foreach ($eventListeners as $listenerConfigStr) {
 			$listenerConfig = json_decode($listenerConfigStr, TRUE);
 			
-			if (method_exists($listenerConfig['class'], $listenerConfig['method'])) {
-				call_user_func($listenerConfig['class'] . '::' . $listenerConfig['method'], $event);
-			} else {
-				throw new Exception('Configured event listener must have function: ' . $listenerConfig['class'] . '::' . $listenerConfig['method']);
-			}
-			
+			if (method_exists($listenerConfig['class'], $listenerConfig['method'])) call_user_func($listenerConfig['class'] . '::' . $listenerConfig['method'], $event);
+			else throw new Exception('Configured event listener must have function: ' . $listenerConfig['class'] . '::' . $listenerConfig['method']);
 		}
 	}
-	
 }
-?>

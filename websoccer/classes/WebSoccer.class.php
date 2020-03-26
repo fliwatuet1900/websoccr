@@ -51,9 +51,7 @@ class WebSoccer {
      * @return User the request's current user
      */
     public function getUser() {
-    	if ($this->_user == null) {
-    		$this->_user = new User();
-    	}
+    	if ($this->_user == null) $this->_user = new User();
     	
     	return $this->_user;
     }
@@ -64,9 +62,8 @@ class WebSoccer {
 	 */
 	public function getConfig($name) {
 		global $conf;
-		if (!isset($conf[$name])) {
-			throw new Exception('Missing configuration: ' . $name);
-		}
+		if (!isset($conf[$name])) throw new Exception('Missing configuration: ' . $name);
+
 		return $conf[$name];
 	}
 	
@@ -76,9 +73,8 @@ class WebSoccer {
 	 */
 	public function getAction($id) {
 		global $action;
-		if (!isset($action[$id])) {
-			throw new Exception('Action not found: ' . $id);
-		}
+		if (!isset($action[$id])) throw new Exception('Action not found: ' . $id);
+
 		return $action[$id];
 	}
 	
@@ -89,11 +85,9 @@ class WebSoccer {
 	public function getSkin() {
 		if ($this->_skin == NULL) {
 			$skinName = $this->getConfig('skin');
-			if (class_exists($skinName)) {
-				$this->_skin = new $skinName($this);
-			} else {
-				throw new Exception('Configured skin \''. $skinName . '\' does not exist. Check the system settings.');
-			}
+			if (class_exists($skinName)) $this->_skin = new $skinName($this);
+			else throw new Exception('Configured skin \''. $skinName . '\' does not exist. Check the system settings.');
+
 		}
 		
 		return $this->_skin;
@@ -122,9 +116,7 @@ class WebSoccer {
 	 * @return TemplateEngine current template engine to use.
 	 */
 	public function getTemplateEngine($i18n, ViewHandler $viewHandler = null) {
-		if ($this->_templateEngine == NULL) {
-			$this->_templateEngine = new TemplateEngine($this, $i18n, $viewHandler);
-		}
+		if ($this->_templateEngine == NULL) $this->_templateEngine = new TemplateEngine($this, $i18n, $viewHandler);
 		
 		return $this->_templateEngine;
 	}
@@ -155,22 +147,17 @@ class WebSoccer {
 	 * @return string URL to specified internal page ID.
 	 */
 	public function getInternalUrl($pageId = null, $queryString = '', $fullUrl = FALSE) {
-		if ($pageId == null) {
-			$pageId = $this->getPageId();
-		}
+		if ($pageId == null) $pageId = $this->getPageId();
 		
-		if (strlen($queryString)) {
-			$queryString = '&' . $queryString;
-		}
+		if (strlen($queryString)) $queryString = '&' . $queryString;
 		
 		if ($fullUrl) {
 			$url = $this->getConfig('homepage') . $this->getConfig('context_root');
 			
 			// do not provide full path to home page until required, in order to improve SEO.
-			if ($pageId != 'home' || strlen($queryString)) {
-				$url .= '/?page=' . $pageId . $queryString;
-			}
-		} else {
+			if ($pageId != 'home' || strlen($queryString)) $url .= '/?page=' . $pageId . $queryString;
+		}
+		else {
 			$url = $this->getConfig('context_root') . '/?page=' . $pageId . $queryString;
 		}
 		
@@ -187,18 +174,12 @@ class WebSoccer {
 	 * @return string URL to specified internal page ID including action call.
 	 */
 	public function getInternalActionUrl($actionId, $queryString = '', $pageId = null, $fullUrl = FALSE) {
-		if ($pageId == null) {
-			$pageId = $this->getRequestParameter('page');
-		}
+		if ($pageId == null) $pageId = $this->getRequestParameter('page');
 		
-		if (strlen($queryString)) {
-			$queryString = '&' . $queryString;
-		}
+		if (strlen($queryString)) $queryString = '&' . $queryString;
 		
 		$url = $this->getConfig('context_root') . '/?page=' . $pageId . $queryString .'&action=' . $actionId;
-		if ($fullUrl) {
-			$url = $this->getConfig('homepage') . $url;
-		}
+		if ($fullUrl) $url = $this->getConfig('homepage') . $url;
 		
 		return $url;
 	}
@@ -209,9 +190,8 @@ class WebSoccer {
 	 * @return string formatted date (without time).
 	 */
 	public function getFormattedDate($timestamp = null) {
-		if ($timestamp == null) {
-			$timestamp = $this->getNowAsTimestamp();
-		}
+		if ($timestamp == null) $timestamp = $this->getNowAsTimestamp();
+
 		return date($this->getConfig('date_format'), $timestamp);
 	}
 	
@@ -222,9 +202,7 @@ class WebSoccer {
 	 * @return string formatted date and time.
 	 */
 	public function getFormattedDatetime($timestamp, I18n $i18n = null) {
-		if ($timestamp == null) {
-			$timestamp = $this->getNowAsTimestamp();
-		}
+		if ($timestamp == null) $timestamp = $this->getNowAsTimestamp();
 		
 		if ($i18n != null) {
 			$dateWord = StringUtil::convertTimestampToWord($timestamp, $this->getNowAsTimestamp(), $i18n);
@@ -264,9 +242,8 @@ class WebSoccer {
 	 * @return array of FrontMessage instances which have been added to the current context.
 	 */
 	public function getFrontMessages() {
-		if ($this->_frontMessages == null) {
-			$this->_frontMessages = array();
-		}
+		if ($this->_frontMessages == null) $this->_frontMessages = array();
+
 		return $this->_frontMessages;
 	}
 	
@@ -293,9 +270,7 @@ class WebSoccer {
 	 * @return array Assoc array of context parameters with key=parameter name; value=parameter value. Empty array if no parameters have been added.
 	 */
 	public function getContextParameters() {
-		if ($this->_contextParameters == null) {
-			$this->_contextParameters = array();
-		}
+		if ($this->_contextParameters == null) $this->_contextParameters = array();
 		
 		return $this->_contextParameters;
 	}
@@ -309,9 +284,8 @@ class WebSoccer {
 	 * @param mixed $value any kind of value to store during this request.
 	 */
 	public function addContextParameter($name, $value) {
-		if ($this->_contextParameters == null) {
-			$this->_contextParameters = array();
-		}
+		if ($this->_contextParameters == null) $this->_contextParameters = array();
+
 		$this->_contextParameters[$name] = $value;
 	}
 	
@@ -320,4 +294,3 @@ class WebSoccer {
 		$this->_isAjaxRequest = FALSE;
 	}
 }
-?>

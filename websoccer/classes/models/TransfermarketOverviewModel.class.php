@@ -35,44 +35,29 @@ class TransfermarketOverviewModel implements IModel {
 	}
 	
 	public function renderView() {
-		return ($this->_websoccer->getConfig("transfermarket_enabled") == 1);
+		return ($this->_websoccer->getConfig('transfermarket_enabled') == 1);
 	}
 	
 	public function getTemplateParameters() {
 		
 		$teamId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
-		if ($teamId < 1) {
-			throw new Exception($this->_i18n->getMessage("feature_requires_team"));
-		}
+		if ($teamId < 1) throw new Exception($this->_i18n->getMessage('feature_requires_team'));
 		
-		$positionInput = $this->_websoccer->getRequestParameter("position");
+		$positionInput = $this->_websoccer->getRequestParameter('position');
 		$positionFilter = null;
-		if ($positionInput == "goaly") {
-			$positionFilter = "Torwart";
-		} else if ($positionInput == "defense") {
-			$positionFilter = "Abwehr";
-		} else if ($positionInput == "midfield") {
-			$positionFilter = "Mittelfeld";
-		} else if ($positionInput == "striker") {
-			$positionFilter = "Sturm";
-		}
+		if ($positionInput == 'goaly') $positionFilter = 'Torwart';
+		elseif ($positionInput == 'defense') $positionFilter = 'Abwehr';
+		elseif ($positionInput == 'midfield') $positionFilter = 'Mittelfeld';
+		elseif ($positionInput == 'striker') $positionFilter = 'Sturm';
 		
 		$count = PlayersDataService::countPlayersOnTransferList($this->_websoccer, $this->_db, $positionFilter);
-		$eps = $this->_websoccer->getConfig("entries_per_page");
+		$eps = $this->_websoccer->getConfig('entries_per_page');
 		$paginator = new Paginator($count, $eps, $this->_websoccer);
-		if ($positionFilter != null) {
-			$paginator->addParameter("position", $positionInput);
-		}
+		if ($positionFilter != null) $paginator->addParameter('position', $positionInput);
 		
-		if ($count > 0) {
-			$players = PlayersDataService::getPlayersOnTransferList($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps, $positionFilter);
-		} else {
-			$players = array();
-		}
+		if ($count > 0) $players = PlayersDataService::getPlayersOnTransferList($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps, $positionFilter);
+		else $players = array();
 		
-		return array("transferplayers" => $players, "playerscount" => $count, "paginator" => $paginator);
+		return array('transferplayers' => $players, 'playerscount' => $count, 'paginator' => $paginator);
 	}
-	
 }
-
-?>

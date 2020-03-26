@@ -38,7 +38,7 @@ class CupRoundsLinkConverter implements IConverter {
 	 * @see IConverter::toHtml()
 	 */
 	public function toHtml($row) {
-		$output = ' <a href=\'?site=managecuprounds&cup='. $row['id']. '\' title=\''. $this->_i18n->getMessage('manage_show_details') . '\' >'. $row['entity_cup_rounds'] .' <i class=\'icon-tasks\'></i></a>';
+		$output = ' <a href="?site=managecuprounds&cup='. $row['id']. '" title="'. $this->_i18n->getMessage('manage_show_details') . '" >'. $row['entity_cup_rounds'] .' <i class="icon-tasks"></i></a>';
 		return $output;
 	}
 	
@@ -55,7 +55,4 @@ class CupRoundsLinkConverter implements IConverter {
 	public function toDbValue($value) {
 		return $this->toText($value);
 	}
-	
 }
-
-?>

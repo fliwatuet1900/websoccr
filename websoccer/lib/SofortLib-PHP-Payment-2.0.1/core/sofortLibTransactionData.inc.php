@@ -165,12 +165,15 @@ class SofortLibTransactionData extends SofortLibAbstract {
 		
 		if($parentTag == '') {
 			return $this->_extractValueSimpleTag($i, $tag);
-		} else if($parentTag == 'status_history_items') {
+		}
+		elseif($parentTag == 'status_history_items') {
 			return $this->_extractValueStatusHistoryItem ($i, $tag, $parentTag, $n);
-		} else if($n !== false && isset($this->_response[$i][$parentTag][$tag][$n])) {
+		}
+		elseif($n !== false && isset($this->_response[$i][$parentTag][$tag][$n])) {
 			//Special cases: user_variable and reason both can have $n elements
 			return $this->_extractValueGroupedDataNumbered($i, $tag, $parentTag, $n);
-		} else {
+		}
+		else {
 			//Some Data is nested (holder and sender data)
 			return $this->_extractValueGroupedData($i, $tag, $parentTag);
 		}

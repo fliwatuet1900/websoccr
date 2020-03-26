@@ -40,66 +40,56 @@ class AddNationalPlayerController implements IActionController {
 	 */
 	public function executeAction($parameters) {
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig("nationalteams_enabled")) {
+		if (!$this->_websoccer->getConfig('nationalteams_enabled')) {
 			return NULL;
 		}
 		
 		// get team info
 		$teamId = NationalteamsDataService::getNationalTeamManagedByCurrentUser($this->_websoccer, $this->_db);
-		if (!$teamId) {
-			throw new Exception($this->_i18n->getMessage("nationalteams_user_requires_team"));
-		}
-		$result = $this->_db->querySelect("name", $this->_websoccer->getConfig("db_prefix") . "_verein", "id = %d", $teamId);
+		if (!$teamId) throw new Exception($this->_i18n->getMessage('nationalteams_user_requires_team'));
+
+		$result = $this->_db->querySelect('name', $this->_websoccer->getConfig('db_prefix') . '_verein', 'id = \'%d\'', $teamId);
 		$team = $result->fetch_array();
 		$result->free();
 		
 		// get player info
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_spieler";
-		$result = $this->_db->querySelect("nation", $fromTable, "id = %d", $parameters["id"]);
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_spieler';
+		$result = $this->_db->querySelect('nation', $fromTable, 'id = \'%d\'', $parameters['id']);
 		$player = $result->fetch_array();
 		$result->free();
 		
-		if (!$player) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if (!$player) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		// check if from same nation. If not, user most probably tries to cheat, hence i18n not important.
-		if ($player["nation"] != $team["name"]) {
-			throw new Exception("Player is from different nation.");
+		if ($player['nation'] != $team['name']) {
+			throw new Exception('Player is from different nation.');
 		}
 		
 		// check if already in team
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_nationalplayer";
-		$result = $this->_db->querySelect("COUNT(*) AS hits", $fromTable, "player_id = %d", $parameters["id"]);
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_nationalplayer';
+		$result = $this->_db->querySelect('COUNT(*) AS hits', $fromTable, 'player_id = \'%d\'', $parameters['id']);
 		$players = $result->fetch_array();
 		$result->free();
 		
-		if ($players && $players["hits"]) {
-			throw new Exception($this->_i18n->getMessage("nationalteams_addplayer_err_alreadyinteam"));
-		}
+		if ($players && $players['hits']) throw new Exception($this->_i18n->getMessage('nationalteams_addplayer_err_alreadyinteam'));
 		
 		// check maximum number of players
-		$result = $this->_db->querySelect("COUNT(*) AS hits", $fromTable, "team_id = %d", $teamId);
+		$result = $this->_db->querySelect('COUNT(*) AS hits', $fromTable, 'team_id = \'%d\'', $teamId);
 		$existingplayers = $result->fetch_array();
 		$result->free();
-		if ($existingplayers["hits"] >= 30) {
-			throw new Exception($this->_i18n->getMessage("nationalteams_addplayer_err_toomanyplayer", 30));
-		}
+		if ($existingplayers['hits'] >= 30) throw new Exception($this->_i18n->getMessage('nationalteams_addplayer_err_toomanyplayer', 30));
 		
 		// add to team
 		$this->_db->queryInsert(array(
-				"team_id" => $teamId,
-				"player_id" => $parameters["id"]
+				'team_id' => $teamId,
+				'player_id' => $parameters['id']
 				), $fromTable);
 		
 		// create success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS,
-				$this->_i18n->getMessage("nationalteams_addplayer_success"),
-				""));
+				$this->_i18n->getMessage('nationalteams_addplayer_success'),
+				''));
 		
-		return "nationalteam";
+		return 'nationalteam';
 	}
-	
 }
-
-?>

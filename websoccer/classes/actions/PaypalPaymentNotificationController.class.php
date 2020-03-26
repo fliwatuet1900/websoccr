@@ -56,42 +56,44 @@ class PaypalPaymentNotificationController implements IActionController {
 		
 		$fp = fsockopen ($this->_websoccer->getConfig("paypal_url"), 443, $errno, $errstr, 30);
 		if (!$fp) {
-			throw new Exception("Error on HTTP(S) request. Error: " . $errno . " " . $errstr);
-		} else {
+			throw new Exception('Error on HTTP(S) request. Error: ' . $errno . ' ' . $errstr);
+		}
+		else {
 			fputs ($fp, $header . $req);
-			$response = "";
+			$response = '';
 			while (!feof($fp)) {
 				$res = fgets ($fp, 1024);
 				$response .= $res;
-				if (strcmp ($res, "VERIFIED") == 0) {
+				if (strcmp ($res, 'VERIFIED') == 0) {
 		
 					// PAYMENT VALIDATED & VERIFIED!
 					
 					// check receiver e-mail
-					if (strtolower($parameters["receiver_email"]) != strtolower($this->_websoccer->getConfig("paypal_receiver_email"))) {
-						EmailHelper::sendSystemEmail($this->_websoccer, $this->_websoccer->getConfig("systememail"), "Failed PayPal confirmation: Invalid Receiver", 
-							"Invalid receiver: " . $parameters["receiver_email"]);
-						throw new Exception("Receiver E-Mail not correct.");
+					if (strtolower($parameters['receiver_email']) != strtolower($this->_websoccer->getConfig('paypal_receiver_email'))) {
+						EmailHelper::sendSystemEmail($this->_websoccer, $this->_websoccer->getConfig('systememail'), 'Failed PayPal confirmation: Invalid Receiver', 
+							'Invalid receiver: ' . $parameters['receiver_email']);
+						throw new Exception('Receiver E-Mail not correct.');
 					}
 					
-					if ($parameters["payment_status"] != "Completed") {
-						EmailHelper::sendSystemEmail($this->_websoccer, $this->_websoccer->getConfig("systememail"), "Failed PayPal confirmation: Invalid Status",
-							"A paypment notification has been sent, but has an invalid status: " . $parameters["payment_status"]);
-						throw new Exception("Payment status not correct.");
+					if ($parameters['payment_status'] !== 'Completed') {
+						EmailHelper::sendSystemEmail($this->_websoccer, $this->_websoccer->getConfig('systememail'), 'Failed PayPal confirmation: Invalid Status',
+							'A paypment notification has been sent, but has an invalid status: ' . $parameters['payment_status']);
+						throw new Exception('Payment status not correct.');
 					}
 						
 					// credit amount to user
-					$amount = $parameters["mc_gross"];
-					$userId = $parameters["custom"];
-					PremiumDataService::createPaymentAndCreditPremium($this->_websoccer, $this->_db, $userId, $amount, "paypal-notify");
+					$amount = $parameters['mc_gross'];
+					$userId = $parameters['custom'];
+					PremiumDataService::createPaymentAndCreditPremium($this->_websoccer, $this->_db, $userId, $amount, 'paypal-notify');
 					
 					// we can exit script execution here, since action is called in background
 					die(200);
 		
-				} else if (strcmp ($res, "INVALID") == 0) {
+				}
+				elseif (strcmp ($res, 'INVALID') == 0) {
 	
 					// PAYMENT INVALID & INVESTIGATE MANUALY!
-					throw new Exception("Payment is invalid");
+					throw new Exception('Payment is invalid');
 		
 				}
 			}
@@ -103,7 +105,4 @@ class PaypalPaymentNotificationController implements IActionController {
 		
 		return null;
 	}
-	
 }
-
-?>

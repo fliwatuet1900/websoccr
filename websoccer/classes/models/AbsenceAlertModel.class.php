@@ -52,7 +52,4 @@ class AbsenceAlertModel implements IModel {
 		
 		return array('absence' => $this->_absence);
 	}
-	
 }
-
-?>

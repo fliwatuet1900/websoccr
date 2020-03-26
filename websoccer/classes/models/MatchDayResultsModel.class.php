@@ -37,8 +37,8 @@ class MatchDayResultsModel implements IModel {
 	}
 	
 	public function renderView() {
-		$this->_seasonId = (int) $this->_websoccer->getRequestParameter("seasonid");
-		$this->_matchday = (int) $this->_websoccer->getRequestParameter("matchday");
+		$this->_seasonId = (int) $this->_websoccer->getRequestParameter('seasonid');
+		$this->_matchday = (int) $this->_websoccer->getRequestParameter('matchday');
 		return ($this->_seasonId > 0 && $this->_matchday > 0);
 	}
 	
@@ -46,10 +46,6 @@ class MatchDayResultsModel implements IModel {
 		
 		$matches = MatchesDataService::getMatchesByMatchday($this->_websoccer, $this->_db, $this->_seasonId, $this->_matchday);
 		
-		return array("matches" => $matches);
+		return array('matches' => $matches);
 	}
-	
-	
 }
-
-?>

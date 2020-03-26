@@ -42,5 +42,3 @@ class LanguageSwitcherModel implements IModel {
 		return array();
 	}	
 }
-
-?>

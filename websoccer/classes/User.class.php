@@ -75,7 +75,8 @@ class User {
 	public function getRole() {
 		if ($this->id == null) {
 			return ROLE_GUEST;
-		} else {
+		}
+		else {
 			return ROLE_USER;
 		}
 	}
@@ -93,21 +94,19 @@ class User {
 			// get from session
 			if (isset($_SESSION['clubid'])) {
 				$this->_clubId = $_SESSION['clubid'];
-			} else if ($websoccer != null && $db != null) {
+			}
+			elseif ($websoccer != null && $db != null) {
 				
 				// default implementation: get first available club which is not managed as interim manager (user might have several clubs)
 				$fromTable = $websoccer->getConfig('db_prefix') . '_verein';
-				$whereCondition = 'status = 1 AND user_id = %d AND nationalteam != \'1\' ORDER BY interimmanager DESC';
+				$whereCondition = 'status = \'1\' AND user_id = \'%d\' AND nationalteam != \'1\' ORDER BY interimmanager DESC';
 				$columns = 'id';
 				$result = $db->querySelect($columns, $fromTable, $whereCondition, $this->id, 1);
 				$club = $result->fetch_array();
 				$result->free();
 				
-				if ($club) {
-					$this->setClubId($club['id']);
-				}
+				if ($club) $this->setClubId($club['id']);
 			}
-
 		}
 		return $this->_clubId;
 	}
@@ -129,11 +128,8 @@ class User {
 	 */
 	public function getProfilePicture() {
 		if ($this->_profilePicture == null) {
-			if (strlen($this->email)) {
-				$this->_profilePicture = UsersDataService::getUserProfilePicture(WebSoccer::getInstance(), null, $this->email);
-			} else {
-				$this->_profilePicture = '';
-			}
+			if (strlen($this->email)) $this->_profilePicture = UsersDataService::getUserProfilePicture(WebSoccer::getInstance(), null, $this->email);
+			else $this->_profilePicture = '';
 		}
 			
 		return $this->_profilePicture;
@@ -145,10 +141,7 @@ class User {
 	 * @param String $fileName file name of picture.
 	 */
 	public function setProfilePicture(WebSoccer $websoccer, $fileName) {
-		if (strlen($fileName)) {
-			$this->_profilePicture = UsersDataService::getUserProfilePicture($websoccer, $fileName, null);
-		}
-		
+		if (strlen($fileName)) $this->_profilePicture = UsersDataService::getUserProfilePicture($websoccer, $fileName, null);
 	}
 	
 	/**
@@ -164,16 +157,11 @@ class User {
 			
 			$result = $db->querySelect('id', $websoccer->getConfig('db_prefix') . '_admin',
 					'email = \'%s\' AND r_admin = \'1\'', $this->email);
-			if ($result->num_rows) {
-				$this->_isAdmin = TRUE;
-			} else {
-				$this->_isAdmin = FALSE;
-			}
+			if ($result->num_rows) $this->_isAdmin = TRUE;
+			else $this->_isAdmin = FALSE;
+
 			$result->free();
 		}
-		
 		return $this->_isAdmin;
 	}
 }
-
-?>

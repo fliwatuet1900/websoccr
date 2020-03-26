@@ -63,23 +63,18 @@ class ActionHandler {
 		$user = $website->getUser();
 		// is admin action
 		if (strpos($actionConfig['role'], 'admin') !== false) {
-			if (!$user->isAdmin()) {
-				throw new AccessDeniedException($i18n->getMessage('error_access_denied'));
-			}
-		} else {
+			if (!$user->isAdmin()) throw new AccessDeniedException($i18n->getMessage('error_access_denied'));
+		}
+		else {
 			// all other actions
 			$requiredRoles = explode(',', $actionConfig['role']);
-			if (!in_array($user->getRole(), $requiredRoles)) {
-				throw new AccessDeniedException($i18n->getMessage('error_access_denied'));
-			}
+			if (!in_array($user->getRole(), $requiredRoles)) throw new AccessDeniedException($i18n->getMessage('error_access_denied'));
 		}
 
 		// validate parameters
 		$params = $actionXml->xpath('//action[@id = "'. $actionId . '"]/param');
 		$validatedParams = array();
-		if ($params) {
-			$validatedParams = self::_validateParameters($params, $website, $i18n);
-		}
+		if ($params) $validatedParams = self::_validateParameters($params, $website, $i18n);
 		
 		$controllerName = $actionConfig['controller'];
 		
@@ -91,9 +86,7 @@ class ActionHandler {
 		$actionReturn = self::_executeAction($website, $db, $i18n, $actionId, $controllerName, $validatedParams);
 		
 		// create log entry
-		if (isset($actionConfig['log']) && $actionConfig['log'] && $website->getUser()->id) {
-			ActionLogDataService::createOrUpdateActionLog($website, $db, $website->getUser()->id, $actionId);
-		}
+		if (isset($actionConfig['log']) && $actionConfig['log'] && $website->getUser()->id) ActionLogDataService::createOrUpdateActionLog($website, $db, $website->getUser()->id, $actionId);
 		
 		return $actionReturn;
 	}	
@@ -112,35 +105,37 @@ class ActionHandler {
 			
 			$paramValue = $website->getRequestParameter($paramId);
 			
-			if ($type == 'boolean') {
-				$paramValue = ($paramValue) ? '1' : '0';
-			}
+			if ($type === 'boolean') $paramValue = ($paramValue) ? '1' : '0';
 			
 			// validate 'required'
 			if ($required && $paramValue == null) {
 				$errorMessages[$paramId] = $i18n->getMessage('validation_error_required');
-			} else if ($paramValue != null) {
+			}
+			elseif ($paramValue != null) {
 				
 				// minimum / maximum length
-				if ($type == 'text' && $min > 0 && strlen($paramValue) < $min) {
+				if ($type === 'text' && $min > 0 && strlen($paramValue) < $min) {
 					$errorMessages[$paramId] = sprintf($i18n->getMessage('validation_error_min_length'), $min);
-				} else if ($type == 'text' && $max > 0 && strlen($paramValue) > $max) {
+				}
+				elseif ($type === 'text' && $max > 0 && strlen($paramValue) > $max) {
 					$errorMessages[$paramId] = sprintf($i18n->getMessage('validation_error_max_length'), $max);
-					
 				// check number
-				} else if ($type == 'number' && !is_numeric($paramValue)) {
+				}
+				elseif ($type === 'number' && !is_numeric($paramValue)) {
 					$errorMessages[$paramId] = $i18n->getMessage('validation_error_not_a_number');
-				} else if ($type == 'number' && $paramValue < $min) {
+				}
+				elseif ($type === 'number' && $paramValue < $min) {
 					$errorMessages[$paramId] = $i18n->getMessage('validation_error_min_number', $min);
-				} else if ($type == 'number' && $max > 0 && $paramValue > $max) {
+				}
+				elseif ($type === 'number' && $max > 0 && $paramValue > $max) {
 					$errorMessages[$paramId] = $i18n->getMessage('validation_error_max_number', $max);
-				} else if ($type == 'url' && !filter_var($paramValue, FILTER_VALIDATE_URL)) {
+				}
+				elseif ($type === 'url' && !filter_var($paramValue, FILTER_VALIDATE_URL)) {
 					$errorMessages[$paramId] = $i18n->getMessage('validation_error_not_a_url');
-				} else if ($type == 'date') {
+				}
+				elseif ($type === 'date') {
 					$format = $website->getConfig('date_format');
-					if (!DateTime::createFromFormat($format, $paramValue)) {
-						$errorMessages[$paramId] = $i18n->getMessage('validation_error_invaliddate', $format);
-					}
+					if (!DateTime::createFromFormat($format, $paramValue)) $errorMessages[$paramId] = $i18n->getMessage('validation_error_invaliddate', $format);
 				}
 				
 				if (strlen($validatorName)) {
@@ -155,23 +150,16 @@ class ActionHandler {
 				}
 			}
 			
-			if (!isset($errorMessages[$paramId])) {
-				$validatedParams[$paramId] = $paramValue;
-			}
-			
+			if (!isset($errorMessages[$paramId])) $validatedParams[$paramId] = $paramValue;
 		}
 		
-		if (count($errorMessages)) {
-			throw new ValidationException($errorMessages);
-		}
+		if (count($errorMessages)) throw new ValidationException($errorMessages);
 		
 		return $validatedParams;
 	}
 	
 	private static function _executeAction($website, $db, $i18n, $actionId, $controllerName, $validatedParams) {
-		if (!class_exists($controllerName)) {
-			throw new Exception('Controller not found: ' . $controllerName);
-		}
+		if (!class_exists($controllerName)) throw new Exception('Controller not found: ' . $controllerName);
 			
 		// prevent double-submit
 		$_SESSION[DOUBLE_SUBMIT_CHECK_SESSIONKEY_ACTIONID] = $actionId;
@@ -195,7 +183,8 @@ class ActionHandler {
 				exit;
 					
 				// render info page
-			} else {
+			}
+			else {
 				$website->addContextParameter('premium_balance_required', $creditsRequired);
 				return $targetPage;
 			}
@@ -216,5 +205,3 @@ class ActionHandler {
 		return 'premium-confirm-action';
 	}
 }
-
-?>

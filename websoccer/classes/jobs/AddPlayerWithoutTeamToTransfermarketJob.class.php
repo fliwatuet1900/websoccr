@@ -34,5 +34,3 @@ class AddPlayerWithoutTeamToTransfermarketJob extends AbstractJob {
 		TransfermarketDataService::movePlayersWithoutTeamToTransfermarket($this->_websoccer, $this->_db);
 	}
 }
-
-?>

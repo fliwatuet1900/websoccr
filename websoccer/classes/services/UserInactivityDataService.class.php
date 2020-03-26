@@ -31,17 +31,17 @@ class UserInactivityDataService {
 	
 	public static function getUserInactivity(WebSoccer $websoccer, DbConnection $db, $userId) {
 		
-		$columns["id"] = "id";
-		$columns["login"] = "login";
-		$columns["login_check"] = "login_check";
-		$columns["aufstellung"] = "tactics";
-		$columns["transfer"] = "transfer";
-		$columns["transfer_check"] = "transfer_check";
-		$columns["vertragsauslauf"] = "contractextensions";
+		$columns['id'] = 'id';
+		$columns['login'] = 'login';
+		$columns['login_check'] = 'login_check';
+		$columns['aufstellung'] = 'tactics';
+		$columns['transfer'] = 'transfer';
+		$columns['transfer_check'] = 'transfer_check';
+		$columns['vertragsauslauf'] = 'contractextensions';
 		
-		$fromTable = $websoccer->getConfig("db_prefix") . "_user_inactivity";
+		$fromTable = $websoccer->getConfig('db_prefix') . '_user_inactivity';
 		
-		$whereCondition = "user_id = %d";
+		$whereCondition = 'user_id = \'%d\'';
 		$parameters = $userId;
 		
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters, 1);
@@ -50,7 +50,7 @@ class UserInactivityDataService {
 		
 		// create new entry
 		if (!$inactivity) {
-			$newcolumns["user_id"] = $userId;
+			$newcolumns['user_id'] = $userId;
 			$db->queryInsert($newcolumns, $fromTable);
 			return self::getUserInactivity($websoccer, $db, $userId);
 		}
@@ -70,40 +70,38 @@ class UserInactivityDataService {
 		$user = UsersDataService::getUserById($websoccer, $db, $userId);
 		
 		// compute login-activity
-		if ($inactivity["login_check"] < $checkBoundary) {
-			$inactiveDays = round(($now - $user["lastonline"]) / (24 * 3600));
-			$updatecolumns["login"] = min(100, round($inactiveDays * INACTIVITY_PER_DAY_LOGIN));
-			$updatecolumns["login_check"] = $now;
+		if ($inactivity['login_check'] < $checkBoundary) {
+			$inactiveDays = round(($now - $user['lastonline']) / (24 * 3600));
+			$updatecolumns['login'] = min(100, round($inactiveDays * INACTIVITY_PER_DAY_LOGIN));
+			$updatecolumns['login_check'] = $now;
 			
 			// update tactics activity
-			$formationTable = $websoccer->getConfig("db_prefix") . "_aufstellung AS F";
-			$formationTable .= " INNER JOIN " . $websoccer->getConfig("db_prefix") . "_verein AS T ON T.id = F.verein_id";
-			$result = $db->querySelect("F.datum AS date", $formationTable, "T.user_id = %d", $userId);
+			$formationTable = $websoccer->getConfig('db_prefix') . '_aufstellung AS F';
+			$formationTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_verein AS T ON T.id = F.verein_id';
+			$result = $db->querySelect('F.datum AS date', $formationTable, 'T.user_id = \'%d\'', $userId);
 			$formation = $result->fetch_array();
 			$result->free();
 			if ($formation) {
-				$inactiveDays = round(($now - $formation["date"]) / (24 * 3600));
-				$updatecolumns["aufstellung"] = min(100, round($inactiveDays * INACTIVITY_PER_DAY_TACTICS));
+				$inactiveDays = round(($now - $formation['date']) / (24 * 3600));
+				$updatecolumns['aufstellung'] = min(100, round($inactiveDays * INACTIVITY_PER_DAY_TACTICS));
 			}
 		}
 		
 		// compute transfers-activity (check user's bids)
-		if ($inactivity["transfer_check"] < $checkBoundary) {
+		if ($inactivity['transfer_check'] < $checkBoundary) {
 			$bid = TransfermarketDataService::getLatestBidOfUser($websoccer, $db, $userId);
-			$transferBenchmark = $user["registration_date"];
-			if ($bid) {
-				$transferBenchmark = $bid["date"];
-			}
+			$transferBenchmark = $user['registration_date'];
+			if ($bid) $transferBenchmark = $bid['date'];
 				
 			$inactiveDays = round(($now - $transferBenchmark) / (24 * 3600));
-			$updatecolumns["transfer"] = min(100, round($inactiveDays * INACTIVITY_PER_DAY_TRANSFERS));
-			$updatecolumns["transfer_check"] = $now;
+			$updatecolumns['transfer'] = min(100, round($inactiveDays * INACTIVITY_PER_DAY_TRANSFERS));
+			$updatecolumns['transfer_check'] = $now;
 		}
 		
 		// update
 		if (count($updatecolumns)) {
-			$fromTable = $websoccer->getConfig("db_prefix") . "_user_inactivity";
-			$db->queryUpdate($updatecolumns, $fromTable, "id = %d", $inactivity["id"]);
+			$fromTable = $websoccer->getConfig('db_prefix') . '_user_inactivity';
+			$db->queryUpdate($updatecolumns, $fromTable, 'id = \'%d\'', $inactivity['id']);
 		}
 		
 	}
@@ -111,18 +109,16 @@ class UserInactivityDataService {
 	public static function resetContractExtensionField($websoccer, $db, $userId) {
 		$inactivity = self::getUserInactivity($websoccer, $db, $userId);
 		
-		$updatecolumns["vertragsauslauf"] = 0;
-		$fromTable = $websoccer->getConfig("db_prefix") . "_user_inactivity";
-		$db->queryUpdate($updatecolumns, $fromTable, "id = %d", $inactivity["id"]);
+		$updatecolumns['vertragsauslauf'] = 0;
+		$fromTable = $websoccer->getConfig('db_prefix') . '_user_inactivity';
+		$db->queryUpdate($updatecolumns, $fromTable, 'id = \'%d\'', $inactivity['id']);
 	}
 	
 	public static function increaseContractExtensionField($websoccer, $db, $userId) {
 		$inactivity = self::getUserInactivity($websoccer, $db, $userId);
 	
-		$updatecolumns["vertragsauslauf"] = min(100, $inactivity["contractextensions"] + INACTIVITY_PER_CONTRACTEXTENSION);
-		$fromTable = $websoccer->getConfig("db_prefix") . "_user_inactivity";
-		$db->queryUpdate($updatecolumns, $fromTable, "id = %d", $inactivity["id"]);
+		$updatecolumns['vertragsauslauf'] = min(100, $inactivity['contractextensions'] + INACTIVITY_PER_CONTRACTEXTENSION);
+		$fromTable = $websoccer->getConfig('db_prefix') . '_user_inactivity';
+		$db->queryUpdate($updatecolumns, $fromTable, 'id = \'%d\'', $inactivity['id']);
 	}
-	
 }
-?>

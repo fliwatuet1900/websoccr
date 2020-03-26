@@ -69,7 +69,8 @@ class DefaultBootstrapSkin implements ISkin {
 			$files[] = $dir . 'bootstrap.min.js';
 			$files[] = $dir . 'jquery.blockUI.js';
 			$files[] = $dir . 'wsbase.js';
-		} else {
+		}
+		else {
 			$files[] = $dir . 'websoccer.min.js';
 		}
 		
@@ -101,5 +102,3 @@ class DefaultBootstrapSkin implements ISkin {
 		return 'DefaultBootstrapSkin';
 	}
 }
-
-?>

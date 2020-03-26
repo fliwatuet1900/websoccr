@@ -40,20 +40,13 @@ class PlayerDetailsModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		$playerId = (int) $this->_websoccer->getRequestParameter("id");
-		if ($playerId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		$playerId = (int) $this->_websoccer->getRequestParameter('id');
+		if ($playerId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $playerId);
 		
-		if (!isset($player["player_id"])) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if (!isset($player['player_id'])) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
-		return array("player" => $player);
+		return array('player' => $player);
 	}
-	
 }
-
-?>

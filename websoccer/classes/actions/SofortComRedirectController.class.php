@@ -42,11 +42,11 @@ class SofortComRedirectController implements IActionController {
 	 */
 	public function executeAction($parameters) {
 		
-		$configKey = trim($this->_websoccer->getConfig("sofortcom_configkey"));
+		$configKey = trim($this->_websoccer->getConfig('sofortcom_configkey'));
 		
 		if (!strlen($configKey)) {
 			// user should actually not come here, hence no i18n
-			throw new Exception("Sofort.com configuration key is not configured.");
+			throw new Exception('Sofort.com configuration key is not configured.');
 		}
 		
 		// verify amount (check if specified in options)
@@ -61,14 +61,12 @@ class SofortComRedirectController implements IActionController {
 				$realMoney = trim($optionParts[0]);
 		
 				// credit amount and end here
-				if ($amount == $realMoney) {
-					$validAmount = TRUE;
-				}
+				if ($amount == $realMoney) $validAmount = TRUE;
 			}
 		}
 		if (!$validAmount) {
 			// amount comes actually from a selection list, hence can be invalid only by cheating -> no i18n
-			throw new Exception("Invalid amount");
+			throw new Exception('Invalid amount');
 		}
 		
 		// create transaction model
@@ -81,8 +79,8 @@ class SofortComRedirectController implements IActionController {
 				'home', TRUE);
 		
 		$Sofortueberweisung->setAmount($amount);
-		$Sofortueberweisung->setCurrencyCode($this->_websoccer->getConfig("premium_currency"));
-		$Sofortueberweisung->setReason($this->_websoccer->getConfig("projectname"));
+		$Sofortueberweisung->setCurrencyCode($this->_websoccer->getConfig('premium_currency'));
+		$Sofortueberweisung->setReason($this->_websoccer->getConfig('projectname'));
 		$Sofortueberweisung->setSuccessUrl($abortOrSuccessUrl, true);
 		$Sofortueberweisung->setAbortUrl($abortOrSuccessUrl);
 		$Sofortueberweisung->setNotificationUrl($notifyUrl, 'received');
@@ -91,7 +89,8 @@ class SofortComRedirectController implements IActionController {
 		
 		if ($Sofortueberweisung->isError()) {
 			throw new Exception($Sofortueberweisung->getError());
-		} else {
+		}
+		else {
 			// redirect to payment url
 			$paymentUrl = $Sofortueberweisung->getPaymentUrl();
 			header('Location: '.$paymentUrl);
@@ -100,7 +99,4 @@ class SofortComRedirectController implements IActionController {
 		
 		return null;
 	}
-	
 }
-
-?>

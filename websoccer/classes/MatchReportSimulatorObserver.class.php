@@ -74,9 +74,7 @@ class MatchReportSimulatorObserver implements ISimulatorObserver {
 		$messageId = $this->_availableTexts[$messageType][$index];
 		
 		$players = '';
-		if ($playerNames != null) {
-			$players = implode(';', $playerNames);
-		}
+		if ($playerNames != null) $players = implode(';', $playerNames);
 		
 		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_matchreport';
 		$columns['match_id'] = $match->id;
@@ -101,6 +99,4 @@ class MatchReportSimulatorObserver implements ISimulatorObserver {
 	public function onBeforeMatchStarts(SimulationMatch $match) {
 		// do nothing since it does not require any special message.
 	}
-	
 }
-?>

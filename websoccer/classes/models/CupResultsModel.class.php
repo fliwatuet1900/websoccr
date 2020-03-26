@@ -78,28 +78,21 @@ class CupResultsModel implements IModel {
 			$userTeamId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 			
 			$result = $this->_db->querySelect('name,team_id', $this->_websoccer->getConfig('db_prefix') . '_cup_round_group', 
-					'cup_round_id = %d ORDER BY name ASC', array($round['round_id']));
+					'cup_round_id = \'%d\' ORDER BY name ASC', array($round['round_id']));
 			while ($group = $result->fetch_array()) {
-				if (!isset($groups[$group['name']])) {
-					$groups[$group['name']] = $group['name'];
-				}
+				if (!isset($groups[$group['name']])) $groups[$group['name']] = $group['name'];
 				
-				if ($group['team_id'] == $userTeamId) {
-					$preSelectedGroup = $group['name'];
-				}
+				if ($group['team_id'] == $userTeamId) $preSelectedGroup = $group['name'];
 				
 			}
 			$result->free();
 			
 			$matches = array();
-		} else {
+		}
+		else {
 			$matches = MatchesDataService::getMatchesByCupRound($this->_websoccer, $this->_db, $cupName, $cupRound);
 		}
 		
 		return array('matches' => $matches, 'round' => $round, 'groups' => $groups, 'preSelectedGroup' => $preSelectedGroup);
 	}
-	
-	
 }
-
-?>

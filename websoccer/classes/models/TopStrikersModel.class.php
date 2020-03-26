@@ -40,12 +40,8 @@ class TopStrikersModel implements IModel {
 	}
 	
 	public function getTemplateParameters() {
-		return array("players" => PlayersDataService::getTopStrikers($this->_websoccer, $this->_db, NUMBER_OF_PLAYERS, 
-						$this->_websoccer->getRequestParameter("leagueid")),
-					"leagues" => LeagueDataService::getLeaguesSortedByCountry($this->_websoccer, $this->_db));
+		return array('players' => PlayersDataService::getTopStrikers($this->_websoccer, $this->_db, NUMBER_OF_PLAYERS, 
+						$this->_websoccer->getRequestParameter('leagueid')),
+					'leagues' => LeagueDataService::getLeaguesSortedByCountry($this->_websoccer, $this->_db));
 	}
-	
-	
 }
-
-?>

@@ -32,81 +32,77 @@ class SendPasswordController implements IActionController {
 	}
 	
 	public function executeAction($parameters) {
-		if (!$this->_websoccer->getConfig("login_allow_sendingpassword")) {
-			throw new Exception("Action is disabled.");
+		if (!$this->_websoccer->getConfig('login_allow_sendingpassword')) {
+			throw new Exception('Action is disabled.');
 		}
 		
 		// check captcha
-		if ($this->_websoccer->getConfig("register_use_captcha")
-				&& strlen($this->_websoccer->getConfig("register_captcha_publickey"))
-				&& strlen($this->_websoccer->getConfig("register_captcha_privatekey"))) {
+		if ($this->_websoccer->getConfig('register_use_captcha')
+				&& strlen($this->_websoccer->getConfig('register_captcha_publickey'))
+				&& strlen($this->_websoccer->getConfig('register_captcha_privatekey'))) {
 		
-			include_once(BASE_FOLDER . "/lib/recaptcha/recaptchalib.php");
+			include_once(BASE_FOLDER . '/lib/recaptcha/recaptchalib.php');
 		
-			$captchaResponse = recaptcha_check_answer($this->_websoccer->getConfig("register_captcha_privatekey"),
-					$_SERVER["REMOTE_ADDR"],
-					$_POST["recaptcha_challenge_field"],
-					$_POST["recaptcha_response_field"]);
+			$captchaResponse = recaptcha_check_answer($this->_websoccer->getConfig('register_captcha_privatekey'),
+					$_SERVER['REMOTE_ADDR'],
+					$_POST['recaptcha_challenge_field'],
+					$_POST['recaptcha_response_field']);
 			if (!$captchaResponse->is_valid) {
-				throw new Exception($this->_i18n->getMessage("registration_invalidcaptcha"));
+				throw new Exception($this->_i18n->getMessage('registration_invalidcaptcha'));
 			}
 		}
 		
-		$email = $parameters["useremail"];
+		$email = $parameters['useremail'];
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_user";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_user';
 		
 		// get user
-		$columns = "id, passwort_salt, passwort_neu_angefordert";
-		$wherePart = "UPPER(email) = '%s' AND status = 1";
+		$columns = 'id, passwort_salt, passwort_neu_angefordert';
+		$wherePart = 'UPPER(email) = \'%s' AND status = \'1\'';
 		$result = $this->_db->querySelect($columns, $fromTable, $wherePart, strtoupper($email));
 		$userdata = $result->fetch_array();
 		$result->free();
 		
-		if (!isset($userdata["id"])) {
+		if (!isset($userdata['id'])) {
 			sleep(5);
-			throw new Exception($this->_i18n->getMessage("forgot-password_email-not-found"));
+			throw new Exception($this->_i18n->getMessage('forgot-password_email-not-found'));
 		}
 		
 		$now = $this->_websoccer->getNowAsTimestamp();
 		
 		$timeBoundary = $now - 24 * 3600;
-		if ($userdata["passwort_neu_angefordert"] > $timeBoundary) {
-			throw new Exception($this->_i18n->getMessage("forgot-password_already-sent"));
+		if ($userdata['passwort_neu_angefordert'] > $timeBoundary) {
+			throw new Exception($this->_i18n->getMessage('forgot-password_already-sent'));
 		}
 		
 		// create new password
-		$salt = $userdata["passwort_salt"];
-		if (!strlen($salt)) {
-			$salt = SecurityUtil::generatePasswordSalt();
-		}
+		$salt = $userdata['passwort_salt'];
+		if (!strlen($salt)) $salt = SecurityUtil::generatePasswordSalt();
+
 		$password = SecurityUtil::generatePassword();
 		$hashedPassword = SecurityUtil::hashPassword($password, $salt);
 		
 		// update user
-		$columns = array("passwort_salt" => $salt, "passwort_neu_angefordert" => $now, "passwort_neu" => $hashedPassword);
-		$whereCondition = "id = %d";
-		$parameter = $userdata["id"];
+		$columns = array('passwort_salt' => $salt, 'passwort_neu_angefordert' => $now, 'passwort_neu' => $hashedPassword);
+		$whereCondition = 'id = \'%d\'';
+		$parameter = $userdata['id'];
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameter);
 		
 		$this->_sendEmail($email, $password);
 		
-		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, $this->_i18n->getMessage("forgot-password_message_title"),
-				$this->_i18n->getMessage("forgot-password_message_content")));
+		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, $this->_i18n->getMessage('forgot-password_message_title'),
+				$this->_i18n->getMessage('forgot-password_message_content')));
 		
-		return "login";
+		return 'login';
 	}
 	
 	private function _sendEmail($email, $password) {
-		$tplparameters["newpassword"] = $password;
+		$tplparameters['newpassword'] = $password;
 		
 		EmailHelper::sendSystemEmailFromTemplate($this->_websoccer, $this->_i18n,
 			$email,
-			$this->_i18n->getMessage("sendpassword_email_subject"),
-			"sendpassword",
+			$this->_i18n->getMessage('sendpassword_email_subject'),
+			'sendpassword',
 			$tplparameters);
 	}
-	
 }
-
-?>

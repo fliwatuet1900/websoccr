@@ -59,24 +59,17 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 		$clubTable = $this->_websoccer->getConfig('db_prefix') . '_verein';
 		$updateColumns = array();
 		
-		$result = $this->_db->querySelect('user_id', $clubTable, 'id = %d AND user_id > 0', $match->homeTeam->id);
+		$result = $this->_db->querySelect('user_id', $clubTable, 'id = \'%d\' AND user_id > \'0\'', $match->homeTeam->id);
 		$homeUser = $result->fetch_array();
 		$result->free();
-		if ($homeUser) {
-			$updateColumns['home_user_id'] = $homeUser['user_id'];
-		}
+		if ($homeUser) $updateColumns['home_user_id'] = $homeUser['user_id'];
 		
-		$result = $this->_db->querySelect('user_id', $clubTable, 'id = %d AND user_id > 0', $match->guestTeam->id);
+		$result = $this->_db->querySelect('user_id', $clubTable, 'id = \'%d\' AND user_id > \'0\'', $match->guestTeam->id);
 		$guestUser = $result->fetch_array();
 		$result->free();
-		if ($guestUser) {
-			$updateColumns['gast_user_id'] = $guestUser['user_id'];
-		}
+		if ($guestUser) $updateColumns['gast_user_id'] = $guestUser['user_id'];
 		
-		if (count($updateColumns)) {
-			$this->_db->queryUpdate($updateColumns, $this->_websoccer->getConfig('db_prefix') . '_spiel', 
-					'id = %d', $match->id);
-		}
+		if (count($updateColumns)) $this->_db->queryUpdate($updateColumns, $this->_websoccer->getConfig('db_prefix') . '_spiel', 'id = \'%d\'', $match->id);
 	}
 	
 	/**
@@ -90,24 +83,23 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 		if ($isFriendlyMatch) {
 			$this->updatePlayersOfFriendlymatch($match->homeTeam);
 			$this->updatePlayersOfFriendlymatch($match->guestTeam);
-		} else {
+		}
+		else {
 			// player statistics and salary
 			$isTie = $match->homeTeam->getGoals() == $match->guestTeam->getGoals();
 			$this->updatePlayers($match, $match->homeTeam, $match->homeTeam->getGoals() > $match->guestTeam->getGoals(), $isTie);
 			$this->updatePlayers($match, $match->guestTeam, $match->homeTeam->getGoals() < $match->guestTeam->getGoals(), $isTie);
 			
 			// sponsor
-			if (!$match->homeTeam->isNationalTeam) {
-				$this->creditSponsorPayments($match->homeTeam, TRUE, $match->homeTeam->getGoals() > $match->guestTeam->getGoals());
-			}
-			if (!$match->guestTeam->isNationalTeam) {
-				$this->creditSponsorPayments($match->guestTeam, FALSE, $match->homeTeam->getGoals() < $match->guestTeam->getGoals());
-			}
+			if (!$match->homeTeam->isNationalTeam) $this->creditSponsorPayments($match->homeTeam, TRUE, $match->homeTeam->getGoals() > $match->guestTeam->getGoals());
+
+			if (!$match->guestTeam->isNationalTeam) $this->creditSponsorPayments($match->guestTeam, FALSE, $match->homeTeam->getGoals() < $match->guestTeam->getGoals());
 			
 			// points and statistics
 			if ($match->type == 'Ligaspiel') {
 				$this->updateTeams($match);
-			} else if (strlen($match->cupRoundGroup)) {
+			}
+			elseif (strlen($match->cupRoundGroup)) {
 				$this->updateTeamsOfCupGroupMatch($match);
 				SimulationCupMatchHelper::checkIfMatchIsLastMatchOfGroupRoundAndCreateFollowingMatches($this->_websoccer, $this->_db, $match);
 			}
@@ -117,7 +109,7 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 		}
 		
 		// delete formations
-		$this->_db->queryDelete($this->_websoccer->getConfig('db_prefix') . '_aufstellung', 'match_id = %d', $match->id);
+		$this->_db->queryDelete($this->_websoccer->getConfig('db_prefix') . '_aufstellung', 'match_id = \'%d\'', $match->id);
 	}
 	
 	/**
@@ -151,20 +143,16 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 			$minMinutes = (int) $this->_websoccer->getConfig('sim_played_min_minutes');
 			$staminaChange = (int) $this->_websoccer->getConfig('sim_strengthchange_stamina');
 			
-			if ($player->getMinutesPlayed() >= $minMinutes) {
-				$columns['w_kondition'] = min(100, $player->strengthStamina + $staminaChange);
-			}
+			if ($player->getMinutesPlayed() >= $minMinutes) $columns['w_kondition'] = min(100, $player->strengthStamina + $staminaChange);
 		}
 		
 		// injury
-		if ($player->injured > 0 && $this->_websoccer->getConfig('sim_injured_after_friendly')) {
-			$columns['verletzt'] = $player->injured;
-		}
+		if ($player->injured > 0 && $this->_websoccer->getConfig('sim_injured_after_friendly')) $columns['verletzt'] = $player->injured;
 		
 		// update if any changes
 		if (count($columns)) {
 			$fromTable = $this->_websoccer->getConfig('db_prefix') . '_spieler';
-			$this->_db->queryUpdate($columns, $fromTable, 'id = %d', $player->id);
+			$this->_db->queryUpdate($columns, $fromTable, 'id = \'%d\'', $player->id);
 		}
 	}
 	
@@ -191,9 +179,10 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 		
 		if ($team->isNationalTeam) {
 			$fromTable .= ' INNER JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_nationalplayer AS NP ON NP.player_id = id';
-			$whereCondition = 'NP.team_id = %d AND status = 1';
-		} else {
-			$whereCondition = 'verein_id = %d AND status = 1';
+			$whereCondition = 'NP.team_id = \'%d\' AND status = \'1\'';
+		}
+		else {
+			$whereCondition = 'verein_id = \'%d\' AND status = \'1\'';
 		}
 		
 		$parameters = $team->id;
@@ -206,21 +195,18 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 			// add goal bonus
 			if (isset($playersOnPitch[$playerinfo['id']])) {
 				$player = $playersOnPitch[$playerinfo['id']];
-				if ($player->getGoals()) {
-					$totalSalary += $player->getGoals() * $playerinfo['vertrag_torpraemie'];
-				}
+				if ($player->getGoals()) $totalSalary += $player->getGoals() * $playerinfo['vertrag_torpraemie'];
 				
 				// update player who did not play at all
-			} else {
+			}
+			else {
 				$this->updatePlayerWhoDidNotPlay($match, $team->isNationalTeam, $playerinfo);
 			}
 			
 		}
 		$result->free();
 		
-		if (!$team->isNationalTeam) {
-			$this->deductSalary($team, $totalSalary);
-		}
+		if (!$team->isNationalTeam) $this->deductSalary($team, $totalSalary);
 		
 		// update players who actually played
 		foreach ($playersOnPitch as $player) {
@@ -230,7 +216,7 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 	
 	private function updatePlayer(SimulationMatch $match, SimulationPlayer $player, $isTeamWinner, $isTie) {
 		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_spieler';
-		$whereCondition = 'id = %d';
+		$whereCondition = 'id = \'%d\'';
 		$parameters = $player->id;
 		
 		$minMinutes = (int) $this->_websoccer->getConfig('sim_played_min_minutes');
@@ -238,13 +224,9 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 		$staminaChange = (int) $this->_websoccer->getConfig('sim_strengthchange_stamina');
 		$satisfactionChange = (int) $this->_websoccer->getConfig('sim_strengthchange_satisfaction');
 		
-		if ($player->team->isNationalTeam) {
-			$columns['gesperrt_nationalteam'] = $player->blocked;
-		} elseif ($match->type == 'Pokalspiel') {
-			$columns['gesperrt_cups'] = $player->blocked;
-		} else {
-			$columns['gesperrt'] = $player->blocked;
-		}
+		if ($player->team->isNationalTeam) $columns['gesperrt_nationalteam'] = $player->blocked;
+		elseif ($match->type == 'Pokalspiel') $columns['gesperrt_cups'] = $player->blocked;
+		else $columns['gesperrt'] = $player->blocked;
 		
 		// get previous player statistics and lending info
 		$pcolumns = 'id,vorname,nachname,kunstname,verein_id,vertrag_spiele,st_tore,st_assists,st_spiele,st_karten_gelb,st_karten_gelb_rot,st_karten_rot,sa_tore,sa_assists,sa_spiele,sa_karten_gelb,sa_karten_gelb_rot,sa_karten_rot,lending_fee,lending_owner_id,lending_matches';
@@ -265,35 +247,30 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 		if ($player->redCard) {
 			$columns['st_karten_rot'] = $playerinfo['st_karten_rot'] + 1;
 			$columns['sa_karten_rot'] = $playerinfo['sa_karten_rot'] + 1;
-		} else if ($player->yellowCards) {
+		}
+		elseif ($player->yellowCards) {
 			
 			if ($player->yellowCards == 2) {
 				$columns['st_karten_gelb_rot'] = $playerinfo['st_karten_gelb_rot'] + 1;
 				$columns['sa_karten_gelb_rot'] = $playerinfo['sa_karten_gelb_rot'] + 1;
 				
-				if ($player->team->isNationalTeam) {
-					$columns['gesperrt_nationalteam'] = '1';
-				} elseif ($match->type == 'Pokalspiel') {
-					$columns['gesperrt_cups'] = '1';
-				} else {
-					$columns['gesperrt'] = '1';
-				}
-			} elseif (!$player->team->isNationalTeam) {
+				if ($player->team->isNationalTeam) $columns['gesperrt_nationalteam'] = '1';
+				elseif ($match->type == 'Pokalspiel')$columns['gesperrt_cups'] = '1';
+				else $columns['gesperrt'] = '1';
+
+			}
+			elseif (!$player->team->isNationalTeam) {
 				$columns['st_karten_gelb'] = $playerinfo['st_karten_gelb'] + 1;
 				$columns['sa_karten_gelb'] = $playerinfo['sa_karten_gelb'] + 1;
 				
 				// block after certain number of matches ('Gelbsperre')
-				if ($match->type == 'Ligaspiel' && $blockYellowCards > 0 && $columns['sa_karten_gelb'] % $blockYellowCards == 0) {
-					$columns['gesperrt'] = 1;
-				}
+				if ($match->type == 'Ligaspiel' && $blockYellowCards > 0 && $columns['sa_karten_gelb'] % $blockYellowCards == 0) $columns['gesperrt'] = 1;
 			}
 		}
 		
 		if (!$player->team->isNationalTeam) {
 			$columns['vertrag_spiele'] = max(0, $playerinfo['vertrag_spiele'] - 1);
-			if ($columns['vertrag_spiele'] == 5) {
-				$this->_teamsWithSoonEndingContracts[$player->team->id] = TRUE;
-			}
+			if ($columns['vertrag_spiele'] == 5) $this->_teamsWithSoonEndingContracts[$player->team->id] = TRUE;
 		}
 		
 		// update other fields
@@ -304,49 +281,38 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 			if ($player->getMinutesPlayed() >= $minMinutes) {
 				$columns['w_kondition'] = min(100, $player->strengthStamina + $staminaChange);
 				$columns['w_zufriedenheit'] = min(100, $player->strengthSatisfaction + $satisfactionChange);
-			} else {
+			}
+			else {
 				$columns['w_kondition'] = max(1, $player->strengthStamina - $staminaChange);
 				$columns['w_zufriedenheit'] = max(1, $player->strengthSatisfaction - $satisfactionChange);
 			}
 			
 			// result dependent satisfaction change
 			if (!$isTie) {
-				if ($isTeamWinner) {
-					$columns['w_zufriedenheit'] = min(100, $columns['w_zufriedenheit'] + $satisfactionChange);
-				} else {
-					$columns['w_zufriedenheit'] = max(1, $columns['w_zufriedenheit'] - $satisfactionChange);
-				}
+				if ($isTeamWinner) $columns['w_zufriedenheit'] = min(100, $columns['w_zufriedenheit'] + $satisfactionChange);
+				else $columns['w_zufriedenheit'] = max(1, $columns['w_zufriedenheit'] - $satisfactionChange);
 			}
-			
 		}
 		
-		if (!$player->team->isNationalTeam && $playerinfo['lending_matches'] > 0) {
-			$this->handleBorrowedPlayer($columns, $playerinfo);
-		}
+		if (!$player->team->isNationalTeam && $playerinfo['lending_matches'] > 0) $this->handleBorrowedPlayer($columns, $playerinfo);
 		
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameters);
 	}
 	
 	private function updatePlayerWhoDidNotPlay(SimulationMatch $match, $isNationalTeam, $playerinfo) {
 		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_spieler';
-		$whereCondition = 'id = %d';
+		$whereCondition = 'id = \'%d\'';
 		$parameters = $playerinfo['id'];
 		$satisfactionChange = (int) $this->_websoccer->getConfig('sim_strengthchange_satisfaction');
 		
-		if ($isNationalTeam) {
-			$columns['gesperrt_nationalteam'] = max(0, $playerinfo['gesperrt_nationalteam'] - 1);
-		} elseif ($match->type == 'Pokalspiel') {
-			$columns['gesperrt_cups'] = max(0, $playerinfo['gesperrt_cups'] - 1);
-		} else {
-			$columns['gesperrt'] = max(0, $playerinfo['gesperrt'] - 1);
-		}
+		if ($isNationalTeam) $columns['gesperrt_nationalteam'] = max(0, $playerinfo['gesperrt_nationalteam'] - 1);
+		elseif ($match->type == 'Pokalspiel') $columns['gesperrt_cups'] = max(0, $playerinfo['gesperrt_cups'] - 1);
+		else $columns['gesperrt'] = max(0, $playerinfo['gesperrt'] - 1);
 		
 		$columns['verletzt'] = max(0, $playerinfo['verletzt'] - 1);
 		if (!$isNationalTeam) {
 			$columns['vertrag_spiele'] = max(0, $playerinfo['vertrag_spiele'] - 1);
-			if ($columns['vertrag_spiele'] == 5) {
-				$this->_teamsWithSoonEndingContracts[$playerinfo['id']] = TRUE;
-			}
+			if ($columns['vertrag_spiele'] == 5) $this->_teamsWithSoonEndingContracts[$playerinfo['id']] = TRUE;
 		}
 		
 		if (!$isNationalTeam || $this->_websoccer->getConfig('sim_playerupdate_through_nationalteam')) {
@@ -354,9 +320,7 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 			$columns['w_frische'] = min(100, $playerinfo['w_frische'] + $this->_websoccer->getConfig('sim_strengthchange_freshness_notplayed'));
 		}
 		
-		if (!$isNationalTeam && $playerinfo['lending_matches'] > 0) {
-			$this->handleBorrowedPlayer($columns, $playerinfo);
-		}
+		if (!$isNationalTeam && $playerinfo['lending_matches'] > 0) $this->handleBorrowedPlayer($columns, $playerinfo);
 		
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameters);
 	}
@@ -372,7 +336,7 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 	
 	private function updateTeams(SimulationMatch $match) {
 		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_verein';
-		$whereCondition = 'id = %d';
+		$whereCondition = 'id = \'%d\'';
 		
 		$tcolumns = 'st_tore,st_gegentore,st_spiele,st_siege,st_niederlagen,st_unentschieden,st_punkte,sa_tore,sa_gegentore,sa_spiele,sa_siege,sa_niederlagen,sa_unentschieden,sa_punkte';
 		
@@ -416,7 +380,8 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 			
 			$guestColumns['sa_punkte'] = $guest['sa_punkte'] + POINTS_LOSS;
 			$guestColumns['st_punkte'] = $guest['st_punkte'] + POINTS_LOSS;
-		} else if ($match->homeTeam->getGoals() == $match->guestTeam->getGoals()) {
+		}
+		elseif ($match->homeTeam->getGoals() == $match->guestTeam->getGoals()) {
 			$homeColumns['sa_unentschieden'] = $home['sa_unentschieden'] + 1;
 			$homeColumns['st_unentschieden'] = $home['st_unentschieden'] + 1;
 			
@@ -428,7 +393,8 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 			
 			$guestColumns['sa_punkte'] = $guest['sa_punkte'] + POINTS_DRAW;
 			$guestColumns['st_punkte'] = $guest['st_punkte'] + POINTS_DRAW;
-		} else {
+		}
+		else {
 			$homeColumns['sa_niederlagen'] = $home['sa_niederlagen'] + 1;
 			$homeColumns['st_niederlagen'] = $home['st_niederlagen'] + 1;
 			
@@ -451,7 +417,7 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 		$fromTable .= ' INNER JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_cup_round AS R ON R.id = G.cup_round_id';
 		$fromTable .= ' INNER JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_cup AS C ON C.id = R.cup_id';
 		
-		$whereCondition = 'C.name = \'%s\' AND R.name = \'%s\' AND G.name = \'%s\' AND G.team_id = %d';
+		$whereCondition = 'C.name = \'%s\' AND R.name = \'%s\' AND G.name = \'%s\' AND G.team_id = \'%d\'';
 		
 		$tcolumns = array(
 				'G.tab_points' => 'tab_points',
@@ -488,7 +454,8 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 			$guestColumns['tab_losses'] = $guest['tab_losses'] + 1;
 				
 			$guestColumns['tab_points'] = $guest['tab_points'] + POINTS_LOSS;
-		} else if ($match->homeTeam->getGoals() == $match->guestTeam->getGoals()) {
+		}
+		elseif ($match->homeTeam->getGoals() == $match->guestTeam->getGoals()) {
 			$homeColumns['tab_draws'] = $home['tab_draws'] + 1;
 				
 			$homeColumns['tab_points'] = $home['tab_points'] + POINTS_DRAW;
@@ -496,7 +463,8 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 			$guestColumns['tab_draws'] = $guest['tab_draws'] + 1;
 				
 			$guestColumns['tab_points'] = $guest['tab_points'] + POINTS_DRAW;
-		} else {
+		}
+		else {
 			$homeColumns['tab_losses'] = $home['tab_losses'] + 1;
 				
 			$homeColumns['tab_points'] = $home['tab_points'] + POINTS_LOSS;
@@ -515,7 +483,7 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 		$columns = 'S.name AS sponsor_name, b_spiel,b_heimzuschlag,b_sieg,T.sponsor_spiele AS sponsor_matches';
 		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_verein AS T';
 		$fromTable .= ' INNER JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_sponsor AS S ON S.id = T.sponsor_id';
-		$whereCondition = 'T.id = %d AND T.sponsor_spiele > 0';
+		$whereCondition = 'T.id = \'%d\' AND T.sponsor_spiele > \'0\'';
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $team->id);
 		$sponsor = $result->fetch_array();
 		$result->free();
@@ -523,13 +491,9 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 		if (isset($sponsor['sponsor_matches'])) {
 			$amount = $sponsor['b_spiel'];
 			
-			if ($isHomeTeam) {
-				$amount += $sponsor['b_heimzuschlag'];
-			}
+			if ($isHomeTeam) $amount += $sponsor['b_heimzuschlag'];
 			
-			if ($teamIsWinner) {
-				$amount += $sponsor['b_sieg'];
-			}
+			if ($teamIsWinner) $amount += $sponsor['b_sieg'];
 			
 			BankAccountDataService::creditAmount($this->_websoccer, $this->_db, $team->id,
 				$amount,
@@ -538,14 +502,12 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 			
 			// update sponsor contract
 			$updatecolums['sponsor_spiele'] = max(0, $sponsor['sponsor_matches'] - 1);
-			if ($updatecolums['sponsor_spiele'] == 0) {
-				$updatecolums['sponsor_id'] = '';
-			}
-			$whereCondition = 'id = %d';
+			if ($updatecolums['sponsor_spiele'] == 0) $updatecolums['sponsor_id'] = '';
+
+			$whereCondition = 'id = \'%d\'';
 			$fromTable = $this->_websoccer->getConfig('db_prefix') . '_verein';
 			$this->_db->queryUpdate($updatecolums, $fromTable, $whereCondition, $team->id);
 		}
-		
 	}
 	
 	private function updateUsers(SimulationMatch $match) {
@@ -556,25 +518,22 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 		$columns = 'U.id AS u_id, U.highscore AS highscore, U.fanbeliebtheit AS popularity';
 		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_verein AS T';
 		$fromTable .= ' INNER JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_user AS U ON U.id = T.user_id';
-		$whereCondition = 'T.id = %d';
+		$whereCondition = 'T.id = \'%d\'';
 		
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $match->homeTeam->id);
 		$homeUser = $result->fetch_array();
 		$result->free();
 		
 		$updateTable = $this->_websoccer->getConfig('db_prefix') . '_user';
-		$updateCondition = 'id = %d';
+		$updateCondition = 'id = \'%d\'';
 		
 		// make popularity dependent on strength
 		$homeStrength = $match->homeTeam->computeTotalStrength($this->_websoccer, $match);		
 		$guestStrength = $match->guestTeam->computeTotalStrength($this->_websoccer, $match);
 		
-		// the strength difference between home and guest team in per cent. Positive value means, home team is stronger.
-		if ($homeStrength) {
-			$homeGuestStrengthDiff = round(($homeStrength - $guestStrength) / $homeStrength * 100);
-		} else {
-			$homeGuestStrengthDiff = 0;
-		}
+		// the strength difference between home and away team in per cent. Positive value means, home team is stronger.
+		if ($homeStrength) $homeGuestStrengthDiff = round(($homeStrength - $guestStrength) / $homeStrength * 100);
+		else $homeGuestStrengthDiff = 0;
 		
 		// update user of home team
 		if (!empty($homeUser['u_id']) && !$match->homeTeam->noFormationSet) {
@@ -583,16 +542,15 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 				
 				// fans only get excited if team was not much stronger
 				$popFactor = 1.1;
-				if ($homeGuestStrengthDiff >= 20) {
-					$popFactor = 1.05;
-				}
+				if ($homeGuestStrengthDiff >= 20) $popFactor = 1.05;
 				
 				$homeColumns['fanbeliebtheit'] = min(100, round($homeUser['popularity'] * $popFactor));
 				
 				// badge applicable?
 				$goalsDiff = $match->homeTeam->getGoals() - $match->guestTeam->getGoals();
 				BadgesDataService::awardBadgeIfApplicable($this->_websoccer, $this->_db, $homeUser['u_id'], 'win_with_x_goals_difference', $goalsDiff);
-			} else if ($match->homeTeam->getGoals() == $match->guestTeam->getGoals()) {
+			}
+			elseif ($match->homeTeam->getGoals() == $match->guestTeam->getGoals()) {
 				$homeColumns['highscore'] = max(0, $homeUser['highscore'] + $highscoreDraw);
 				
 				// fans react on strength difference.
@@ -600,13 +558,15 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 				if ($homeGuestStrengthDiff >= 20) {
 					// if much stronger, they dislike it
 					$popFactor = 0.95;
-				} else if ($homeGuestStrengthDiff <= -20) {
+				}
+				elseif ($homeGuestStrengthDiff <= -20) {
 					// if much weaker, they like it! it is an achievement
 					$popFactor = 1.05;
 				}
 				
 				$homeColumns['fanbeliebtheit'] = min(100, round($homeUser['popularity'] * $popFactor));
-			} else {
+			}
+			else {
 				$homeColumns['highscore'] = max(0, $homeUser['highscore'] + $highscoreLoss);
 				
 				// fans react on strength difference.
@@ -614,21 +574,18 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 				if ($homeGuestStrengthDiff >= 20) {
 					// if much stronger, they dislike it even more
 					$popFactor = 0.90;
-				} else if ($homeGuestStrengthDiff <= -20) {
+				}
+				elseif ($homeGuestStrengthDiff <= -20) {
 					// if much weaker, it is ok for them
 					$popFactor = 1.00;
 				}
 				$homeColumns['fanbeliebtheit'] = max(1, round($homeUser['popularity'] * $popFactor));
 			}
 			
-			if (!$match->homeTeam->isManagedByInterimManager) {
-				$this->_db->queryUpdate($homeColumns, $updateTable, $updateCondition, $homeUser['u_id']);
-			}
+			if (!$match->homeTeam->isManagedByInterimManager) $this->_db->queryUpdate($homeColumns, $updateTable, $updateCondition, $homeUser['u_id']);
 			
 			// send notification about soon ending contracts
-			if (isset($this->_teamsWithSoonEndingContracts[$match->homeTeam->id])) {
-				$this->notifyAboutSoonEndingContracts($homeUser['u_id'], $match->homeTeam->id);
-			}
+			if (isset($this->_teamsWithSoonEndingContracts[$match->homeTeam->id])) $this->notifyAboutSoonEndingContracts($homeUser['u_id'], $match->homeTeam->id);
 		}
 		
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $match->guestTeam->id);
@@ -639,9 +596,7 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 			if ($match->guestTeam->getGoals() > $match->homeTeam->getGoals()) {
 				// fans only get excited if team was not much stronger
 				$popFactor = 1.1;
-				if ($homeGuestStrengthDiff <= -20) {
-					$popFactor = 1.05;
-				}
+				if ($homeGuestStrengthDiff <= -20) $popFactor = 1.05;
 				
 				$guestColumns['highscore'] = max(0, $guestUser['highscore'] + $highscoreWin);
 				$guestColumns['fanbeliebtheit'] = min(100, round($guestUser['popularity'] * $popFactor));
@@ -649,20 +604,23 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 				// badge applicable?
 				$goalsDiff = $match->guestTeam->getGoals() - $match->homeTeam->getGoals();
 				BadgesDataService::awardBadgeIfApplicable($this->_websoccer, $this->_db, $guestUser['u_id'], 'win_with_x_goals_difference', $goalsDiff);
-			} else if ($match->guestTeam->getGoals() == $match->homeTeam->getGoals()) {
+			}
+			elseif ($match->guestTeam->getGoals() == $match->homeTeam->getGoals()) {
 				// fans react on strength difference.
 				$popFactor = 1.0;
 				if ($homeGuestStrengthDiff <= -20) {
 					// if much stronger, they dislike it
 					$popFactor = 0.95;
-				} else if ($homeGuestStrengthDiff >= 20) {
+				}
+				elseif ($homeGuestStrengthDiff >= 20) {
 					// if much weaker, they like it! it is an achievement
 					$popFactor = 1.05;
 				}
 				
 				$guestColumns['highscore'] = max(0, $guestUser['highscore'] + $highscoreDraw);
 				$guestColumns['fanbeliebtheit'] = min(100, round($guestUser['popularity'] * $popFactor));
-			} else {
+			}
+			else {
 				$guestColumns['highscore'] = max(0, $guestUser['highscore'] + $highscoreLoss);
 				
 				// fans react on strength difference.
@@ -670,21 +628,18 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 				if ($homeGuestStrengthDiff <= -20) {
 					// if much stronger, they dislike it even more
 					$popFactor = 0.90;
-				} else if ($homeGuestStrengthDiff >= 20) {
+				}
+				elseif ($homeGuestStrengthDiff >= 20) {
 					// if much weaker, it is ok for them
 					$popFactor = 1.00;
 				}
 				$guestColumns['fanbeliebtheit'] = max(1, round($guestUser['popularity'] * $popFactor));
 			}
 				
-			if (!$match->guestTeam->isManagedByInterimManager) {
-				$this->_db->queryUpdate($guestColumns, $updateTable, $updateCondition, $guestUser['u_id']);
-			}
+			if (!$match->guestTeam->isManagedByInterimManager) $this->_db->queryUpdate($guestColumns, $updateTable, $updateCondition, $guestUser['u_id']);
 			
 			// send notification about soon ending contracts
-			if (isset($this->_teamsWithSoonEndingContracts[$match->guestTeam->id])) {
-				$this->notifyAboutSoonEndingContracts($guestUser['u_id'], $match->guestTeam->id);
-			}
+			if (isset($this->_teamsWithSoonEndingContracts[$match->guestTeam->id])) $this->notifyAboutSoonEndingContracts($guestUser['u_id'], $match->guestTeam->id);
 		}
 	}
 	
@@ -738,6 +693,4 @@ class DataUpdateSimulatorObserver implements ISimulatorObserver {
 	public function onSubstitution(SimulationMatch $match, SimulationSubstitution $substitution) {
 		// nothing to do here, just be compliant with API...
 	}
-	
 }
-?>

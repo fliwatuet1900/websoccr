@@ -40,13 +40,10 @@ class UserNickSearchModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		$query = $this->_websoccer->getRequestParameter("query");
+		$query = $this->_websoccer->getRequestParameter('query');
 		
 		$users = UsersDataService::findUsernames($this->_websoccer, $this->_db, $query);
 		
-		return array("items" => $users);
+		return array('items' => $users);
 	}
-	
 }
-
-?>

@@ -71,11 +71,8 @@ class Google_AssertionCredentials {
           'iss' => $this->serviceAccountName,
     );
 
-    if ($this->sub !== false) {
-      $jwtParams['sub'] = $this->sub;
-    } else if ($this->prn !== false) {
-      $jwtParams['prn'] = $this->prn;
-    }
+    if ($this->sub !== false) $jwtParams['sub'] = $this->sub;
+    elseif ($this->prn !== false) $jwtParams['prn'] = $this->prn;
 
     return $this->makeSignedJwt($jwtParams);
   }

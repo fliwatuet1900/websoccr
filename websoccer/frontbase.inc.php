@@ -35,9 +35,8 @@ include(CONFIGCACHE_FILE_FRONTEND);
 $authenticatorClasses = explode(',', $website->getConfig('authentication_mechanism'));
 foreach ($authenticatorClasses as $authenticatorClass) {
 	$authenticatorClass = trim($authenticatorClass);
-	if (!class_exists($authenticatorClass)) {
-		throw new Exception('Class not found: ' . $authenticatorClass);
-	}
+	if (!class_exists($authenticatorClass)) throw new Exception('Class not found: ' . $authenticatorClass);
+
 	$authenticator = new $authenticatorClass($website);
 	$authenticator->verifyAndUpdateCurrentUser($website->getUser());
 }
@@ -47,11 +46,10 @@ $i18n = I18n::getInstance($website->getConfig('supported_languages'));
 if ($website->getUser()->language != null) {
 	try {
 		$i18n->setCurrentLanguage($website->getUser()->language);
-	} catch (Exception $e) {
+	}
+	catch (Exception $e) {
 		// ignore and use default language
 	}
 }
 include(sprintf(CONFIGCACHE_MESSAGES, $i18n->getCurrentLanguage()));
 include(sprintf(CONFIGCACHE_ENTITYMESSAGES, $i18n->getCurrentLanguage()));
-
-?>

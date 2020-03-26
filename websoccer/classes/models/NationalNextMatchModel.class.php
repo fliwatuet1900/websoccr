@@ -68,7 +68,4 @@ class NationalNextMatchModel implements IModel {
 		
 		return array('match' => $matches[0]);
 	}
-	
 }
-
-?>

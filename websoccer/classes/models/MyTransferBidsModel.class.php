@@ -43,9 +43,6 @@ class MyTransferBidsModel implements IModel {
 		$teamId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 		
 		$bids = TransfermarketDataService::getCurrentBidsOfTeam($this->_websoccer, $this->_db, $teamId);
-		return array("bids" => $bids);
+		return array('bids' => $bids);
 	}
-	
 }
-
-?>

@@ -61,7 +61,7 @@ class MoneyTransactionConverter implements IConverter {
 			$db = DbConnection::getInstance();
 			$columns = 'finanz_budget';
 			$fromTable = $this->_websoccer->getConfig('db_prefix') .'_verein';
-			$whereCondition = 'id = %d';
+			$whereCondition = 'id = \'%d\'';
 			$result = $db->querySelect($columns, $fromTable, $whereCondition, $_POST['verein_id'], 1);
 			$team = $result->fetch_array();
 			$result->free();
@@ -74,8 +74,4 @@ class MoneyTransactionConverter implements IConverter {
 		
 		return $amount;
 	}
-	
-	
 }
-
-?>

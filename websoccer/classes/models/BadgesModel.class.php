@@ -55,9 +55,6 @@ class BadgesModel implements IModel {
 		}
 		$result->free();
 		
-		return array("badges" => $badges);
+		return array('badges' => $badges);
 	}
-	
 }
-
-?>

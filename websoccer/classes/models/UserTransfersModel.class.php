@@ -40,14 +40,9 @@ class UserTransfersModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		$userId = $this->_websoccer->getRequestParameter("userid");
-		if ($userId > 0) {
-			$transfers = TransfermarketDataService::getCompletedTransfersOfUser($this->_websoccer, $this->_db, $userId);
-		}
+		$userId = $this->_websoccer->getRequestParameter('userid');
+		if ($userId > 0) $transfers = TransfermarketDataService::getCompletedTransfersOfUser($this->_websoccer, $this->_db, $userId);
 		
-		return array("completedtransfers" => $transfers);
+		return array('completedtransfers' => $transfers);
 	}
-	
 }
-
-?>

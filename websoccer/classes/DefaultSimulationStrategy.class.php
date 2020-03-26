@@ -25,6 +25,8 @@
  * 
  * @author Ingo Hofmann
  */
+
+// INTERVENTION to String Comparisons
 class DefaultSimulationStrategy implements ISimulationStrategy {
 	
 	private $_websoccer;
@@ -91,16 +93,15 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 		
 		if (isset($opponentTeam->positionsAndPlayers[$opponentPosition])) {
 			$noOfOpponentPlayersInPosition = count($opponentTeam->positionsAndPlayers[$opponentPosition]);
-		} else {
+		}
+		else {
 			$noOfOpponentPlayersInPosition = 0;
 		}
 		
 		$pTackle = 10;
-		if ($noOfOpponentPlayersInPosition == $noOfOwnPlayersInPosition) {
-			$pTackle += 10;
-		} else if ($noOfOpponentPlayersInPosition > $noOfOwnPlayersInPosition) {
-			$pTackle += 10 + 20 * ($noOfOpponentPlayersInPosition - $noOfOwnPlayersInPosition);
-		}
+		if ($noOfOpponentPlayersInPosition == $noOfOwnPlayersInPosition) $pTackle += 10;
+		elseif ($noOfOpponentPlayersInPosition > $noOfOwnPlayersInPosition) $pTackle += 10 + 20 * ($noOfOpponentPlayersInPosition - $noOfOwnPlayersInPosition);
+
 		$pAction['tackle'] = min($pTackle, 40);
 		
 		// probability of shooting depends on position + tactic
@@ -108,24 +109,17 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 		$tacticInfluence = ($this->_getOffensiveStrength($player->team, $match) - $this->_getDefensiveStrength($opponentTeam, $match)) / 10;
 		
 		// reduce number of attempts if own team focussed on counterattacks
-		if ($player->team->counterattacks) {
-			$pShoot = round($pShoot * 0.5);
-		}
+		if ($player->team->counterattacks) $pShoot = round($pShoot * 0.5);
 		
 		// also consider current result
 		$resultInfluence = ($player->team->getGoals() - $opponentTeam->getGoals()) * (0 - 5);
 		
 		// if team is in deficit, the morale can push up to additional 5%
-		if ($player->team->getGoals() < $opponentTeam->getGoals() && $player->team->morale) {
-			$resultInfluence += floor($player->team->morale / 100 * 5);
-		}
+		if ($player->team->getGoals() < $opponentTeam->getGoals() && $player->team->morale) $resultInfluence += floor($player->team->morale / 100 * 5);
 		
 		// forwards/midfielders have a minimum shoot probability of 5%
-		if ($player->position == PLAYER_POSITION_STRIKER || $player->position == PLAYER_POSITION_MIDFIELD) {
-			$minShootProb = 5;
-		} else {
-			$minShootProb = 1;
-		}
+		if ($player->position == PLAYER_POSITION_STRIKER || $player->position == PLAYER_POSITION_MIDFIELD) $minShootProb = 5;
+		else $minShootProb = 1;
 		
 		$pAction['shoot'] = round(max($minShootProb, min($pShoot + $tacticInfluence + $resultInfluence, 50)) * $this->_websoccer->getConfig('sim_shootprobability') / 100);
 		
@@ -144,9 +138,7 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 		$pFailed[FALSE] = round(($player->getTotalStrength($this->_websoccer, $match) + $player->strengthTech) / 2);
 		
 		// probability of failure increases if long passes are activated
-		if ($player->team->longPasses) {
-			$pFailed[FALSE] = round($pFailed[FALSE] * 0.7);
-		}
+		if ($player->team->longPasses) $pFailed[FALSE] = round($pFailed[FALSE] * 0.7);
 		
 		$pFailed[TRUE] = 100 - $pFailed[FALSE];
 		if (SimulationHelper::selectItemFromProbabilities($pFailed) == TRUE) {
@@ -167,9 +159,7 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 		$pTarget[PLAYER_POSITION_STRIKER] = $this->_passTargetProbPerPosition[$player->position][PLAYER_POSITION_STRIKER];
 		
 		// consider tactic option: long passes
-		if ($player->position != PLAYER_POSITION_GOALY) {
-			$pTarget[PLAYER_POSITION_STRIKER] += 10;
-		}
+		if ($player->position != PLAYER_POSITION_GOALY) $pTarget[PLAYER_POSITION_STRIKER] += 10;
 		
 		$offensiveInfluence = round(10 - $player->team->offensive * 0.2);
 		$pTarget[PLAYER_POSITION_DEFENCE] = $pTarget[PLAYER_POSITION_DEFENCE] + $offensiveInfluence;
@@ -216,16 +206,12 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 			// opponent: yellow / redcard
 			$pTackle['yellow'] = round(max(1, min(20, round((100 - $opponent->strengthTech) / 2))) * $this->_websoccer->getConfig('sim_cardsprobability') / 100);
 			
-			// prevent too many yellow-red cards
-			if ($opponent->yellowCards > 0) {
-				$pTackle['yellow'] = round($pTackle['yellow'] / 2);
-			}
+			// prevent too many second yellow cards
+			if ($opponent->yellowCards > 0) $pTackle['yellow'] = round($pTackle['yellow'] / 2);
 			
 			$pTackle['red'] = 1;
 			// if chances for yellow card is very high, then also chances for red card increased
-			if ($pTackle['yellow']  > 15) {
-				$pTackle['red'] = 3;
-			}
+			if ($pTackle['yellow']  > 15) $pTackle['red'] = 3;
 			
 			$pTackle['fair'] = 100 - $pTackle['yellow'] - $pTackle['red'];
 			
@@ -258,7 +244,8 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 				foreach ($this->_observers as $observer) {
 					if ($tackled == 'yellow') {
 						$observer->onYellowCard($match, $opponent);
-					} else {
+					}
+					else {
 						
 						// number of blocked matches
 						$maxMatchesBlocked = (int) $this->_websoccer->getConfig('sim_maxmatches_blocked');
@@ -279,19 +266,15 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 				if ($player->position == PLAYER_POSITION_STRIKER) {
 					$pPenalty[TRUE] = 10;
 					$pPenalty[FALSE] = 90;
-					if (SimulationHelper::selectItemFromProbabilities($pPenalty)) {
-						$this->foulPenalty($match, $player->team);
-					}
+					if (SimulationHelper::selectItemFromProbabilities($pPenalty)) $this->foulPenalty($match, $player->team);
 					
 					// fouls on all other player lead to a free kick
-				} else {
+				}
+				else {
 					
 					// select player who will shoot
-					if ($player->team->freeKickPlayer != NULL) {
-						$freeKickScorer = $player->team->freeKickPlayer;
-					} else {
-						$freeKickScorer = SimulationHelper::selectPlayer($player->team, PLAYER_POSITION_MIDFIELD);
-					}
+					if ($player->team->freeKickPlayer != NULL) $freeKickScorer = $player->team->freeKickPlayer;
+					else $freeKickScorer = SimulationHelper::selectPlayer($player->team, PLAYER_POSITION_MIDFIELD);
 					
 					// get goaly influence
 					$goaly = SimulationHelper::selectPlayer(SimulationHelper::getOpponentTeam($freeKickScorer, $match), PLAYER_POSITION_GOALY, null);
@@ -309,18 +292,13 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 						$observer->onFreeKick($match, $freeKickScorer, $goaly, $freeKickResult);
 					}
 					
-					if ($freeKickResult) {
-						$this->_kickoff($match, $freeKickScorer);
-					} else {
-						$match->setPlayerWithBall($goaly);
-					}
-					
+					if ($freeKickResult) $this->_kickoff($match, $freeKickScorer);
+					else $match->setPlayerWithBall($goaly);
 				}
-
 			}
-			
 			// player lost the ball
-		} else {
+		}
+		else {
 			
 			$match->setPlayerWithBall($opponent);
 			
@@ -338,9 +316,7 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 					$this->shoot($match);
 				}
 			}
-			
 		}
-		
 		return $result;
 	}
 
@@ -366,9 +342,7 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 		}
 		
 		// reduce probability of too many goals per scorer
-		if ($player->getGoals() > 1) {
-			$shootStrength = round($shootStrength / $player->getGoals());
-		}
+		if ($player->getGoals() > 1) $shootStrength = round($shootStrength / $player->getGoals());
 		
 		$pGoal[TRUE] = max(1, min($shootStrength - $shootReduction, 60));
 		$pGoal[FALSE] = 100 - $pGoal[TRUE];
@@ -390,11 +364,8 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 			if (SimulationHelper::selectItemFromProbabilities($pCorner)) {
 				
 				// select players
-				if ($player->team->freeKickPlayer) {
-					$passingPlayer = $player->team->freeKickPlayer;
-				} else {
-					$passingPlayer = SimulationHelper::selectPlayer($player->team, PLAYER_POSITION_MIDFIELD);
-				}
+				if ($player->team->freeKickPlayer) $passingPlayer = $player->team->freeKickPlayer;
+				else $passingPlayer = SimulationHelper::selectPlayer($player->team, PLAYER_POSITION_MIDFIELD);
 				
 				$targetPlayer = SimulationHelper::selectPlayer($player->team, PLAYER_POSITION_MIDFIELD, $passingPlayer);
 				foreach ($this->_observers as $observer) {
@@ -404,7 +375,8 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 			}
 			
 		// scored
-		} else {
+		}
+		else {
 			foreach ($this->_observers as $observer) {
 				$observer->onGoal($match, $player, $goaly);
 			}
@@ -436,14 +408,10 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 			$shots++;
 			
 			// home team shoots
-			if ($this->_shootPenalty($match, $playersHome[$playerIndexHome])) {
-				$goalsHome++;
-			}
+			if ($this->_shootPenalty($match, $playersHome[$playerIndexHome])) $goalsHome++;
 			
-			// guest team shoots
-			if ($this->_shootPenalty($match, $playersGuest[$playerIndexGuest])) {
-				$goalsGuest++;
-			}
+			// away team shoots
+			if ($this->_shootPenalty($match, $playersGuest[$playerIndexGuest])) $goalsGuest++;
 			
 			// do we have a winner?
 			if ($shots >= 5 && $goalsHome !== $goalsGuest) {
@@ -453,12 +421,9 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 			$playerIndexHome++;
 			$playerIndexGuest++;
 			
-			if ($playerIndexHome >= count($playersHome)) {
-				$playerIndexHome = 0;
-			}
-			if ($playerIndexGuest >= count($playersGuest)) {
-				$playerIndexGuest = 0;
-			}
+			if ($playerIndexHome >= count($playersHome)) $playerIndexHome = 0;
+
+			if ($playerIndexGuest >= count($playersGuest)) $playerIndexGuest = 0;
 		}
 	}
 	
@@ -471,10 +436,10 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 		
 		// execute shoot
 		if ($this->_shootPenalty($match, $player)) {
-			
 			// if hit, only update player's statistic, since other statistics (such as team goals, grades) will be auomatically updated by observers
 			$player->setGoals($player->getGoals() + 1);
-		} else {
+		}
+		else {
 			// choose goaly as next player
 			$goaly = SimulationHelper::selectPlayer(SimulationHelper::getOpponentTeam($player, $match), PLAYER_POSITION_GOALY, null);
 			$match->setPlayerWithBall($goaly);
@@ -539,16 +504,12 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 				if ($player->mainPosition == 'OM') {
 					$omPlayers++;
 					// only up to 3 OMs are effective. Else, players in defense are missing for building attacks
-					if ($omPlayers <= 3) {
-						$mfStrength = $mfStrength * 1.3;
-					} else {
-						$mfStrength = $mfStrength * 0.5;
-					}
-					
-				} else if ($player->mainPosition == 'DM') {
+					if ($omPlayers <= 3) $mfStrength = $mfStrength * 1.3;
+					else $mfStrength = $mfStrength * 0.5;
+				}
+				elseif ($player->mainPosition == 'DM') {
 					$mfStrength = $mfStrength * 0.7;
 				}
-				
 				$strength += $mfStrength;
 			}
 		}
@@ -559,11 +520,8 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 			foreach ($team->positionsAndPlayers[PLAYER_POSITION_STRIKER] as $player) {
 				$noOfStrikers++;
 				
-				if ($noOfStrikers < 3) {
-					$strength += $player->getTotalStrength($this->_websoccer, $match) * 1.5;
-				} else {
-					$strength += $player->getTotalStrength($this->_websoccer, $match) * 0.5;
-				}
+				if ($noOfStrikers < 3) $strength += $player->getTotalStrength($this->_websoccer, $match) * 1.5;
+				else $strength += $player->getTotalStrength($this->_websoccer, $match) * 0.5;
 			}
 		}
 		
@@ -582,16 +540,11 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 			$mfStrength = $player->getTotalStrength($this->_websoccer, $match);
 			
 			// add 30% for defensive midfielders, reduce 30% if attacking
-			if ($player->mainPosition == 'OM') {
-				$mfStrength = $mfStrength * 0.7;
-			} else if ($player->mainPosition == 'DM') {
-				$mfStrength = $mfStrength * 1.3;
-			}
+			if ($player->mainPosition == 'OM') $mfStrength = $mfStrength * 0.7;
+			elseif ($player->mainPosition == 'DM') $mfStrength = $mfStrength * 1.3;
 			
 			// give bonus on midfielders when team is supposed to be focussed on counterattacks. They will be more defending then.
-			if ($team->counterattacks) {
-				$mfStrength = $mfStrength * 1.1;
-			}
+			if ($team->counterattacks) $mfStrength = $mfStrength * 1.1;
 			
 			$strength += $mfStrength;
 		}
@@ -606,9 +559,9 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 		// less than 3 defence players would be extra risky
 		if ($noOfDefence < 3) {
 			$strength = $strength * 0.5;
-			
 			// but more than 4 extra secure
-		} else if ($noOfDefence > 4) {
+		}
+		elseif ($noOfDefence > 4) {
 			$strength = $strength * 1.5;
 		}
 	
@@ -645,6 +598,4 @@ class DefaultSimulationStrategy implements ISimulationStrategy {
 		$match->setPlayerWithBall(
 				SimulationHelper::selectPlayer(SimulationHelper::getOpponentTeam($scorer, $match), PLAYER_POSITION_DEFENCE, null));
 	}
-	
 }
-?>

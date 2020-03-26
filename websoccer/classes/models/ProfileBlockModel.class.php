@@ -39,13 +39,13 @@ class ProfileBlockModel implements IModel {
 	}
 	
 	public function getTemplateParameters() {
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_user";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_user';
 		
 		$user = $this->_websoccer->getUser();
 		
 		// select general information
-		$columns = "fanbeliebtheit AS user_popularity, highscore AS user_highscore";
-		$whereCondition = "id = %d";
+		$columns = 'fanbeliebtheit AS user_popularity, highscore AS user_highscore';
+		$whereCondition = 'id = \'%d\'';
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $user->id, 1);
 		$userinfo = $result->fetch_array();
 		$result->free();
@@ -54,9 +54,7 @@ class ProfileBlockModel implements IModel {
 		
 		// get team info
 		$team = null;
-		if ($clubId > 0) {
-			$team = TeamsDataService::getTeamSummaryById($this->_websoccer, $this->_db, $clubId);
-		}
+		if ($clubId > 0) $team = TeamsDataService::getTeamSummaryById($this->_websoccer, $this->_db, $clubId);
 		
 		// unread messages
 		$unseenMessages = MessagesDataService::countUnseenInboxMessages($this->_websoccer, $this->_db);
@@ -64,11 +62,7 @@ class ProfileBlockModel implements IModel {
 		// unseen notifications
 		$unseenNotifications = NotificationsDataService::countUnseenNotifications($this->_websoccer, $this->_db, $user->id, $clubId);
 		
-		return array("profile" => $userinfo, "userteam" => $team, "unseenMessages" => $unseenMessages,
-				"unseenNotifications" => $unseenNotifications);
+		return array('profile' => $userinfo, 'userteam' => $team, 'unseenMessages' => $unseenMessages,
+				'unseenNotifications' => $unseenNotifications);
 	}
-	
-	
 }
-
-?>

@@ -43,20 +43,16 @@ class SofortComPaymentNotificationController implements IActionController {
 	 */
 	public function executeAction($parameters) {
 		
-		$configKey = trim($this->_websoccer->getConfig("sofortcom_configkey"));
+		$configKey = trim($this->_websoccer->getConfig('sofortcom_configkey'));
 		
-		if (!strlen($configKey)) {
-			throw new Exception("Sofort.com configuration key is not configured.");
-		}
+		if (!strlen($configKey)) throw new Exception('Sofort.com configuration key is not configured.');
 		
 		// verify user
 		$userId = $parameters['u'];
-		$result = $this->_db->querySelect("id", $this->_websoccer->getConfig("db_prefix") . "_user", "id = %d", $userId);
+		$result = $this->_db->querySelect('id', $this->_websoccer->getConfig('db_prefix') . '_user', 'id = \'%d\'', $userId);
 		$user = $result->fetch_array();
 		$result->free();
-		if (!$user) {
-			throw new Exception("illegal user id");
-		}
+		if (!$user) throw new Exception('illegal user id');
 		
 		// read the notification from php://input  (http://php.net/manual/en/wrappers.php.php)
 		$SofortLib_Notification = new SofortLibNotification();
@@ -69,28 +65,26 @@ class SofortComPaymentNotificationController implements IActionController {
 		// verify transaction data
 		$SofortLibTransactionData->sendRequest();
 		if ($SofortLibTransactionData->isError()) {
-			EmailHelper::sendSystemEmail($this->_websoccer, $this->_websoccer->getConfig("systememail"), 
-				"Failed Sofort.com payment notification",
-				"Error: " . $SofortLibTransactionData->getError());
+			EmailHelper::sendSystemEmail($this->_websoccer, $this->_websoccer->getConfig('systememail'), 
+				'Failed Sofort.com payment notification',
+				'Error: ' . $SofortLibTransactionData->getError());
 			throw new Exception($SofortLibTransactionData->getError());
-		} else {
+		}
+		else {
 			
 			// verify status
 			if ($SofortLibTransactionData->getStatus() != 'received') {
-				EmailHelper::sendSystemEmail($this->_websoccer, $this->_websoccer->getConfig("systememail"),
-					"Failed Sofort.com payment notification: invalid status",
-					"Status: " . $SofortLibTransactionData->getStatus());
-				throw new Exception("illegal status");
+				EmailHelper::sendSystemEmail($this->_websoccer, $this->_websoccer->getConfig('systememail'),
+					'Failed Sofort.com payment notification: invalid status',
+					'Status: ' . $SofortLibTransactionData->getStatus());
+				throw new Exception('illegal status');
 			}
 
 			// credit amount
 			$amount = $SofortLibTransactionData->getAmount();
-			PremiumDataService::createPaymentAndCreditPremium($this->_websoccer, $this->_db, $userId, $amount, "sofortcom-notify");
+			PremiumDataService::createPaymentAndCreditPremium($this->_websoccer, $this->_db, $userId, $amount, 'sofortcom-notify');
 		}
 		
 		return null;
 	}
-	
 }
-
-?>

@@ -37,18 +37,18 @@ class AlltimeTableModel implements IModel {
 		$this->_i18n = $i18n;
 		$this->_websoccer = $websoccer;
 		
-		$this->_leagueId = (int) $this->_websoccer->getRequestParameter("id");
-		$this->_type = $this->_websoccer->getRequestParameter("type");
+		$this->_leagueId = (int) $this->_websoccer->getRequestParameter('id');
+		$this->_type = $this->_websoccer->getRequestParameter('type');
 		
 		// pre-select user's league in case no other league selected
 		$clubId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 		if ($this->_leagueId == 0 && $clubId > 0) {
-			$result = $db->querySelect("liga_id", $this->_websoccer->getConfig("db_prefix") . "_verein", 
-					"id = %d", $clubId, 1);
+			$result = $db->querySelect('liga_id', $this->_websoccer->getConfig('db_prefix') . '_verein', 
+					'id = \'%d\'', $clubId, 1);
 			$club = $result->fetch_array();
 			$result->free();
 			
-			$this->_leagueId = $club["liga_id"];
+			$this->_leagueId = $club['liga_id'];
 		}
 	}
 	
@@ -60,9 +60,6 @@ class AlltimeTableModel implements IModel {
 	public function getTemplateParameters() {
 		$teams = TeamsDataService::getTeamsOfLeagueOrderedByAlltimeTableCriteria($this->_websoccer, $this->_db, $this->_leagueId, $this->_type);
 		
-		return array("leagueId" => $this->_leagueId, "teams" => $teams);
+		return array('leagueId' => $this->_leagueId, 'teams' => $teams);
 	}
-	
 }
-
-?>

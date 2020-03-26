@@ -40,7 +40,7 @@ class UserHistoryModel implements IModel {
 	 * @see IModel::renderView()
 	 */
 	public function renderView() {
-		$this->_userId = (int) $this->_websoccer->getRequestParameter("userid");
+		$this->_userId = (int) $this->_websoccer->getRequestParameter('userid');
 		return $this->_userId > 0;
 	}
 	
@@ -78,23 +78,21 @@ class UserHistoryModel implements IModel {
 		while ($achievement = $result->fetch_array()) {
 			
 			if (strlen($achievement['league_name'])) {
-				$leagues[$achievement['league_name']][] = $achievement;
-			} else if (!isset($cups[$achievement['cup_name']])) {
+			    $leagues[$achievement['league_name']][] = $achievement;
+            }
+			elseif (!isset($cups[$achievement['cup_name']])) {
 				
 				$cups[$achievement['cup_name']] = $achievement;
 				
 				// delete achievement, since it is an older cup round than already saved
-			} else {
+			}
+			else {
 				$this->_db->queryDelete($tablePrefix . '_achievement', 'id = %d', $achievement['achievement_id']);
 			}
 			
 		}
 		$result->free();
-		
-		
-		return array("leagues" => $leagues, "cups" => $cups);
-	}
-	
-}
 
-?>
+		return array('leagues' => $leagues, 'cups' => $cups);
+	}
+}

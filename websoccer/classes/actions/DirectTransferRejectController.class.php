@@ -39,7 +39,7 @@ class DirectTransferRejectController implements IActionController {
 	public function executeAction($parameters) {
 		
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig("transferoffers_enabled")) {
+		if (!$this->_websoccer->getConfig('transferoffers_enabled')) {
 			return;
 		}
 		
@@ -47,42 +47,36 @@ class DirectTransferRejectController implements IActionController {
 		
 		
 		// get offer information
-		$result = $this->_db->querySelect("*", $this->_websoccer->getConfig("db_prefix") . "_transfer_offer", 
-				"id = %d AND receiver_club_id = %d",
-				array($parameters["id"], $clubId));
+		$result = $this->_db->querySelect('*', $this->_websoccer->getConfig('db_prefix') . '_transfer_offer', 
+				'id = \'%d\' AND receiver_club_id = \'%d\'',
+				array($parameters['id'], $clubId));
 		$offer = $result->fetch_array();
 		$result->free();
 		
 		if (!$offer) {
-			throw new Exception($this->_i18n->getMessage("transferoffers_offer_cancellation_notfound"));
+			throw new Exception($this->_i18n->getMessage('transferoffers_offer_cancellation_notfound'));
 		}
 		
 		$this->_db->queryUpdate(array(
-					"rejected_date" => $this->_websoccer->getNowAsTimestamp(),
-					"rejected_message" => $parameters["comment"],
-					"rejected_allow_alternative" => ($parameters["allow_alternative"]) ? 1 : 0
-				), $this->_websoccer->getConfig("db_prefix") . "_transfer_offer", "id = %d", $offer["id"]);
+					'rejected_date' => $this->_websoccer->getNowAsTimestamp(),
+					'rejected_message' => $parameters['comment'],
+					'rejected_allow_alternative' => ($parameters['allow_alternative']) ? 1 : 0
+				), $this->_websoccer->getConfig('db_prefix') . '_transfer_offer', 'id = \'%d\'', $offer['id']);
 		
 		// get player name for notification
-		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $offer["player_id"]);
-		if ($player["player_pseudonym"]) {
-			$playerName = $player["player_pseudonym"];
-		} else {
-			$playerName = $player["player_firstname"] . " " . $player["player_lastname"];
-		}
+		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $offer['player_id']);
+		if ($player['player_pseudonym']) $playerName = $player['player_pseudonym'];
+		else $playerName = $player['player_firstname'] . ' ' . $player['player_lastname'];
 		
 		// create notification
-		NotificationsDataService::createNotification($this->_websoccer, $this->_db, $offer["sender_user_id"], "transferoffer_notification_rejected",
-			array("playername" => $playerName, "receivername" => $this->_websoccer->getUser()->username), "transferoffer", "transferoffers#sent");
+		NotificationsDataService::createNotification($this->_websoccer, $this->_db, $offer['sender_user_id'], 'transferoffer_notification_rejected',
+			array('playername' => $playerName, 'receivername' => $this->_websoccer->getUser()->username), 'transferoffer', 'transferoffers#sent');
 			
 		// show success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS,
-				$this->_i18n->getMessage("transferoffers_offer_reject_success"),
-				""));
+				$this->_i18n->getMessage('transferoffers_offer_reject_success'),
+				''));
 		
 		return null;
 	}
-	
 }
-
-?>

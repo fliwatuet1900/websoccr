@@ -49,22 +49,19 @@ class StadiumModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$teamId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
-		
-		$stadium = StadiumsDataService::getStadiumByTeamId($this->_websoccer, $this->_db, $teamId);
-		
-		$construction = StadiumsDataService::getCurrentConstructionOrderOfTeam($this->_websoccer, $this->_db, $teamId);
-		
-		$upgradeCosts = array();
-		if ($stadium) {
-			$upgradeCosts["pitch"] = StadiumsDataService::computeUpgradeCosts($this->_websoccer, "pitch", $stadium);
-			$upgradeCosts["videowall"] = StadiumsDataService::computeUpgradeCosts($this->_websoccer, "videowall", $stadium);
-			$upgradeCosts["seatsquality"] = StadiumsDataService::computeUpgradeCosts($this->_websoccer, "seatsquality", $stadium);
-			$upgradeCosts["vipquality"] = StadiumsDataService::computeUpgradeCosts($this->_websoccer, "vipquality", $stadium);
-		}
-		
-		return array("stadium" => $stadium, "construction" => $construction, "upgradeCosts" => $upgradeCosts);
-	}
-	
-}
 
-?>
+        $stadium = StadiumsDataService::getStadiumByTeamId($this->_websoccer, $this->_db, $teamId);
+
+        $construction = StadiumsDataService::getCurrentConstructionOrderOfTeam($this->_websoccer, $this->_db, $teamId);
+
+        $upgradeCosts = array();
+        if ($stadium) {
+            $upgradeCosts['pitch'] = StadiumsDataService::computeUpgradeCosts($this->_websoccer, 'pitch', $stadium);
+            $upgradeCosts['videowall'] = StadiumsDataService::computeUpgradeCosts($this->_websoccer, 'videowall', $stadium);
+            $upgradeCosts['seatsquality'] = StadiumsDataService::computeUpgradeCosts($this->_websoccer, 'seatsquality', $stadium);
+            $upgradeCosts['vipquality'] = StadiumsDataService::computeUpgradeCosts($this->_websoccer, 'vipquality', $stadium);
+        }
+
+        return array('stadium' => $stadium, 'construction' => $construction, 'upgradeCosts' => $upgradeCosts);
+    }
+}

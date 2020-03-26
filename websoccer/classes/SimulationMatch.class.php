@@ -53,7 +53,7 @@ class SimulationMatch {
 	public $minute;
 	
 	/**
-	 * @var boolean TRUE if penaly shooting shall be simulated in case there is no winner.
+	 * @var boolean TRUE if penalty shootout shall be simulated in case there is no winner.
 	 */
 	public $penaltyShootingEnabled;
 	
@@ -150,7 +150,6 @@ class SimulationMatch {
     public function setPlayerWithBall($player) {
     	if ($this->playerWithBall !== NULL && $this->playerWithBall->id !== $player->id) {
     		$player->setBallContacts($player->getBallContacts() + 1);
-    		
     		$this->previousPlayerWithBall = $this->playerWithBall;
     	}
     	
@@ -169,6 +168,4 @@ class SimulationMatch {
     	unset($this->playerWithBall);
     	unset($this->previousPlayerWithBall);
     }
-    
 }
-?>

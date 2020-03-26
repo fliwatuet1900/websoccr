@@ -38,7 +38,7 @@ function escapeOutput($message) {
  * @return string HTML code displaying an alert.
  */
 function createWarningMessage($title, $message) {
-  return createMessage('warning', $title, $message);
+    return createMessage('warning', $title, $message);
 }
 
 /**
@@ -49,7 +49,7 @@ function createWarningMessage($title, $message) {
  * @return string HTML code displaying an alert.
  */
 function createInfoMessage($title, $message) {
-  return createMessage('info', $title, $message);
+    return createMessage('info', $title, $message);
 }
 
 /**
@@ -60,7 +60,7 @@ function createInfoMessage($title, $message) {
  * @return string HTML code displaying an alert.
  */
 function createErrorMessage($title, $message) {
-  return createMessage('error', $title, $message);
+    return createMessage('error', $title, $message);
 }
 
 /**
@@ -71,7 +71,7 @@ function createErrorMessage($title, $message) {
  * @return string HTML code displaying an alert.
  */
 function createSuccessMessage($title, $message) {
-  return createMessage('success', $title, $message);
+    return createMessage('success', $title, $message);
 }
 
 /**
@@ -83,12 +83,12 @@ function createSuccessMessage($title, $message) {
  * @return string HTML code displaying an alert.
  */
 function createMessage($severity, $title, $message) {
-  $html = '<div class=\'alert alert-'. $severity . '\'>';
-  $html .= '<button type=\'button\' class=\'close\' data-dismiss=\'alert\'>&times;</button>';
-  $html .= '<h4>'. $title .'</h4>';
-  $html .= $message;
-  $html .= '</div>';
-  return $html;
+    $html = '<div class="alert alert-'. $severity . '">';
+    $html .= '<button type="button" class="close" data-dismiss="alert">&times;</button>';
+    $html .= '<h4>'. $title .'</h4>';
+    $html .= $message;
+    $html .= '</div>';
+    return $html;
 }
 
 /**
@@ -110,4 +110,3 @@ function logAdminAction(WebSoccer $websoccer, $type, $username, $entity, $entity
 	$fw->close();
 }
 
-?>

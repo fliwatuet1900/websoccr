@@ -40,26 +40,23 @@ class SaveTicketsController implements IActionController {
 			return null;
 		}
 		
-		$columns["preis_stehen"] = $parameters["p_stands"];
-		$columns["preis_sitz"] = $parameters["p_seats"];
-		$columns["preis_haupt_stehen"] = $parameters["p_stands_grand"];
-		$columns["preis_haupt_sitze"] = $parameters["p_seats_grand"];
-		$columns["preis_vip"] = $parameters["p_vip"];
+		$columns['preis_stehen'] = $parameters['p_stands'];
+		$columns['preis_sitz'] = $parameters['p_seats'];
+		$columns['preis_haupt_stehen'] = $parameters['p_stands_grand'];
+		$columns['preis_haupt_sitze'] = $parameters['p_seats_grand'];
+		$columns['preis_vip'] = $parameters['p_vip'];
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_verein";
-		$whereCondition = "id = %d";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_verein';
+		$whereCondition = 'id = \'%d\'';
 		$parameters = $clubId;
 		
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameters);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS,
-				$this->_i18n->getMessage("saved_message_title"),
-				""));
+				$this->_i18n->getMessage('saved_message_title'),
+				''));
 		
 		return null;
 	}
-	
 }
-
-?>

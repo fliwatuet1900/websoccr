@@ -41,7 +41,7 @@ class FindNationalPlayersModel implements IModel {
 	 * @see IModel::renderView()
 	 */
 	public function renderView() {
-		return $this->_websoccer->getConfig("nationalteams_enabled");
+		return $this->_websoccer->getConfig('nationalteams_enabled');
 	}
 	
 	/**
@@ -52,43 +52,39 @@ class FindNationalPlayersModel implements IModel {
 		
 		// get team info
 		$teamId = NationalteamsDataService::getNationalTeamManagedByCurrentUser($this->_websoccer, $this->_db);
-		if (!$teamId) {
-			throw new Exception($this->_i18n->getMessage("nationalteams_user_requires_team"));
-		}
+		if (!$teamId) throw new Exception($this->_i18n->getMessage('nationalteams_user_requires_team'));
 		
-		$result = $this->_db->querySelect("name", $this->_websoccer->getConfig("db_prefix") . "_verein", "id = %d", $teamId);
+		$result = $this->_db->querySelect('name', $this->_websoccer->getConfig('db_prefix') . '_verein', 'id = \'%d\'', $teamId);
 		$team = $result->fetch_array();
 		$result->free();
 		
 		// query players
-		$firstName = $this->_websoccer->getRequestParameter("fname");
-		$lastName = $this->_websoccer->getRequestParameter("lname"); 
-		$position = $this->_websoccer->getRequestParameter("position"); 
-		$mainPosition = $this->_websoccer->getRequestParameter("position_main");
+		$firstName = $this->_websoccer->getRequestParameter('fname');
+		$lastName = $this->_websoccer->getRequestParameter('lname'); 
+		$position = $this->_websoccer->getRequestParameter('position'); 
+		$mainPosition = $this->_websoccer->getRequestParameter('position_main');
 		
-		$playersCount = NationalteamsDataService::findPlayersCount($this->_websoccer, $this->_db, $team["name"], $teamId,
+		$playersCount = NationalteamsDataService::findPlayersCount($this->_websoccer, $this->_db, $team['name'], $teamId,
 				$firstName, $lastName, $position, $mainPosition);
 		
 		// setup paginator
-		$eps = $this->_websoccer->getConfig("entries_per_page");
+		$eps = $this->_websoccer->getConfig('entries_per_page');
 		$paginator = new Paginator($playersCount, $eps, $this->_websoccer);
-		$paginator->addParameter("fname", $firstName);
-		$paginator->addParameter("lname", $lastName);
-		$paginator->addParameter("position", $position);
-		$paginator->addParameter("position_main", $mainPosition);
-		$paginator->addParameter("search", "true");
+		$paginator->addParameter('fname', $firstName);
+		$paginator->addParameter('lname', $lastName);
+		$paginator->addParameter('position', $position);
+		$paginator->addParameter('position_main', $mainPosition);
+		$paginator->addParameter('search', 'true');
 		
 		// get players records
 		if ($playersCount > 0) {
-			$players = NationalteamsDataService::findPlayers($this->_websoccer, $this->_db, $team["name"], $teamId,
+			$players = NationalteamsDataService::findPlayers($this->_websoccer, $this->_db, $team['name'], $teamId,
 				$firstName, $lastName, $position, $mainPosition, $paginator->getFirstIndex(), $eps);
-		} else {
+		}
+		else {
 			$players = array();
 		}
 		
-		return array("team_name" => $team["name"], "playersCount" => $playersCount, "players" => $players, "paginator" => $paginator);
+		return array('team_name' => $team['name'], 'playersCount' => $playersCount, 'players' => $players, 'paginator' => $paginator);
 	}
-	
 }
-
-?>

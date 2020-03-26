@@ -49,15 +49,11 @@ class MatchDetailsModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$matchId = (int) $this->_websoccer->getRequestParameter('id');
-		if ($matchId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if ($matchId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$match = MatchesDataService::getMatchById($this->_websoccer, $this->_db, $matchId);
 		
-		if (!isset($match['match_id'])) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if (!isset($match['match_id'])) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$allowTacticChanges = FALSE;
 		
@@ -80,18 +76,12 @@ class MatchDetailsModel implements IModel {
 		foreach ($reportmessages as $reportMessage) {
 			$type = $reportMessage['type'];
 			if ($type == 'Tor' || $type == 'Tor_mit_vorlage' || $type == 'Elfmeter_erfolg' || $type == 'Freistoss_treffer') {
-				if ($reportMessage['active_home']) {
-					array_unshift($homeStrikerMessages, $reportMessage);
-				} else {
-					array_unshift($guestStrikerMessages, $reportMessage);
-				}
+				if ($reportMessage['active_home']) array_unshift($homeStrikerMessages, $reportMessage);
+				else array_unshift($guestStrikerMessages, $reportMessage);
 			}
 		}
 		
 		return array('match' => $match, 'reportmessages' => $reportmessages, 'allowTacticChanges' => $allowTacticChanges,
 				'homeStrikerMessages' => $homeStrikerMessages, 'guestStrikerMessages' => $guestStrikerMessages);
 	}
-	
 }
-
-?>

@@ -49,19 +49,17 @@ class WhoIsOnlineModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$count = UsersDataService::countOnlineUsers($this->_websoccer, $this->_db);
-		$eps = $this->_websoccer->getConfig("entries_per_page");
+		$eps = $this->_websoccer->getConfig('entries_per_page');
 		$paginator = new Paginator($count, $eps, $this->_websoccer);
 		
 		if ($count > 0) {
 			$users = UsersDataService::getOnlineUsers($this->_websoccer, $this->_db, 
 					$paginator->getFirstIndex(), $eps);
-		} else {
+		}
+		else {
 			$users = array();
 		}
 		
-		return array("users" => $users, "paginator" => $paginator);
+		return array('users' => $users, 'paginator' => $paginator);
 	}
-	
 }
-
-?>

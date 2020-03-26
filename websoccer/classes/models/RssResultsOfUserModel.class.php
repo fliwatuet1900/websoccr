@@ -65,7 +65,4 @@ class RssResultsOfUserModel implements IModel {
 		
 		return array('items' => $items);
 	}
-	
 }
-
-?>

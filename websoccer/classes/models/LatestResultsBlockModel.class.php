@@ -52,7 +52,4 @@ class LatestResultsBlockModel implements IModel {
 		
 		return array('matches' => $matches);
 	}
-	
 }
-
-?>

@@ -33,45 +33,42 @@ class YouthMatchRequestsCreateModel implements IModel {
 		$this->_i18n = $i18n;
 		$this->_websoccer = $websoccer;
 	}
-	
+
 	public function renderView() {
-		return $this->_websoccer->getConfig("youth_enabled");
+		return $this->_websoccer->getConfig('youth_enabled');
 	}
-	
+
 	public function getTemplateParameters() {
-		
+
 		$timeOptions = array();
-		
-		$maxDays = $this->_websoccer->getConfig("youth_matchrequest_max_futuredays");
-		
-		$times = explode(",", $this->_websoccer->getConfig("youth_matchrequest_allowedtimes"));
+
+		$maxDays = $this->_websoccer->getConfig('youth_matchrequest_max_futuredays');
+
+		$times = explode(',', $this->_websoccer->getConfig('youth_matchrequest_allowedtimes'));
 		$validTimes = array();
 		foreach($times as $time) {
-			$validTimes[] = explode(":", $time);
+			$validTimes[] = explode(':', $time);
 		}
-		
+
 		$dateOptions = array();
-		
+
 		$dateObj = new DateTime();
-		$dateFormat = $this->_websoccer->getConfig("datetime_format");
+		$dateFormat = $this->_websoccer->getConfig('datetime_format');
 		for ($day = 1; $day <= $maxDays; $day++) {
-			
+
 			$dateObj->add(new DateInterval('P1D'));
-			
+
 			foreach ($validTimes as $validTime) {
 				$hour = $validTime[0];
 				$minute = $validTime[1];
-				
+
 				$dateObj->setTime($hour, $minute);
-				
+
 				$dateOptions[$dateObj->getTimestamp()] = $dateObj->format($dateFormat);
 			}
-			
-		}
-		
-		return array("dateOptions" => $dateOptions);
-	}
-	
-}
 
-?>
+		}
+
+		return array('dateOptions' => $dateOptions);
+	}
+}

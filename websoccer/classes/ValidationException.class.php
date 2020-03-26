@@ -43,6 +43,4 @@ class ValidationException extends Exception {
     public function getMessages() {
     	return $this->_messages;
     }
-
 }
-?>

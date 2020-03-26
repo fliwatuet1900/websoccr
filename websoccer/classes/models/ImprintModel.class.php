@@ -36,14 +36,11 @@ class ImprintModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		$filecontent = "";
+		$filecontent = '';
 		if (file_exists(IMPRINT_FILE)) {
 			$filecontent = file_get_contents(IMPRINT_FILE);
 		}
 		
-		return array("imprint_content" => $filecontent);
+		return array('imprint_content' => $filecontent);
 	}
-	
 }
-
-?>

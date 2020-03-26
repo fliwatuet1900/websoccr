@@ -45,12 +45,9 @@ class UserActivitiesModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		return array("activities" => 
+		return array('activities' => 
 				ActionLogDataService::getActionLogsOfUser($this->_websoccer, $this->_db, 
 						$this->_websoccer->getRequestParameter('userid')));
 		
 	}
-	
 }
-
-?>

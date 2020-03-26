@@ -67,5 +67,3 @@ interface ISkin {
 	 */
 	public function getImage($fileName);
 }
-
-?>

@@ -52,18 +52,13 @@ class NationalPlayersModel implements IModel {
 		
 		// get team info
 		$teamId = NationalteamsDataService::getNationalTeamManagedByCurrentUser($this->_websoccer, $this->_db);
-		if (!$teamId) {
-			throw new Exception($this->_i18n->getMessage("nationalteams_user_requires_team"));
-		}
+		if (!$teamId) throw new Exception($this->_i18n->getMessage('nationalteams_user_requires_team'));
 		
-		$result = $this->_db->querySelect("name", $this->_websoccer->getConfig("db_prefix") . "_verein", "id = %d", $teamId);
+		$result = $this->_db->querySelect('name', $this->_websoccer->getConfig('db_prefix') . '_verein', 'id = \'%d\'', $teamId);
 		$team = $result->fetch_array();
 		$result->free();
 		
-		return array("team_name" => $team["name"], 
-				"players" => NationalteamsDataService::getNationalPlayersOfTeamByPosition($this->_websoccer, $this->_db, $teamId));
+		return array('team_name' => $team['name'], 
+				'players' => NationalteamsDataService::getNationalPlayersOfTeamByPosition($this->_websoccer, $this->_db, $teamId));
 	}
-	
 }
-
-?>

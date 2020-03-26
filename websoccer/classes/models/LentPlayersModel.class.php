@@ -51,45 +51,40 @@ class LentPlayersModel implements IModel {
 		$teamId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 
 		$columns = array(
-				"P.id" => "id",
-				"vorname" => "firstname",
-				"nachname" => "lastname",
-				"kunstname" => "pseudonym",
-				"position" => "position",
-				"position_main" => "position_main",
-				"position_second" => "position_second",
-				"nation" => "player_nationality",
-				"lending_matches" => "lending_matches",
-				"lending_fee" => "lending_fee",
-				"C.id" => "team_id",
-				"C.name" => "team_name"
+				'P.id' => 'id',
+				'vorname' => 'firstname',
+				'nachname' => 'lastname',
+				'kunstname' => 'pseudonym',
+				'position' => 'position',
+				'position_main' => 'position_main',
+				'position_second' => 'position_second',
+				'nation' => 'player_nationality',
+				'lending_matches' => 'lending_matches',
+				'lending_fee' => 'lending_fee',
+				'C.id' => 'team_id',
+				'C.name' => 'team_name'
 		);
 		
-		if ($this->_websoccer->getConfig('players_aging') == 'birthday') {
-			$ageColumn = 'TIMESTAMPDIFF(YEAR,geburtstag,CURDATE())';
-		} else {
-			$ageColumn = 'age';
-		}
+		if ($this->_websoccer->getConfig('players_aging') == 'birthday') $ageColumn = 'TIMESTAMPDIFF(YEAR,geburtstag,CURDATE())';
+		else $ageColumn = 'age';
+
 		$columns[$ageColumn] = 'age';
 		
-		$dbPrefix = $this->_websoccer->getConfig("db_prefix");
-		$fromTable = $dbPrefix . "_spieler P INNER JOIN " . $dbPrefix . "_verein C ON C.id = P.verein_id";
-		$whereCondition = "P.status = 1 AND lending_owner_id = %d";
+		$dbPrefix = $this->_websoccer->getConfig('db_prefix');
+		$fromTable = $dbPrefix . '_spieler P INNER JOIN ' . $dbPrefix . '_verein C ON C.id = P.verein_id';
+		$whereCondition = 'P.status = \'1\' AND lending_owner_id = \'%d\'';
 		
-		$whereCondition .= " ORDER BY lending_matches ASC, position ASC, position_main ASC, nachname ASC, vorname ASC";
+		$whereCondition .= ' ORDER BY lending_matches ASC, position ASC, position_main ASC, nachname ASC, vorname ASC';
 		
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $teamId, 50);
 		
 		$players = array();
 		while ($player = $result->fetch_array()) {
-			$player["position"] = PlayersDataService::_convertPosition($player["position"]);
+			$player['position'] = PlayersDataService::_convertPosition($player['position']);
 			$players[] = $player;
 		}
 		$result->free();
 		
 		return array('lentplayers' => $players);
 	}
-	
 }
-
-?>

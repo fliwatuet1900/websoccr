@@ -36,7 +36,7 @@ class CancelYouthMatchRequestController implements IActionController {
 	
 	public function executeAction($parameters) {
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig("youth_enabled")) {
+		if (!$this->_websoccer->getConfig('youth_enabled')) {
 			return NULL;
 		}
 		
@@ -45,31 +45,24 @@ class CancelYouthMatchRequestController implements IActionController {
 		$clubId = $user->getClubId($this->_websoccer, $this->_db);
 		
 		// get request info
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_youthmatch_request";
-		$result = $this->_db->querySelect("*", $fromTable, "id = %d", $parameters["id"]);
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_youthmatch_request';
+		$result = $this->_db->querySelect('*', $fromTable, 'id = \'%d\'', $parameters['id']);
 		$request = $result->fetch_array();
 		$result->free();
 		
-		if (!$request) {
-			throw new Exception($this->_i18n->getMessage("youthteam_matchrequest_cancel_err_notfound"));
-		}
+		if (!$request) throw new Exception($this->_i18n->getMessage('youthteam_matchrequest_cancel_err_notfound'));
 		
 		// check if own request
-		if ($clubId != $request["team_id"]) {
-			throw new Exception("nice try");
-		}
+		if ($clubId != $request['team_id']) throw new Exception('nice try');
 		
 		// delte
-		$this->_db->queryDelete($fromTable, "id = %d", $parameters["id"]);
+		$this->_db->queryDelete($fromTable, 'id = \'%d\'', $parameters['id']);
 		
 		// create success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS,
-				$this->_i18n->getMessage("youthteam_matchrequest_cancel_success"),
-				""));
+				$this->_i18n->getMessage('youthteam_matchrequest_cancel_success'),
+				''));
 		
-		return "youth-matchrequests";
+		return 'youth-matchrequests';
 	}
-	
 }
-
-?>

@@ -42,45 +42,37 @@ class ChooseTrainerController implements IActionController {
 		
 		$user = $this->_websoccer->getUser();
 		$teamId = $user->getClubId($this->_websoccer, $this->_db);
-		if ($teamId < 1) {
-			throw new Exception($this->_i18n->getMessage("feature_requires_team"));
-		}
+		if ($teamId < 1) throw new Exception($this->_i18n->getMessage('feature_requires_team'));
 		
 		if (TrainingDataService::countRemainingTrainingUnits($this->_websoccer, $this->_db, $teamId)) {
-			throw new Exception($this->_i18n->getMessage("training_choose_trainer_err_existing_units"));
+			throw new Exception($this->_i18n->getMessage('training_choose_trainer_err_existing_units'));
 		}	
 		
 		// trainer info
-		$trainer = TrainingDataService::getTrainerById($this->_websoccer, $this->_db, $parameters["id"]);
-		if (!isset($trainer["id"])) {
-			throw new Exception("invalid ID");
-		}
+		$trainer = TrainingDataService::getTrainerById($this->_websoccer, $this->_db, $parameters['id']);
+		if (!isset($trainer['id'])) throw new Exception('invalid ID');
 		
 		// can team afford it?
-		$numberOfUnits = (int) $parameters["units"];
+		$numberOfUnits = (int) $parameters['units'];
 		
-		$totalCosts = $numberOfUnits * $trainer["salary"];
+		$totalCosts = $numberOfUnits * $trainer['salary'];
 		
 		$teamInfo = TeamsDataService::getTeamSummaryById($this->_websoccer, $this->_db, $teamId);
-		if ($teamInfo["team_budget"] <= $totalCosts) {
-			throw new Exception($this->_i18n->getMessage("training_choose_trainer_err_too_expensive"));
-		}
+		if ($teamInfo['team_budget'] <= $totalCosts) throw new Exception($this->_i18n->getMessage('training_choose_trainer_err_too_expensive'));
 		
 		// try to debit premium fee
-		if ($trainer['premiumfee']) {
-			PremiumDataService::debitAmount($this->_websoccer, $this->_db, $user->id, $trainer['premiumfee'], "choose-trainer");
-		}
+		if ($trainer['premiumfee']) PremiumDataService::debitAmount($this->_websoccer, $this->_db, $user->id, $trainer['premiumfee'], 'choose-trainer');
 		
 		// debit money
 		BankAccountDataService::debitAmount($this->_websoccer, $this->_db, $teamId,
 			$totalCosts,
-			"training_trainer_salary_subject",
-			$trainer["name"]);
+			'training_trainer_salary_subject',
+			$trainer['name']);
 		
 		// create new units
-		$columns["team_id"] = $teamId;
-		$columns["trainer_id"] = $trainer["id"];
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_training_unit";
+		$columns['team_id'] = $teamId;
+		$columns['trainer_id'] = $trainer['id'];
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_training_unit';
 		
 		for ($unitNo = 1; $unitNo <= $numberOfUnits; $unitNo++) {
 			$this->_db->queryInsert($columns, $fromTable);
@@ -88,13 +80,10 @@ class ChooseTrainerController implements IActionController {
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("saved_message_title"),
-				""));
+				$this->_i18n->getMessage('saved_message_title'),
+				''));
 		
 		// redirect to training overview
-		return "training";
+		return 'training';
 	}
-	
 }
-
-?>

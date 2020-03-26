@@ -142,10 +142,7 @@ class SimulationTeam {
      * @param int $goals number of goals to set.
      */
     public function setGoals($goals) {
-    	if ($this->goals !== $goals) {
-    		$this->goals = $goals;
-    		
-    	}
+    	if ($this->goals !== $goals) $this->goals = $goals;
     }
     
     /**
@@ -162,9 +159,7 @@ class SimulationTeam {
     	
     	foreach ($this->positionsAndPlayers as $position => $players) {
     		foreach ($players as $player) {
-    			if ($player->id !== $playerToRemove->id) {
-    				$newPositionsAndAplayers[$player->position][] = $player;
-    			}
+    			if ($player->id !== $playerToRemove->id) $newPositionsAndAplayers[$player->position][] = $player;
     			
     		}
     	}
@@ -172,9 +167,7 @@ class SimulationTeam {
     	$this->positionsAndPlayers = $newPositionsAndAplayers;
     	$this->removedPlayers[$playerToRemove->id] = $playerToRemove;
     	
-    	if ($this->freeKickPlayer != NULL && $this->freeKickPlayer->id == $playerToRemove->id) {
-    		$this->freeKickPlayer = NULL;
-    	}
+    	if ($this->freeKickPlayer != NULL && $this->freeKickPlayer->id == $playerToRemove->id) $this->freeKickPlayer = NULL;
     }
     
     /**
@@ -204,6 +197,4 @@ class SimulationTeam {
     	unset($this->playersOnBench);
     	unset($this->removedPlayers);
     }
-	
 }
-?>

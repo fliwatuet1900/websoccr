@@ -41,9 +41,7 @@ class RenameClubController implements IActionController {
 	public function executeAction($parameters) {
 		
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig('rename_club_enabled')) {
-			throw new Exceltion("feature is disabled");
-		}
+		if (!$this->_websoccer->getConfig('rename_club_enabled')) throw new Exceltion('feature is disabled');
 		
 		$user = $this->_websoccer->getUser();
 		
@@ -58,21 +56,18 @@ class RenameClubController implements IActionController {
 		$short = strtoupper($parameters['kurz']);
 		$this->_db->queryUpdate(array('name' => $parameters['name'], 'kurz' => $short), 
 				$this->_websoccer->getConfig('db_prefix') . '_verein',
-				'id = %d', $clubId);
+				'id = \'%d\'', $clubId);
 		
 		// rename stadium
 		$this->_db->queryUpdate(array('S.name' => $parameters['stadium']),
 				$this->_websoccer->getConfig('db_prefix') . '_verein AS C INNER JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_stadion AS S ON S.id = C.stadion_id',
-				'C.id = %d', $clubId);
+				'C.id = \'%d\'', $clubId);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("rename-club_success"),
-				""));
+				$this->_i18n->getMessage('rename-club_success'),
+				''));
 		
 		return 'league';
 	}
-	
 }
-
-?>

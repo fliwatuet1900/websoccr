@@ -32,23 +32,18 @@ class LogoutController implements IActionController {
 	}
 	
 	public function executeAction($parameters) {
-		$authenticatorClasses = explode(",", $this->_websoccer->getConfig("authentication_mechanism"));
+		$authenticatorClasses = explode(',', $this->_websoccer->getConfig('authentication_mechanism'));
 		foreach ($authenticatorClasses as $authenticatorClass) {
 			$authenticatorClass = trim($authenticatorClass);
-			if (!class_exists($authenticatorClass)) {
-				throw new Exception("Class not found: " . $authenticatorClass);
-			}
+			if (!class_exists($authenticatorClass)) throw new Exception('Class not found: ' . $authenticatorClass);
 			
 			$authenticator = new $authenticatorClass($this->_websoccer);
 			$authenticator->logoutUser($this->_websoccer->getUser());
 		}
 		
-		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, $this->_i18n->getMessage("logout_message_title"),
-				""));
+		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, $this->_i18n->getMessage('logout_message_title'),
+				''));
 		
-		return "home";
+		return 'home';
 	}
-	
 }
-
-?>

@@ -42,11 +42,8 @@ class DeleteShoutBoxMessageController implements IActionController {
 	public function executeAction($parameters) {
 		
 		$this->_db->queryDelete($this->_websoccer->getConfig('db_prefix') . '_shoutmessage', 
-				'id = %d', $parameters['mid']);
+				'id = \'%d\'', $parameters['mid']);
 		
 		return null;
 	}
-	
 }
-
-?>

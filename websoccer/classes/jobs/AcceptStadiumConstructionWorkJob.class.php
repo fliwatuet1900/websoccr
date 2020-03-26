@@ -59,7 +59,7 @@ class AcceptStadiumConstructionWorkJob extends AbstractJob {
 			if ($constructionResult == 'notcompleted') {
 					
 				$this->_db->queryUpdate(array('deadline' => $newDeadline), $this->_websoccer->getConfig('db_prefix') . '_stadium_construction',
-						'id = %d', $construction['id']);
+						'id = \'%d\'', $construction['id']);
 					
 				// send notification
 				if ($construction['user_id']) {
@@ -68,7 +68,8 @@ class AcceptStadiumConstructionWorkJob extends AbstractJob {
 				}
 					
 				// completed
-			} else {
+			}
+			else {
 					
 				// update stadium
 				$stadium = StadiumsDataService::getStadiumByTeamId($this->_websoccer, $this->_db, $construction['team_id']);
@@ -78,12 +79,11 @@ class AcceptStadiumConstructionWorkJob extends AbstractJob {
 				$columns['p_haupt_steh'] = $stadium['places_stands_grand'] + $construction['p_haupt_steh'];
 				$columns['p_haupt_sitz'] = $stadium['places_seats_grand'] + $construction['p_haupt_sitz'];
 				$columns['p_vip'] = $stadium['places_vip'] + $construction['p_vip'];
-				$this->_db->queryUpdate($columns, $this->_websoccer->getConfig('db_prefix') . '_stadion', 'id = %d',
+				$this->_db->queryUpdate($columns, $this->_websoccer->getConfig('db_prefix') . '_stadion', 'id = \'%d\'',
 						$stadium['stadium_id']);
 					
 				// delete order
-				$this->_db->queryDelete($this->_websoccer->getConfig('db_prefix') . '_stadium_construction',
-						'id = %d', $construction['id']);
+				$this->_db->queryDelete($this->_websoccer->getConfig('db_prefix') . '_stadium_construction', 'id = \'%d\'', $construction['id']);
 					
 				// send notification
 				if ($construction['user_id']) {
@@ -119,9 +119,6 @@ class AcceptStadiumConstructionWorkJob extends AbstractJob {
 			TrainingcampsDataService::executeCamp($this->_websoccer, $this->_db, $booking['team_id'], $booking);
 		}
 		$result->free();
-		
-		
+
 	}
 }
-
-?>

@@ -37,8 +37,8 @@ $mainTitle = $i18n->getMessage('all_settings_title');
 include(CONFIGCACHE_SETTINGS);
 
 if (!$admin['r_admin'] && !$admin['r_demo']) {
-  echo '<p>'. $i18n->getMessage('error_access_denied') . '</p>';
-  exit;
+    echo '<p>'. $i18n->getMessage('error_access_denied') . '</p>';
+    exit;
 }
 
 if (!$show) {
@@ -53,34 +53,32 @@ if (!$show) {
   ?>
 
   <h1><?php echo $mainTitle; ?></h1>
+  <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-horizontal">
+    <input type="hidden" name="show" value="speichern">
+	<input type="hidden" name="site" value="<?php echo $site; ?>">
 
-  <form action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' class='form-horizontal'>
-    <input type='hidden' name='show' value='speichern'>
-	<input type='hidden' name='site' value='<?php echo $site; ?>'>
-	
-
-	<ul class='nav nav-tabs'>
+	<ul class="nav nav-tabs">
 	<?php 
 	// tab headers
 	$firstTab = TRUE;
 	foreach ($tabs as $tabId => $settings) {
 		echo '<li';
-		if ($firstTab) echo ' class=\'active\'';
-		echo '><a href=\'#'. $tabId . '\' data-toggle=\'tab\'>'. $i18n->getMessage('settings_tab_' . $tabId) .'</a></li>';
+		if ($firstTab) echo ' class="active"';
+		echo '><a href="#'. $tabId . '" data-toggle="tab">'. $i18n->getMessage('settings_tab_' . $tabId) .'</a></li>';
 		$firstTab = FALSE;
 	}
 	?>
 	</ul>	
 	
-	<div class='tab-content'>
+	<div class="tab-content">
 	
 	<?php 
 	// tab content
 	$firstTab = TRUE;
 	foreach ($tabs as $tabId => $settings) {
-		echo '<div class=\'tab-pane';
+		echo '<div class="tab-pane';
 		if ($firstTab) echo ' active';
-		echo '\' id=\''. $tabId . '\'>';
+		echo '" id="'. $tabId . '">';
 		
 		foreach ($settings as $settingId => $settingInfo) {
 			echo FormBuilder::createFormGroup($i18n, $settingId, $settingInfo, $website->getConfig($settingId), 'settings_label_');
@@ -93,47 +91,36 @@ if (!$show) {
 	 
 	</div>	
 	
-	<div class='form-actions'>
-		<input type='submit' class='btn btn-primary' accesskey='s' title='Alt + s' value='<?php echo $i18n->getMessage('button_save'); ?>'> 
-		<input type='reset' class='btn' value='<?php echo $i18n->getMessage('button_reset'); ?>'>
+	<div class="form-actions">
+		<input type="submit" class="btn btn-primary" accesskey="s" title="Alt + s" value="<?php echo $i18n->getMessage('button_save'); ?>">
+		<input type="reset" class="btn" value="<?php echo $i18n->getMessage('button_reset'); ?>">
 	</div>
          
   </form>
 
   <?php
-
 }
 
 //********** Validate and save **********
-elseif ($show == 'speichern') {
+elseif ($show === 'speichern') {
 
-  if ($admin['r_demo']) $err[] = $i18n->getMessage('validationerror_no_changes_as_demo');
+    if ($admin['r_demo']) $err[] = $i18n->getMessage('validationerror_no_changes_as_demo');
 
-  //##### output errors #####
-  if (isset($err)) {
+    //##### output errors #####
+    if (isset($err)) include('validationerror.inc.php');
+    //##### Save #####
+    else {
+        $newSettings = array();
 
-    include('validationerror.inc.php');
-
-  }
-  //##### Save #####
-  else {
+        foreach ($setting as $settingId => $settingData) {
+            $newSettings[$settingId] = (isset($_POST[$settingId])) ? prepareFielfValueForSaving($_POST[$settingId]) : '';
+  	    }
   	
-  	$newSettings = array();
-  	
-  	foreach ($setting as $settingId => $settingData) {
-  		$newSettings[$settingId] = (isset($_POST[$settingId])) ? prepareFielfValueForSaving($_POST[$settingId]) : '';
-  	}
-  	
-  	$cf = ConfigFileWriter::getInstance($conf);
-  	$cf->saveSettings($newSettings); 
+        $cf = ConfigFileWriter::getInstance($conf);
+        $cf->saveSettings($newSettings);
 
-	include('success.inc.php');
-	
-	echo createWarningMessage($i18n->getMessage('settings_saved_note_restartjobs'),
-		$i18n->getMessage('settings_saved_note_restartjobs_details'));
-	
-  }
+        include('success.inc.php');
 
+        echo createWarningMessage($i18n->getMessage('settings_saved_note_restartjobs'), $i18n->getMessage('settings_saved_note_restartjobs_details'));
+    }
 }
-
-?>

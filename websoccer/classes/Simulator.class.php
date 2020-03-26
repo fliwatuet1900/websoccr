@@ -51,9 +51,7 @@ class Simulator {
     public function __construct(DbConnection $db, WebSoccer $websoccer) {
     	
     	$strategyClass = $websoccer->getConfig('sim_strategy');
-    	if (!class_exists($strategyClass)) {
-    		throw new Exception('simulation strategy class not found: ' . $strategyClass);
-    	}
+    	if (!class_exists($strategyClass)) throw new Exception('simulation strategy class not found: ' . $strategyClass);
     	$this->_websoccer = $websoccer;
     	$this->_db = $db;
     	$this->_simStrategy = new $strategyClass($websoccer);
@@ -77,9 +75,7 @@ class Simulator {
      * @param int $minutes number of minutes to simuate.
      */
     public function simulateMatch(SimulationMatch $match, $minutes) {
-    	if ($match->minute == null) {
-    		$match->minute = 0;
-    	}
+    	if ($match->minute == null) $match->minute = 0;
     	
     	// start the match
     	if ($match->minute == 0) {
@@ -105,7 +101,8 @@ class Simulator {
     		
     		if ($match->minute == 1) {
     			$this->_simStrategy->kickoff($match);
-    		} else {
+    		}
+    		else {
     			SimulationHelper::checkAndExecuteSubstitutions($match, $match->homeTeam, $this->_observers);
     			SimulationHelper::checkAndExecuteSubstitutions($match, $match->guestTeam, $this->_observers);
     		}
@@ -121,7 +118,7 @@ class Simulator {
     		// match ended?
     		// two possibilities: 
     		// a. Normal matches end after regular time
-    		// b. if penalty shooting is enabled, play extension if there is no result after 90 minutes
+    		// b. if penalty shootout is enabled, play extension if there is no result after 90 minutes
     		$lastMinute = 90 + SimulationHelper::getMagicNumber(1, 5);
     		if ($match->penaltyShootingEnabled || $match->type == 'Pokalspiel') {
     			
@@ -133,8 +130,9 @@ class Simulator {
     				$this->completeMatch($match);
     				break;
     				
-    				// no winner after extension time -> penalty shooting
-    			} elseif ($match->minute == 121 
+    				// no winner after extension time -> penalty shootout
+    			}
+    			elseif ($match->minute == 121
     					&& ($match->type != 'Pokalspiel' && $match->homeTeam->getGoals() == $match->guestTeam->getGoals()
     							|| $match->type == 'Pokalspiel' && SimulationCupMatchHelper::checkIfExtensionIsRequired($this->_websoccer, $this->_db, $match))) {
     				
@@ -148,8 +146,9 @@ class Simulator {
     						SimulationCupMatchHelper::createNextRoundMatchAndPayAwards($this->_websoccer, $this->_db, 
     							$match->homeTeam->id, $match->guestTeam->id, $match->cupName, $match->cupRoundName);
     						
-    					// guest team won
-    					} else {
+    					// away team won
+    					}
+    					else {
     						SimulationCupMatchHelper::createNextRoundMatchAndPayAwards($this->_websoccer, $this->_db,
     							$match->guestTeam->id, $match->homeTeam->id, $match->cupName, $match->cupRoundName);
     					}
@@ -157,11 +156,10 @@ class Simulator {
     				
     				$this->completeMatch($match);
     				break;
-    				
     			}
-    			
     			// regular match
-    		} elseif ($match->minute >= $lastMinute) {
+    		}
+    		elseif ($match->minute >= $lastMinute) {
     			$this->completeMatch($match);
     			break;
     		}
@@ -212,6 +210,4 @@ class Simulator {
     	}
     	return ($noOfPlayers > 5);
     }
-    
 }
-?>

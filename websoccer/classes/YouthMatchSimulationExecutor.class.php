@@ -58,7 +58,7 @@ class YouthMatchSimulationExecutor {
 		
 		// get matches to simulate
 		$result = $db->querySelect('*', $websoccer->getConfig('db_prefix') . '_youthmatch', 
-				'simulated != \'1\' AND matchdate <= %d ORDER BY matchdate ASC', $websoccer->getNowAsTimestamp(), $maxMatchesToSimulate);
+				'simulated != \'1\' AND matchdate <= \'%d\' ORDER BY matchdate ASC', $websoccer->getNowAsTimestamp(), $maxMatchesToSimulate);
 		while ($matchinfo = $result->fetch_array()) {
 			$match = self::_createMatch($websoccer, $db, $matchinfo);
 				
@@ -115,7 +115,7 @@ class YouthMatchSimulationExecutor {
 		$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_youthplayer AS P ON P.id = MP.player_id';
 		
 		// ensure that player still is in team in WHERE condition.
-		$whereCondition = 'MP.match_id = %d AND MP.team_id = %d AND P.team_id = %d ORDER BY playernumber ASC';
+		$whereCondition = 'MP.match_id = \'%d\' AND MP.team_id = \'%d\' AND P.team_id = \'%d\' ORDER BY playernumber ASC';
 		$parameters = array($match->id, $team->id, $team->id);
 		
 		$columns = array(
@@ -153,13 +153,15 @@ class YouthMatchSimulationExecutor {
 				$team->playersOnBench[$playerinfo['id']] = $player;
 				
 				// field player
-			} else {
+			}
+			else {
 				
 				// first player must be always goalkeeper
 				if ($addedFieldPlayers == 0) {
 					$player->position = 'Torwart';
 					$player->mainPosition = 'T';
-				} else {
+				}
+				else {
 					$player->position = $playerinfo['match_position'];
 				}
 				
@@ -193,7 +195,7 @@ class YouthMatchSimulationExecutor {
 	 */
 	private static function _createRandomFormation(WebSoccer $websoccer, DbConnection $db, SimulationMatch $match, SimulationTeam $team) {
 		// better delete possible previous formation with too few players
-		$db->queryDelete($websoccer->getConfig('db_prefix') . '_youthmatch_player', 'match_id = %d AND team_id = %d', array($match->id, $team->id));
+		$db->queryDelete($websoccer->getConfig('db_prefix') . '_youthmatch_player', 'match_id = \'%d\' AND team_id = \'%d\'', array($match->id, $team->id));
 		
 		// define the exact default formation
 		$formationPositions = array('T', 'LV', 'IV', 'IV', 'RV', 'LM', 'ZM', 'ZM', 'RM', 'LS', 'RS');
@@ -230,7 +232,8 @@ class YouthMatchSimulationExecutor {
 				$db->queryInsert($columns, $websoccer->getConfig('db_prefix') . '_youthmatch_player');
 				
 				$team->positionsAndPlayers[$player->position][] = $player;
-			} catch (Exception $e) {
+			}
+			catch (Exception $e) {
 				// could not be stored. Can happen when the youth player moved from the opponent to this team.
 				// then we get a PK violation. We just don't add this player then.
 			}
@@ -272,9 +275,7 @@ class YouthMatchSimulationExecutor {
 						$team->substitutions[] = $sub;
 					}
 				}
-		
 			}
-		
 		}
 	}
 	

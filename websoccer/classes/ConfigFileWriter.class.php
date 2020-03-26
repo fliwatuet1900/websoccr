@@ -59,13 +59,11 @@ class ConfigFileWriter {
     }
     
     private function _writeToFile() {
-    	$content = "<?php" . PHP_EOL;
+    	$content = '<?php' . PHP_EOL;
     	
     	foreach ($this->_settings as $id => $value) {
-    		$content .= "\$conf[\"". $id . "\"] = \"". addslashes($value) ."\";". PHP_EOL;
+    		$content .= '$conf[\''. $id . '\'] = \''. addslashes($value) .'\';'. PHP_EOL;
     	}
-    	
-    	$content .= "?>";
     	
     	$fw = new FileWriter(GLOBAL_CONFIG_FILE);
     	$fw->writeLine($content);
@@ -76,6 +74,4 @@ class ConfigFileWriter {
     private function __construct($settings) {
     	$this->_settings = $settings;
     }
-	
 }
-?>

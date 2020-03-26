@@ -36,28 +36,24 @@ class LeagueSelectionModel implements IModel {
 	}
 	
 	public function renderView() {
-		$this->_country = $this->_websoccer->getRequestParameter("country");
+		$this->_country = $this->_websoccer->getRequestParameter('country');
 		return (strlen($this->_country));
 	}
 	
 	public function getTemplateParameters() {
 		
 		// get table markers
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_liga";
-		$whereCondition = "land = '%s' ORDER BY name ASC";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_liga';
+		$whereCondition = 'land = \'%s\' ORDER BY name ASC';
 		
 		$leagues = array();
 		
-		$result = $this->_db->querySelect("id, name", $fromTable, $whereCondition, $this->_country);
+		$result = $this->_db->querySelect('id, name', $fromTable, $whereCondition, $this->_country);
 		while ($league = $result->fetch_array()) {
 			$leagues[] = $league;
 		}
 		$result->free();
 		
-		return array("leagues" => $leagues);
+		return array('leagues' => $leagues);
 	}
-	
-	
 }
-
-?>

@@ -88,7 +88,4 @@ class HallOfFameModel implements IModel {
 		
 		return array('leagues' => $leagues, 'cups' => $cups);
 	}
-	
 }
-
-?>

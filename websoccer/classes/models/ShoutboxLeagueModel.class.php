@@ -61,7 +61,7 @@ class ShoutboxLeagueModel implements IModel {
 		$fromTable .= ' INNER JOIN ' . $tablePrefix . '_saison AS SEASON ON (M.saison_id = SEASON.id)';
 		$fromTable .= ' INNER JOIN ' . $tablePrefix . '_liga AS L ON (L.id = SEASON.liga_id)';
 		
-		$whereCondition = 'L.id = %d ORDER BY MESSAGE.created_date DESC';
+		$whereCondition = 'L.id = \'%d\' ORDER BY MESSAGE.created_date DESC';
 		
 		$columns = array(
 				'MESSAGE.id' => 'message_id',
@@ -80,9 +80,6 @@ class ShoutboxLeagueModel implements IModel {
 		}
 		$result->free();
 		
-		return array("messages" => $messages, "hidesubmit" => TRUE);
+		return array('messages' => $messages, 'hidesubmit' => TRUE);
 	}
-	
 }
-
-?>

@@ -40,7 +40,7 @@ class TeamHistoryModel implements IModel {
 	 * @see IModel::renderView()
 	 */
 	public function renderView() {
-		$this->_teamId = (int) $this->_websoccer->getRequestParameter("teamid");
+		$this->_teamId = (int) $this->_websoccer->getRequestParameter('teamid');
 		return $this->_teamId > 0;
 	}
 	
@@ -70,7 +70,7 @@ class TeamHistoryModel implements IModel {
 		$fromTable .= ' LEFT JOIN ' . $tablePrefix . '_cup AS CUP ON CUP.id = CUPROUND.cup_id';
 		$fromTable .= ' LEFT JOIN ' . $tablePrefix . '_user AS U ON U.id = A.user_id';
 		
-		$whereCondition = 'A.team_id = %d ORDER BY A.date_recorded DESC';
+		$whereCondition = 'A.team_id = \'%d\' ORDER BY A.date_recorded DESC';
 		
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $this->_teamId);
 		$leagues = array();
@@ -79,22 +79,20 @@ class TeamHistoryModel implements IModel {
 			
 			if (strlen($achievement['league_name'])) {
 				$leagues[$achievement['league_name']][] = $achievement;
-			} else if (!isset($cups[$achievement['cup_name']])) {
+			}
+			elseif (!isset($cups[$achievement['cup_name']])) {
 				
 				$cups[$achievement['cup_name']] = $achievement;
 				
 				// delete achievement, since it is an older cup round than already saved
-			} else {
-				$this->_db->queryDelete($tablePrefix . '_achievement', 'id = %d', $achievement['achievement_id']);
+			}
+			else {
+				$this->_db->queryDelete($tablePrefix . '_achievement', 'id = \'%d\'', $achievement['achievement_id']);
 			}
 			
 		}
 		$result->free();
-		
-		
-		return array("leagues" => $leagues, "cups" => $cups);
-	}
-	
-}
 
-?>
+		return array('leagues' => $leagues, 'cups' => $cups);
+	}
+}

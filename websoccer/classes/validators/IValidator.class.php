@@ -47,7 +47,4 @@ interface IValidator {
 	 * @return string Internationalized validation message which can be displayed at view.
 	 */
 	public function getMessage();
-	
 }
-
-?>

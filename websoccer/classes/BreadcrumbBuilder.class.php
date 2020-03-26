@@ -40,7 +40,6 @@ class BreadcrumbBuilder {
 		if (!isset($pages[$currentPageId])) {
 			return;
 		}
-		
 		$items = array();
 		
 		$nextPageId = $currentPageId;
@@ -48,16 +47,10 @@ class BreadcrumbBuilder {
 			$pageConfig = json_decode($pages[$nextPageId], TRUE);
 			$items[$nextPageId] = $i18n->getNavigationLabel($nextPageId);
 			
-			if (isset($pageConfig['parentItem']) && strlen($pageConfig['parentItem'])) {
-				$nextPageId = $pageConfig['parentItem'];
-			} else {
-				$nextPageId = FALSE;
-			}
+			if (isset($pageConfig['parentItem']) && strlen($pageConfig['parentItem'])) $nextPageId = $pageConfig['parentItem'];
+			else $nextPageId = FALSE;
 		}
 		
 		return array_reverse($items);
-	}	
-	
+	}
 }
-
-?>

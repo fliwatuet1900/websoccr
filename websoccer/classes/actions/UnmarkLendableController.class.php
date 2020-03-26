@@ -41,33 +41,26 @@ class UnmarkLendableController implements IActionController {
 		$clubId = $user->getClubId($this->_websoccer, $this->_db);
 		
 		// check if it is own player. Might be already lent in the meanwhile. Or someone tries to cheat.
-		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters["id"]);
-		if ($clubId != $player["team_id"]) {
-			throw new Exception($this->_i18n->getMessage("lending_err_notownplayer"));
-		}
+		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters['id']);
+		if ($clubId != $player['team_id']) throw new Exception($this->_i18n->getMessage('lending_err_notownplayer'));
 		
 		// check if he is already lent. 
 		// Then the player is lent to the user itself and he tries to cheat, hence message is not that important.
-		if ($player["lending_owner_id"] > 0) {
-			throw new Exception($this->_i18n->getMessage("lending_err_borrowed_player"));
-		}
+		if ($player['lending_owner_id'] > 0) throw new Exception($this->_i18n->getMessage('lending_err_borrowed_player'));
 		
-		$columns = array("lending_fee" => 0);
+		$columns = array('lending_fee' => 0);
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_spieler";
-		$whereCondition = "id = %d";
-		$parameters = $parameters["id"];
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_spieler';
+		$whereCondition = 'id = \'%d\'';
+		$parameters = $parameters['id'];
 		
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameters);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("lending_lendable_unmark_success"),
-				""));
+				$this->_i18n->getMessage('lending_lendable_unmark_success'),
+				''));
 		
 		return null;
 	}
-	
 }
-
-?>

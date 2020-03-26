@@ -43,7 +43,6 @@ header('Content-type: application/json; charset=utf-8');
 
 // do not provide anything in offline mode
 if ($website->getConfig('offline') !== 'offline') {
-	
 	$parameters = array();
 	$validationMessages = null;
 	
@@ -52,13 +51,15 @@ if ($website->getConfig('offline') !== 'offline') {
 	if ($actionId !== NULL) {
 		try {
 			ActionHandler::handleAction($website, $db, $i18n, $actionId);
-		} catch (ValidationException $ve) {
+		}
+		catch (ValidationException $ve) {
 			$validationMessages = $ve->getMessages();
 			
 			$website->addFrontMessage(new FrontMessage(MESSAGE_TYPE_ERROR, 
 					$i18n->getMessage('validation_error_box_title'), 
 					$i18n->getMessage('validation_error_box_message')));
-		} catch (Exception $e) {
+		}
+		catch (Exception $e) {
 			$website->addFrontMessage(new FrontMessage(MESSAGE_TYPE_ERROR,
 					$i18n->getMessage('errorpage_title'),
 					$e->getMessage()));
@@ -68,12 +69,12 @@ if ($website->getConfig('offline') !== 'offline') {
 	$viewHandler = new ViewHandler($website, $db, $i18n, $page, $block, $validationMessages);
 	
 	try {
-		
 		// get and render target block
 		$blockId = $website->getRequestParameter(PARAM_BLOCK);
 		if (strlen($blockId) && isset($block[$blockId])) {
 			$output['content'] = $viewHandler->renderBlock($blockId, json_decode($block[$blockId], TRUE), $parameters);
-		} else {
+		}
+		else {
 			// get and render page
 			$pageId = $website->getRequestParameter(PARAM_PAGE);
 			if ($pageId != null) {
@@ -82,7 +83,8 @@ if ($website->getConfig('offline') !== 'offline') {
 			}
 		}
 		
-	} catch (Exception $e) {
+	}
+	catch (Exception $e) {
 		$website->addFrontMessage(new FrontMessage(MESSAGE_TYPE_ERROR,
 				$i18n->getMessage('errorpage_title'),
 				$e->getMessage()));
@@ -93,9 +95,8 @@ if ($website->getConfig('offline') !== 'offline') {
 
 if ($website->getRequestParameter('contentonly')) {
 	echo $output['content'];
-} else {
+}
+else {
 	$output['messages'] = $viewHandler->renderBlock('messagesblock', json_decode($block['messagesblock'], TRUE));
-	
 	echo json_encode($output);
 }
-?>

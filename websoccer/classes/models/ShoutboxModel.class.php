@@ -56,7 +56,7 @@ class ShoutboxModel implements IModel {
 		$fromTable .= ' INNER JOIN ' . $tablePrefix . '_verein AS GUEST ON GUEST.id = M.gast_verein';
 		$fromTable .= ' INNER JOIN ' . $tablePrefix . '_spiel AS REFERENCE ON (M.saison_id IS NOT NULL AND M.saison_id = REFERENCE.saison_id OR M.pokalname IS NOT NULL AND M.pokalname != \'\' AND  M.pokalname = REFERENCE.pokalname OR REFERENCE.spieltyp = \'Freundschaft\' AND M.spieltyp = REFERENCE.spieltyp)';
 		
-		$whereCondition = 'REFERENCE.id = %d ORDER BY MESSAGE.created_date DESC';
+		$whereCondition = 'REFERENCE.id = \'%d\' ORDER BY MESSAGE.created_date DESC';
 		
 		$columns = array(
 				'MESSAGE.id' => 'message_id',
@@ -75,9 +75,6 @@ class ShoutboxModel implements IModel {
 		}
 		$result->free();
 		
-		return array("messages" => $messages);
+		return array('messages' => $messages);
 	}
-	
 }
-
-?>

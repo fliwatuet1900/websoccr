@@ -47,7 +47,8 @@ class SchedioartFootballSkin extends DefaultBootstrapSkin {
 			$files[] = $dir . 'schedioart/schedioartskin.css';
 			$files[] = $dir . 'websoccer.css';
 			$files[] = $dir . 'bootstrap-responsive.min.css';
-		} else {
+		}
+		else {
 			$files[] = $dir . 'schedioart/theme.min.css';
 		}
 		
@@ -56,4 +57,3 @@ class SchedioartFootballSkin extends DefaultBootstrapSkin {
 		return $files;
 	}
 }
-?>

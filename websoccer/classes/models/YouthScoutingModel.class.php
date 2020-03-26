@@ -35,14 +35,14 @@ class YouthScoutingModel implements IModel {
 	}
 	
 	public function renderView() {
-		return $this->_websoccer->getConfig("youth_enabled") && $this->_websoccer->getConfig("youth_scouting_enabled");
+		return $this->_websoccer->getConfig('youth_enabled') && $this->_websoccer->getConfig('youth_scouting_enabled');
 	}
 	
 	public function getTemplateParameters() {
 		
 		$lastExecutionTimestamp = YouthPlayersDataService::getLastScoutingExecutionTime($this->_websoccer, $this->_db, 
 				$this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db));
-		$nextPossibleExecutionTimestamp = $lastExecutionTimestamp + $this->_websoccer->getConfig("youth_scouting_break_hours") * 3600;
+		$nextPossibleExecutionTimestamp = $lastExecutionTimestamp + $this->_websoccer->getConfig('youth_scouting_break_hours') * 3600;
 		$now = $this->_websoccer->getNowAsTimestamp();
 		
 		$scouts = array();
@@ -51,22 +51,16 @@ class YouthScoutingModel implements IModel {
 		$scoutingPossible = ($nextPossibleExecutionTimestamp <= $now);
 		if ($scoutingPossible) {
 			
-			$scoutId = (int) $this->_websoccer->getRequestParameter("scoutid");
-			if ($scoutId > 0) {
-				$countries = YouthPlayersDataService::getPossibleScoutingCountries();
-			} else {
-				$scouts = YouthPlayersDataService::getScouts($this->_websoccer, $this->_db);
-			}
+			$scoutId = (int) $this->_websoccer->getRequestParameter('scoutid');
+			if ($scoutId > 0) $countries = YouthPlayersDataService::getPossibleScoutingCountries();
+			else $scouts = YouthPlayersDataService::getScouts($this->_websoccer, $this->_db);
 			
 		}
 		
-		return array("lastExecutionTimestamp" => $lastExecutionTimestamp, 
-				"nextPossibleExecutionTimestamp" => $nextPossibleExecutionTimestamp,
-				"scoutingPossible" => $scoutingPossible,
-				"scouts" => $scouts,
-				"countries" => $countries);
+		return array('lastExecutionTimestamp' => $lastExecutionTimestamp, 
+				'nextPossibleExecutionTimestamp' => $nextPossibleExecutionTimestamp,
+				'scoutingPossible' => $scoutingPossible,
+				'scouts' => $scouts,
+				'countries' => $countries);
 	}
-	
 }
-
-?>

@@ -49,11 +49,12 @@ class SimulationAudienceCalculator {
 		$isAttractiveMatch = FALSE;
 		if ($match->type == 'Pokalspiel') {
 			$isAttractiveMatch = TRUE;
-		} else if ($match->type == 'Ligaspiel') {
+		}
+		elseif ($match->type == 'Ligaspiel') {
 			// consider difference between points
 			$tcolumns = 'sa_punkte';
 			$fromTable = $websoccer->getConfig('db_prefix') . '_verein';
-			$whereCondition = 'id = %d';
+			$whereCondition = 'id = \'%d\'';
 			
 			$result = $db->querySelect($tcolumns, $fromTable, $whereCondition, $match->homeTeam->id);
 			$home = $result->fetch_array();
@@ -132,7 +133,7 @@ class SimulationAudienceCalculator {
 		$columns['last_haupt_sitz'] = $tickets_seats_grand;
 		$columns['last_vip'] = $tickets_vip;
 		$fromTable = $websoccer->getConfig('db_prefix') . '_verein';
-		$whereCondition = 'id = %d';
+		$whereCondition = 'id = \'%d\'';
 		$db->queryUpdate($columns, $fromTable, $whereCondition, $match->homeTeam->id);
 		
 		// update match field
@@ -213,18 +214,12 @@ class SimulationAudienceCalculator {
 		$rate = $rate + $deviation;
 		
 		// consider fan popularity (-10 up to +10%)
-		if ($rate > 0) {
-			$rate = $rate - 10 + 1/5 * $fanpopularity;
-		}
+		if ($rate > 0) $rate = $rate - 10 + 1/5 * $fanpopularity;
 		
-		if ($isAttractiveMatch) {
-			$rate = $rate * 1.1;
-		}
+		if ($isAttractiveMatch) $rate = $rate * 1.1;
 		
 		// stadium extras
-		if ($rate > 0) {
-			$rate = $rate + $maintenanceInfluence;
-		}
+		if ($rate > 0) $rate = $rate + $maintenanceInfluence;
 		
 		return min(100, max(0, $rate)) / 100;
 	}
@@ -247,7 +242,7 @@ class SimulationAudienceCalculator {
 			}
 		}
 		
-		$db->queryUpdate($columns, $websoccer->getConfig('db_prefix') . '_stadion', 'id = %d', $homeInfo['stadium_id']);
+		$db->queryUpdate($columns, $websoccer->getConfig('db_prefix') . '_stadion', 'id = \'%d\'', $homeInfo['stadium_id']);
 	}
 	
 	private static function weakenPlayersDueToGrassQuality(WebSoccer $websoccer, $homeInfo, SimulationMatch $match) {
@@ -263,4 +258,3 @@ class SimulationAudienceCalculator {
 		}
 	}
 }
-?>

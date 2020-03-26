@@ -52,6 +52,4 @@ class GreenBootstrapSkin extends DefaultBootstrapSkin {
 		
 		return $files;
 	}
-	
 }
-?>

@@ -44,19 +44,13 @@ class FileUploadHelper {
 		$filename = $_FILES[$requestParameter]['name'];
 		$ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 		$allowedExtensions = explode(',', ALLOWED_EXTENSIONS);
-		if (!in_array($ext, $allowedExtensions)) {
-			throw new Exception($i18n->getMessage('validationerror_imageupload_noimagefile'));
-		}
+		if (!in_array($ext, $allowedExtensions)) throw new Exception($i18n->getMessage('validationerror_imageupload_noimagefile'));
 		
 		$imagesize = getimagesize($_FILES[$requestParameter]['tmp_name']);
-		if ($imagesize === FALSE) {
-			throw new Exception($i18n->getMessage('validationerror_imageupload_noimagefile'));
-		}
+		if ($imagesize === FALSE) throw new Exception($i18n->getMessage('validationerror_imageupload_noimagefile'));
 		
 		$type = substr($imagesize['mime'], strrpos($imagesize['mime'], '/') + 1);
-		if (!in_array($type, $allowedExtensions)) {
-			throw new Exception($i18n->getMessage('validationerror_imageupload_noimagefile'));
-		}
+		if (!in_array($type, $allowedExtensions)) throw new Exception($i18n->getMessage('validationerror_imageupload_noimagefile'));
 		
 		$targetFilename .= '.' . $ext;
 		self::_uploadFile($i18n, $requestParameter, $targetFilename, $targetDirectory);
@@ -69,13 +63,10 @@ class FileUploadHelper {
 			$tmp_name = $_FILES[$requestParameter]['tmp_name'];
 			$name = $targetFilename;
 			$uploaded = @move_uploaded_file($tmp_name, UPLOAD_FOLDER . $targetDirectory . '/'. $name);
-			if (!$uploaded) {
-				throw new Exception($i18n->getMessage('error_file_upload_failed'));
-			}
-		} else {
+			if (!$uploaded) throw new Exception($i18n->getMessage('error_file_upload_failed'));
+		}
+		else {
 			throw new Exception($i18n->getMessage('error_file_upload_failed'));
 		}
 	}
-	
 }
-?>

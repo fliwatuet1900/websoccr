@@ -158,9 +158,8 @@ class SimulationPlayer {
      * @param SimulationMatch $match match model.
      */
     public function getTotalStrength(WebSoccer $websoccer, SimulationMatch $match) {
-    	if ($this->totalStrength == null || $this->needsStrengthRecomputation == TRUE) {
-    		$this->recomputeTotalStrength($websoccer,$match);
-    	}
+    	if ($this->totalStrength == null || $this->needsStrengthRecomputation == TRUE) $this->recomputeTotalStrength($websoccer,$match);
+
     	return $this->totalStrength;
     } 
     
@@ -177,7 +176,6 @@ class SimulationPlayer {
     public function setMark($mark) {
     	if ($this->mark !== $mark) {
     		$this->mark = $mark;
-    		
     		$this->needsStrengthRecomputation = TRUE;
     	}
     }
@@ -213,27 +211,23 @@ class SimulationPlayer {
     	$mainStrength = $this->strength;
     	
     	// home field advantage
-    	if ($match->isSoldOut && $this->team->id == $match->homeTeam->id) {
-	    	$mainStrength += $websoccer->getConfig("sim_home_field_advantage");
-    	}
+    	if ($match->isSoldOut && $this->team->id == $match->homeTeam->id) $mainStrength += $websoccer->getConfig('sim_home_field_advantage');
     	
     	// weakening of NAs
-    	if ($this->team->noFormationSet) {
-    		$mainStrength = round($mainStrength * $websoccer->getConfig("sim_createformation_strength") / 100);
-    	}
+    	if ($this->team->noFormationSet) $mainStrength = round($mainStrength * $websoccer->getConfig('sim_createformation_strength') / 100);
     	
-    	$weightsSum = $websoccer->getConfig("sim_weight_strength")
-    		+ $websoccer->getConfig("sim_weight_strengthTech")
-    		+ $websoccer->getConfig("sim_weight_strengthStamina")
-    		+ $websoccer->getConfig("sim_weight_strengthFreshness")
-    		+ $websoccer->getConfig("sim_weight_strengthSatisfaction");
+    	$weightsSum = $websoccer->getConfig('sim_weight_strength')
+    		+ $websoccer->getConfig('sim_weight_strengthTech')
+    		+ $websoccer->getConfig('sim_weight_strengthStamina')
+    		+ $websoccer->getConfig('sim_weight_strengthFreshness')
+    		+ $websoccer->getConfig('sim_weight_strengthSatisfaction');
     		
     	// get weights from settings
-    	$totalStrength = $mainStrength * $websoccer->getConfig("sim_weight_strength"); 
-    	$totalStrength += $this->strengthTech * $websoccer->getConfig("sim_weight_strengthTech"); 
-    	$totalStrength += $this->strengthStamina * $websoccer->getConfig("sim_weight_strengthStamina"); 
-    	$totalStrength += $this->strengthFreshness * $websoccer->getConfig("sim_weight_strengthFreshness");
-    	$totalStrength += $this->strengthSatisfaction * $websoccer->getConfig("sim_weight_strengthSatisfaction");
+    	$totalStrength = $mainStrength * $websoccer->getConfig('sim_weight_strength'); 
+    	$totalStrength += $this->strengthTech * $websoccer->getConfig('sim_weight_strengthTech'); 
+    	$totalStrength += $this->strengthStamina * $websoccer->getConfig('sim_weight_strengthStamina'); 
+    	$totalStrength += $this->strengthFreshness * $websoccer->getConfig('sim_weight_strengthFreshness');
+    	$totalStrength += $this->strengthSatisfaction * $websoccer->getConfig('sim_weight_strengthSatisfaction');
     	$totalStrength = $totalStrength / $weightsSum;
     	
     	// consider mark (1.0 -> +10%, 6.0 -> -10%)
@@ -393,7 +387,7 @@ class SimulationPlayer {
      * 
      * @param int $minutesPlayed number of minutes that the player has been on the pitch.
      * @param boolean $recomputeFreshness TRUE (default) if the total strength shall be recomputed after setting the minutes. 
-     * If so, player also looses freshness over time.
+     * If so, player also loses freshness over time.
      */
     public function setMinutesPlayed($minutesPlayed, $recomputeFreshness = TRUE) {
     	if ($this->minutesPlayed < $minutesPlayed) {
@@ -405,7 +399,8 @@ class SimulationPlayer {
     			if ($minutesPlayed == 20 && $this->position == PLAYER_POSITION_GOALY) {
     				$this->strengthFreshness = max(1, $this->strengthFreshness - 1);
     				$this->needsStrengthRecomputation = TRUE;
-    			} else if ($this->position != PLAYER_POSITION_GOALY) {
+    			}
+    			elseif ($this->position != PLAYER_POSITION_GOALY) {
     				$this->looseFreshness();
     			}
     			
@@ -423,9 +418,7 @@ class SimulationPlayer {
     private function looseFreshness() {
     	$freshness = $this->strengthFreshness - 1;
     	
-    	if ($this->age > 32 && $this->position != PLAYER_POSITION_GOALY) {
-    		$freshness -= 1;
-    	}
+    	if ($this->age > 32 && $this->position != PLAYER_POSITION_GOALY) $freshness -= 1;
     	
     	// playing offensive is extra tiring for offensive players
     	if ($this->team->offensive >= 80 && ($this->position == PLAYER_POSITION_MIDFIELD || $this->position == PLAYER_POSITION_STRIKER)) {
@@ -433,9 +426,7 @@ class SimulationPlayer {
     	}
     	
     	// consider bad stamina
-    	if ($this->strengthStamina < 40) {
-    		$freshness -= 1;
-    	}
+    	if ($this->strengthStamina < 40) $freshness -= 1;
     	
     	$freshness = max(1, $freshness);
     	$this->strengthFreshness = $freshness;
@@ -451,6 +442,4 @@ class SimulationPlayer {
     	return "{id: ". $this->id .", team: ". $this->team->id . ", position: ". $this->position .", mark: ". $this->mark 
     		.", strength: " . $this->strength . ", strengthTech: " . $this->strengthTech . ", strengthStamina: " . $this->strengthStamina . ", strengthFreshness: " . $this->strengthFreshness . ", strengthSatisfaction: " . $this->strengthSatisfaction . "}";
     }
-	
 }
-?>

@@ -54,21 +54,18 @@ class MyScheduleModel implements IModel {
 		
 		$clubId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 		
-		$whereCondition = '(home_verein = %d OR gast_verein = %d) AND berechnet != \'1\'';
+		$whereCondition = '(home_verein = \'%d\' OR gast_verein = \'%d\') AND berechnet != \'1\'';
 		$parameters = array($clubId, $clubId);
 		
 		$result = $this->_db->querySelect('COUNT(*) AS hits', $this->_websoccer->getConfig('db_prefix') . '_spiel', $whereCondition, $parameters);
 		$matchesCnt = $result->fetch_array();
 		$result->free();
-		if ($matchesCnt) {
-			$count = $matchesCnt['hits'];
-		} else {
-			$count = 0;
-		}
+		if ($matchesCnt) $count = $matchesCnt['hits'];
+		else $count = 0;
 		
 		if ($count) {
 			$whereCondition .= ' ORDER BY M.datum ASC';
-			$eps = $this->_websoccer->getConfig("entries_per_page");
+			$eps = $this->_websoccer->getConfig('entries_per_page');
 			$paginator = new Paginator($count, $eps, $this->_websoccer);
 			
 			$matches = MatchesDataService::getMatchesByCondition($this->_websoccer, $this->_db, $whereCondition, $parameters, 
@@ -76,9 +73,6 @@ class MyScheduleModel implements IModel {
 			
 		}
 		
-		return array("matches" => $matches, "paginator" => $paginator);
+		return array('matches' => $matches, 'paginator' => $paginator);
 	}
-	
 }
-
-?>

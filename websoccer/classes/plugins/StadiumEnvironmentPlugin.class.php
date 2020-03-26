@@ -48,7 +48,7 @@ class StadiumEnvironmentPlugin {
 		
 		if ($bonus != 0) {
 			$playerTable = $event->websoccer->getConfig('db_prefix') . '_youthplayer';
-			$result = $event->db->querySelect('strength', $playerTable, 'id = %d', $event->playerId);
+			$result = $event->db->querySelect('strength', $playerTable, 'id = \'%d\'', $event->playerId);
 			$player = $result->fetch_array();
 			$result->free();
 			
@@ -57,13 +57,10 @@ class StadiumEnvironmentPlugin {
 				$maxStrength = (int) $event->websoccer->getConfig('youth_scouting_max_strength');
 				
 				$strength = max($minStrength, min($maxStrength, $player['strength'] + $bonus));
-				if ($strength != $player['strength']) {
-					$event->db->queryUpdate(array('strength' => $strength), $playerTable, 'id = %d', $event->playerId);
-				}
+				if ($strength != $player['strength']) $event->db->queryUpdate(array('strength' => $strength), $playerTable, 'id = \'%d\'', $event->playerId);
 				
 			}
 		}
-		
 	}
 	
 	/**
@@ -79,21 +76,15 @@ class StadiumEnvironmentPlugin {
 		
 		$bonus = $bonus / 100;
 		
-		if ($event->rateSeats) {
-			$event->rateSeats = max(0.0, min(1.0, $event->rateSeats + $bonus));
-		}
-		if ($event->rateStands) {
-			$event->rateStands = max(0.0, min(1.0, $event->rateStands + $bonus));
-		}
-		if ($event->rateSeatsGrand) {
-			$event->rateSeatsGrand = max(0.0, min(1.0, $event->rateSeatsGrand + $bonus));
-		}
-		if ($event->rateStandsGrand) {
-			$event->rateStandsGrand = max(0.0, min(1.0, $event->rateStandsGrand + $bonus));
-		}
-		if ($event->rateVip) {
-			$event->rateVip = max(0.0, min(1.0, $event->rateVip + $bonus));
-		}
+		if ($event->rateSeats) $event->rateSeats = max(0.0, min(1.0, $event->rateSeats + $bonus));
+
+		if ($event->rateStands) $event->rateStands = max(0.0, min(1.0, $event->rateStands + $bonus));
+
+		if ($event->rateSeatsGrand) $event->rateSeatsGrand = max(0.0, min(1.0, $event->rateSeatsGrand + $bonus));
+
+		if ($event->rateStandsGrand) $event->rateStandsGrand = max(0.0, min(1.0, $event->rateStandsGrand + $bonus));
+
+		if ($event->rateVip) $event->rateVip = max(0.0, min(1.0, $event->rateVip + $bonus));
 	}
 	
 	/**
@@ -114,7 +105,8 @@ class StadiumEnvironmentPlugin {
 		if ($sum > 0) {
 			BankAccountDataService::creditAmount($event->websoccer, $event->db, $homeTeamId, $sum, 
 				'stadiumenvironment_matchincome_subject', $event->websoccer->getConfig('projectname'));
-		} else {
+		}
+		else {
 			BankAccountDataService::debitAmount($event->websoccer, $event->db, $homeTeamId, abs($sum),
 				'stadiumenvironment_costs_per_match_subject', $event->websoccer->getConfig('projectname'));
 		}
@@ -143,20 +135,17 @@ class StadiumEnvironmentPlugin {
 			// get injured players
 			$playerTable = $event->websoccer->getConfig('db_prefix') . '_spieler';
 			$result = $event->db->querySelect('id,verein_id AS team_id,verletzt AS injured', $playerTable, 
-					'(verein_id = %d OR verein_id = %d) AND verletzt > 0', array($homeTeamId, $guestTeamId));
+					'(verein_id = \'%d\' OR verein_id = \'%d\') AND verletzt > \'0\'', array($homeTeamId, $guestTeamId));
 			while ($player = $result->fetch_array()) {
 				
 				$reduction = 0;
-				if ($sumHome > 0 && $player['team_id'] == $homeTeamId) {
-					$reduction = $sumHome;
-				} elseif ($sumGuest > 0 && $player['team_id'] == $guestTeamId) {
-					$reduction = $sumGuest;
-				}
+				if ($sumHome > 0 && $player['team_id'] == $homeTeamId) $reduction = $sumHome;
+				elseif ($sumGuest > 0 && $player['team_id'] == $guestTeamId) $reduction = $sumGuest;
 				
 				// update player
 				if ($reduction > 0) {
 					$injured = max(0, $player['injured'] - $reduction);
-					$event->db->queryUpdate(array('verletzt' => $injured), $playerTable, 'id = %d', $player['id']);
+					$event->db->queryUpdate(array('verletzt' => $injured), $playerTable, 'id = \'%d\'', $player['id']);
 				}
 			}
 			$result->free();
@@ -168,7 +157,7 @@ class StadiumEnvironmentPlugin {
 		
 		$dbPrefix = $websoccer->getConfig('db_prefix');
 		$result = $db->querySelect('SUM(' . $attributeName . ') AS attrSum', $dbPrefix . '_buildings_of_team INNER JOIN '. $dbPrefix . '_stadiumbuilding ON id = building_id', 
-				'team_id = %d AND construction_deadline < %d', array($teamId, $websoccer->getNowAsTimestamp()));
+				'team_id = \'%d\' AND construction_deadline < \'%d\'', array($teamId, $websoccer->getNowAsTimestamp()));
 		$resArray = $result->fetch_array();
 		$result->free();
 		
@@ -178,6 +167,4 @@ class StadiumEnvironmentPlugin {
 		
 		return 0;
 	}
-	
 }
-?>

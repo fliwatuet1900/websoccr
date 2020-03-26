@@ -29,7 +29,7 @@ class MatchesDataService {
 		$fromTable = self::_getFromPart($websoccer);
 	
 		// where
-		$whereCondition = 'M.berechnet != \'1\' AND (HOME.id = %d OR GUEST.id = %d) AND M.datum > %d ORDER BY M.datum ASC';
+		$whereCondition = 'M.berechnet != \'1\' AND (HOME.id = \'%d\' OR GUEST.id = \'%d\') AND M.datum > \'%d\' ORDER BY M.datum ASC';
 		$parameters = array($clubId, $clubId, $websoccer->getNowAsTimestamp());
 	
 		// select
@@ -59,7 +59,7 @@ class MatchesDataService {
 		$fromTable .= ' LEFT JOIN ' . $formationTable . ' AS GUEST_F ON GUEST_F.verein_id = GUEST.id AND GUEST_F.match_id = M.id';
 		
 		// where
-		$whereCondition = 'M.berechnet != \'1\' AND (HOME.id = %d OR GUEST.id = %d) AND M.datum > %d ORDER BY M.datum ASC';
+		$whereCondition = 'M.berechnet != \'1\' AND (HOME.id = \'%d\' OR GUEST.id = \'%d\') AND M.datum > \'%d\' ORDER BY M.datum ASC';
 		$parameters = array($clubId, $clubId, $websoccer->getNowAsTimestamp());
 		
 		// select
@@ -77,7 +77,8 @@ class MatchesDataService {
 		
 		if (!count($matchinfos)) {
 			$matchinfo = array();
-		} else {
+		}
+		else {
 			$matchinfo = $matchinfos[0];
 			$matchinfo['match_type'] = self::_convertLeagueType($matchinfo['match_type']);
 		}
@@ -89,7 +90,7 @@ class MatchesDataService {
 		$fromTable = self::_getFromPart($websoccer);
 	
 		// where
-		$whereCondition = 'M.berechnet != \'1\' AND M.minutes > 0 AND (HOME.user_id = %d OR GUEST.user_id = %d) AND M.datum < %d ORDER BY M.datum DESC';
+		$whereCondition = 'M.berechnet != \'1\' AND M.minutes > \'0\' AND (HOME.user_id = \'%d\' OR GUEST.user_id = \'%d\') AND M.datum < \'d\' ORDER BY M.datum DESC';
 		$parameters = array($websoccer->getUser()->id, $websoccer->getUser()->id, $websoccer->getNowAsTimestamp());
 	
 		// select
@@ -105,7 +106,8 @@ class MatchesDataService {
 	
 		if (!count($matchinfos)) {
 			$matchinfo = array();
-		} else {
+		}
+		else {
 			$matchinfo = $matchinfos[0];
 			$matchinfo['match_type'] = self::_convertLeagueType($matchinfo['match_type']);
 		}
@@ -128,7 +130,7 @@ class MatchesDataService {
 		}
 	
 		// where
-		$whereCondition = 'M.id = %d';
+		$whereCondition = 'M.id = \'%d\'';
 		$parameters = $matchId;
 	
 		// select
@@ -191,7 +193,7 @@ class MatchesDataService {
 		$fromTable = $websoccer->getConfig('db_prefix') . '_spiel AS M';
 	
 		// where
-		$whereCondition = 'M.id = %d';
+		$whereCondition = 'M.id = \'%d\'';
 		$parameters = $matchId;
 	
 		// select
@@ -235,7 +237,7 @@ class MatchesDataService {
 	
 	public static function getLastMatch(WebSoccer $websoccer, DbConnection $db) {
 		// where
-		$whereCondition = 'M.berechnet = 1 AND (HOME.user_id = %d OR GUEST.user_id = %d) AND M.datum < %d ORDER BY M.datum DESC';
+		$whereCondition = 'M.berechnet = \'1\' AND (HOME.user_id = \'%d\' OR GUEST.user_id = \'%d\') AND M.datum < \'%d\' ORDER BY M.datum DESC';
 		$parameters = array($websoccer->getUser()->id, $websoccer->getUser()->id, $websoccer->getNowAsTimestamp());
 	
 		return self::_getMatchSummaryByCondition($websoccer, $db, $whereCondition, $parameters);
@@ -243,7 +245,7 @@ class MatchesDataService {
 	
 	public static function getLiveMatchByTeam(WebSoccer $websoccer, DbConnection $db, $teamId) {
 		// where
-		$whereCondition = 'M.berechnet != 1 AND (HOME.id = %d OR GUEST.id = %d) AND M.minutes > 0 ORDER BY M.datum DESC';
+		$whereCondition = 'M.berechnet != \'1\' AND (HOME.id = \'%d\' OR GUEST.id = \'%d\') AND M.minutes > \'0\' ORDER BY M.datum DESC';
 		$parameters = array($teamId, $teamId);
 	
 		return self::_getMatchSummaryByCondition($websoccer, $db, $whereCondition, $parameters);
@@ -267,7 +269,8 @@ class MatchesDataService {
 	
 		if (!count($matchinfos)) {
 			$matchinfo = array();
-		} else {
+		}
+		else {
 			$matchinfo = $matchinfos[0];
 			$matchinfo['match_type'] = self::_convertLeagueType($matchinfo['match_type']);
 		}
@@ -279,7 +282,7 @@ class MatchesDataService {
 		$fromTable = self::_getFromPart($websoccer);
 		
 		// where
-		$whereCondition = 'M.berechnet = 1 AND (HOME.id = %d AND GUEST.id = %d OR HOME.id = %d AND GUEST.id = %d) ORDER BY M.datum DESC';
+		$whereCondition = 'M.berechnet = \'1\' AND (HOME.id = \'%d\' AND GUEST.id = \'%d\' OR HOME.id = \'%d\' AND GUEST.id = \'%d\') ORDER BY M.datum DESC';
 		$parameters = array($matchinfo['match_home_id'], $matchinfo['match_guest_id'], $matchinfo['match_guest_id'], $matchinfo['match_home_id']);
 		
 		// select
@@ -320,7 +323,7 @@ class MatchesDataService {
 	
 	public static function getMatchesByMatchday(WebSoccer $websoccer, DbConnection $db, $seasonId, $matchDay) {
 		// where
-		$whereCondition = 'M.saison_id = %d AND M.spieltag = %d  ORDER BY M.datum ASC';
+		$whereCondition = 'M.saison_id = \'%d\' AND M.spieltag = \'%d\'  ORDER BY M.datum ASC';
 		$parameters = array($seasonId, $matchDay);
 	
 		return self::getMatchesByCondition($websoccer, $db, $whereCondition, $parameters, 50);
@@ -344,7 +347,7 @@ class MatchesDataService {
 	
 	public static function getLatestMatches(WebSoccer $websoccer, DbConnection $db, $limit = 20, $ignoreFriendlies = FALSE) {
 		// where
-		$whereCondition = 'M.berechnet = 1';
+		$whereCondition = 'M.berechnet = \'1\'';
 		if ($ignoreFriendlies) {
 			$whereCondition .= ' AND M.spieltyp != \'Freundschaft\'';
 		}
@@ -356,7 +359,7 @@ class MatchesDataService {
 	
 	public static function getLatestMatchesByUser(WebSoccer $websoccer, DbConnection $db, $userId) {
 		// where
-		$whereCondition = 'M.berechnet = 1 AND (M.home_user_id = %d OR M.gast_user_id = %d) ORDER BY M.datum DESC';
+		$whereCondition = 'M.berechnet = \'1\' AND (M.home_user_id = \'%d\' OR M.gast_user_id = \'%d\') ORDER BY M.datum DESC';
 		$parameters = array($userId, $userId);
 	
 		return self::getMatchesByCondition($websoccer, $db, $whereCondition, $parameters, 20);
@@ -364,7 +367,7 @@ class MatchesDataService {
 	
 	public static function getLatestMatchesByTeam(WebSoccer $websoccer, DbConnection $db, $teamId) {
 		// where
-		$whereCondition = 'M.berechnet = 1 AND (HOME.id = %d OR GUEST.id = %d) ORDER BY M.datum DESC';
+		$whereCondition = 'M.berechnet = \'1\' AND (HOME.id = \'%d\' OR GUEST.id = \'%d\') ORDER BY M.datum DESC';
 		$parameters = array($teamId, $teamId);
 	
 		return self::getMatchesByCondition($websoccer, $db, $whereCondition, $parameters, 20);
@@ -376,7 +379,7 @@ class MatchesDataService {
 		$endTs = $startTs + 3600 * 24;
 		
 		// where
-		$whereCondition = 'M.datum >= %d AND M.datum < %d ORDER BY M.datum ASC';
+		$whereCondition = 'M.datum >= \'%d\' AND M.datum < \'%d\' ORDER BY M.datum ASC';
 		$parameters = array($startTs, $endTs);
 	
 		$limit = $startIndex .','. $entries_per_page;
@@ -389,7 +392,7 @@ class MatchesDataService {
 		$endTs = $startTs + 3600 * 24;
 	
 		// where
-		$whereCondition = 'M.datum >= %d AND M.datum < %d';
+		$whereCondition = 'M.datum >= \'%d\' AND M.datum < \'%d\'';
 		$parameters = array($startTs, $endTs);
 		
 		$result = $db->querySelect('COUNT(*) AS hits', $websoccer->getConfig('db_prefix') . '_spiel AS M', $whereCondition, $parameters);
@@ -406,7 +409,7 @@ class MatchesDataService {
 	
 	public static function getMatchesByTeamAndTimeframe(WebSoccer $websoccer, DbConnection $db, $teamId, $dateStart, $dateEnd) {
 		// where
-		$whereCondition = '(HOME.id = %d OR GUEST.id = %d) AND datum >= %d AND datum <= %d ORDER BY M.datum DESC';
+		$whereCondition = '(HOME.id = \'%d\' OR GUEST.id = \'%d\') AND datum >= \'%d\' AND datum <= \'%d\' ORDER BY M.datum DESC';
 		$parameters = array($teamId, $teamId, $dateStart, $dateEnd);
 	
 		return self::getMatchesByCondition($websoccer, $db, $whereCondition, $parameters, 20);
@@ -415,7 +418,7 @@ class MatchesDataService {
 	public static function getMatchdayNumberOfTeam(WebSoccer $websoccer, DbConnection $db, $teamId) {
 		$columns = 'spieltag AS matchday';
 		$fromTable = $websoccer->getConfig('db_prefix') . '_spiel';
-		$whereCondition = 'spieltyp = \'Ligaspiel\' AND berechnet = 1 AND (home_verein = %d OR gast_verein = %d) ORDER BY datum DESC';
+		$whereCondition = 'spieltyp = \'Ligaspiel\' AND berechnet = \'1\' AND (home_verein = \'%d\' OR gast_verein = \'%d\') ORDER BY datum DESC';
 		$parameters = array($teamId, $teamId);
 		
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters, 1);
@@ -461,7 +464,7 @@ class MatchesDataService {
 		$columns['M.w_staerke'] = 'strength';
 		
 		$order = 'field(M.position_main, \'T\', \'LV\', \'IV\', \'RV\', \'DM\', \'LM\', \'ZM\', \'RM\', \'OM\', \'LS\', \'MS\', \'RS\')';
-		$whereCondition = 'M.spiel_id = %d AND M.team_id = %d AND M.feld != \'Ersatzbank\' ORDER BY ' . $order . ', M.id ASC';
+		$whereCondition = 'M.spiel_id = \'%d\' AND M.team_id = \'%d\' AND M.feld != \'Ersatzbank\' ORDER BY ' . $order . ', M.id ASC';
 		$parameters = array($matchId, $teamId);
 		
 		$players = $db->queryCachedSelect($columns, $fromTable, $whereCondition, $parameters);
@@ -501,14 +504,12 @@ class MatchesDataService {
 				'M.note' => 'grade'
 		);
 		
-		if ($websoccer->getConfig('players_aging') == 'birthday') {
-			$ageColumn = 'TIMESTAMPDIFF(YEAR,P.geburtstag,CURDATE())';
-		} else {
-			$ageColumn = 'P.age';
-		}
+		if ($websoccer->getConfig('players_aging') == 'birthday') $ageColumn = 'TIMESTAMPDIFF(YEAR,P.geburtstag,CURDATE())';
+		else $ageColumn = 'P.age';
+
 		$columns[$ageColumn] = 'age';
 		
-		$whereCondition = 'M.spiel_id = %d AND M.team_id = %d AND M.feld != \'Ausgewechselt\' ORDER BY field(M.position_main, \'T\', \'LV\', \'IV\', \'RV\', \'DM\', \'LM\', \'ZM\', \'RM\', \'OM\', \'LS\', \'MS\', \'RS\'), M.id ASC';
+		$whereCondition = 'M.spiel_id = \'%d\' AND M.team_id = \'%d\' AND M.feld != \'Ausgewechselt\' ORDER BY field(M.position_main, \'T\', \'LV\', \'IV\', \'RV\', \'DM\', \'LM\', \'ZM\', \'RM\', \'OM\', \'LS\', \'MS\', \'RS\'), M.id ASC';
 		$parameters = array($matchId, $teamId);
 		
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters);
@@ -537,7 +538,7 @@ class MatchesDataService {
 		$columns['T.aktion'] = 'type';
 		$columns['R.active_home'] = 'active_home';
 		
-		$whereCondition = 'R.match_id = %d ORDER BY R.minute DESC, R.id DESC';
+		$whereCondition = 'R.match_id = \'%d\' ORDER BY R.minute DESC, R.id DESC';
 		$parameters = $matchId;
 		
 		$reportmessages = array();
@@ -551,14 +552,10 @@ class MatchesDataService {
 			$rmsg = $reportmessage['message'];
 			
 			// remove escaping slashes
-			if ($removeSlashes) {
-				$rmsg = stripslashes($rmsg);
-			}
+			if ($removeSlashes) $rmsg = stripslashes($rmsg);
 			
 			$msgKey = strip_tags($rmsg);
-			if ($i18n->hasMessage($msgKey)) {
-				$rmsg = $i18n->getMessage($msgKey);
-			}
+			if ($i18n->hasMessage($msgKey)) $rmsg = $i18n->getMessage($msgKey);
 			
 			for($playerIndex = 1; $playerIndex <= count($players); $playerIndex++) {
 				$rmsg = str_replace('{sp' . $playerIndex . '}', $players[$playerIndex - 1], $rmsg);
@@ -566,21 +563,19 @@ class MatchesDataService {
 			
 			// replace team name placeholders
 			if (strpos($rmsg, '{ma1}') || strpos($rmsg, '{ma2}')) {
-				if ($match == null) {
-					$match = self::getMatchById($websoccer, $db, $matchId, FALSE);
-				}
+				if ($match == null) $match = self::getMatchById($websoccer, $db, $matchId, FALSE);
 				
 				if ($reportmessage['active_home']) {
 					$rmsg = str_replace('{ma1}', $match['match_home_name'], $rmsg);
 					$rmsg = str_replace('{ma2}', $match['match_guest_name'], $rmsg);
-				} else {
+				}
+				else {
 					$rmsg = str_replace('{ma1}', $match['match_guest_name'], $rmsg);
 					$rmsg = str_replace('{ma2}', $match['match_home_name'], $rmsg);
 				}
 				
 			}
-			
-			
+
 			$reportmessage['message'] = $rmsg;
 			$reportmessages[] = $reportmessage;
 		}
@@ -662,4 +657,3 @@ class MatchesDataService {
 		}
 	}
 }
-?>

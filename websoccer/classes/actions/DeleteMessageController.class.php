@@ -33,26 +33,23 @@ class DeleteMessageController implements IActionController {
 	
 	public function executeAction($parameters) {
 		
-		$id = $parameters["id"];
+		$id = $parameters['id'];
 		
 		$message = MessagesDataService::getMessageById($this->_websoccer, $this->_db, $id);
 		if ($message == null) {
-			throw new Exception($this->_i18n->getMessage("messages_delete_invalidid"));
+			throw new Exception($this->_i18n->getMessage('messages_delete_invalidid'));
 		}
 		
 		// delete
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_briefe";
-		$whereCondition = "id = %d";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_briefe';
+		$whereCondition = 'id = \'%d\'';
 		$this->_db->queryDelete($fromTable, $whereCondition, $id);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("messages_delete_success"),
-				""));
+				$this->_i18n->getMessage('messages_delete_success'),
+				''));
 		
 		return null;
 	}
-	
 }
-
-?>

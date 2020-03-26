@@ -41,9 +41,6 @@ class LiveMatchBlockModel implements IModel {
 	}
 	
 	public function getTemplateParameters() {
-		return array("match" => $this->_match);
+		return array('match' => $this->_match);
 	}
-	
 }
-
-?>

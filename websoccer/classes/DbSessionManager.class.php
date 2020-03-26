@@ -98,13 +98,11 @@ class DbSessionManager {
 			// check whether expired
 			if ($row['expires'] < $this->_websoccer->getNowAsTimestamp()) {
 				$this->destroy($sessionId);
-			} else {
-				$data = $row['session_data'];
-				if ($data == null) {
-					$data = '';
-				}
 			}
-			
+			else {
+				$data = $row['session_data'];
+				if ($data == null) $data = '';
+			}
 		}
 		
 		$result->free();
@@ -128,9 +126,9 @@ class DbSessionManager {
 		// either insert or update
 		if ($this->read($sessionId) !== NULL) {
 			$whereCondition = 'session_id = \'%s\'';
-			
 			$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $sessionId);
-		} else {
+		}
+		else {
 			$columns['session_id'] = $sessionId;
 			$this->_db->queryInsert($columns, $fromTable);
 		}
@@ -148,9 +146,8 @@ class DbSessionManager {
 	
 	private function _deleteExpiredSessions() {
 		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_session';
-		$whereCondition = 'expires < %d';
+		$whereCondition = 'expires < \'%d\'';
 		
 		$this->_db->queryDelete($fromTable, $whereCondition, $this->_websoccer->getNowAsTimestamp());
 	}
 }
-?>

@@ -66,32 +66,27 @@ class ViewHandler {
 			return;
 		}
 		
-		if (!isset($this->_pages[$pageId])) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if (!isset($this->_pages[$pageId])) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$pageConfig = json_decode($this->_pages[$pageId], TRUE);
 		
 		// check permissions
 		$requiredRoles = explode(',', $pageConfig['role']);
-		if (!in_array($this->_website->getUser()->getRole(), $requiredRoles)) {
-			throw new AccessDeniedException($this->_i18n->getMessage('error_access_denied'));
-		}
+		if (!in_array($this->_website->getUser()->getRole(), $requiredRoles)) throw new AccessDeniedException($this->_i18n->getMessage('error_access_denied'));
 		
 		// check if premium page
 		if (isset($pageConfig['premiumBalanceMin'])) {
 			$minPremiumBalanceRequired = (int) $pageConfig['premiumBalanceMin'];
 			if ($minPremiumBalanceRequired > $this->_website->getUser()->premiumBalance) {
-				
 				$targetPage = $this->_website->getConfig('premium_infopage');
 				
 				// redirect to external info page
 				if (filter_var($targetPage, FILTER_VALIDATE_URL)) {
 					header('location: ' . $targetPage);
 					exit;
-					
 					// render info page
-				} else {
+				}
+				else {
 					$this->_website->addContextParameter('premium_balance_required', $minPremiumBalanceRequired);
 					return $this->handlePage($targetPage, $parameters);
 				}
@@ -102,9 +97,7 @@ class ViewHandler {
 		
 		if (isset($pageConfig['model'])) {
 			$class = $pageConfig['model'];
-			if (!class_exists($class)) {
-				throw new Exception('The model class \''. $class . '\' does not exist.');
-			}
+			if (!class_exists($class)) throw new Exception('The model class \''. $class . '\' does not exist.');
 			
 			$model = new $class($this->_db, $this->_i18n, $this->_website);
 			
@@ -172,15 +165,11 @@ class ViewHandler {
 			$viewConfig = json_decode($this->_blocks[$blockId], true);
 		}
 		
-		if ($parameters == null) {
-			$parameters = array();
-		}
+		if ($parameters == null) $parameters = array();
 		
 		if (isset($viewConfig['model'])) {
 			$class = $viewConfig['model'];
-			if (!class_exists($class)) {
-				throw new Exception('The model class \''. $class . '\' does not exist.');
-			}
+			if (!class_exists($class)) throw new Exception('The model class \''. $class . '\' does not exist.');
 				
 			$model = new $class($this->_db, $this->_i18n, $this->_website);
 			
@@ -237,9 +226,7 @@ class ViewHandler {
 		}
 		
 		foreach($blocks as $uiblock => $blockdata) {
-			if ($uiblock != 'custom') {
-				usort($blocks[$uiblock], array('ViewHandler', 'sortByWeight'));
-			}
+			if ($uiblock != 'custom') usort($blocks[$uiblock], array('ViewHandler', 'sortByWeight'));
 		}
 		
 		return $blocks;
@@ -258,7 +245,4 @@ class ViewHandler {
 		}
 		return $a['weight'] - $b['weight'];
 	}
-	
 }
-
-?>

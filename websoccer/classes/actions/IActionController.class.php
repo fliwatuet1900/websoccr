@@ -41,7 +41,4 @@ interface IActionController {
 	 * @throws Exception when action failed. Basic parameter validation is not required in case parameters are properly configured at module.xml.
 	 */
 	public function executeAction($parameters);
-	
 }
-
-?>

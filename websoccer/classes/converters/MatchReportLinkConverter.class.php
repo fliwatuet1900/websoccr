@@ -38,17 +38,17 @@ class MatchReportLinkConverter implements IConverter {
 	 * @see IConverter::toHtml()
 	 */
 	public function toHtml($row) {
-		$output = '<div class=\'btn-group\'>';
-		$output .= '<a class=\'btn btn-small dropdown-toggle\' data-toggle=\'dropdown\' href=\'#\'>';
-		$output .= $this->_i18n->getMessage('entity_match_matchreportitems') . ' <span class=\'caret\'></span>';
+		$output = '<div class="btn-group">';
+		$output .= '<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">';
+		$output .= $this->_i18n->getMessage('entity_match_matchreportitems') . ' <span class="caret"></span>';
 		$output .= '</a>';
-		$output .= '<ul class=\'dropdown-menu\'>';
+		$output .= '<ul class="dropdown-menu">';
 		
-		$output .= '<li><a href=\'?site=manage-match-playerstatistics&match='. $row['id']. '\'><i class=\'icon-cog\'></i> '. $this->_i18n->getMessage('match_manage_playerstatistics') .'</a></li>';
-		$output .= '<li><a href=\'?site=manage-match-reportitems&match='. $row['id']. '\'><i class=\'icon-th-list\'></i> '. $this->_i18n->getMessage('match_manage_reportitems') .'</a></li>';
+		$output .= '<li><a href="?site=manage-match-playerstatistics&match='. $row['id']. '"><i class="icon-cog"></i> '. $this->_i18n->getMessage('match_manage_playerstatistics') .'</a></li>';
+		$output .= '<li><a href="?site=manage-match-reportitems&match='. $row['id']. '"><i class="icon-th-list"></i> '. $this->_i18n->getMessage('match_manage_reportitems') .'</a></li>';
 		
 		if (!$row['entity_match_berechnet']) {
-			$output .= '<li><a href=\'?site=manage-match-complete&match='. $row['id']. '\'><i class=\'icon-ok-sign\'></i> '. $this->_i18n->getMessage('match_manage_complete') .'</a></li>';
+			$output .= '<li><a href="?site=manage-match-complete&match='. $row['id']. '"><i class="icon-ok-sign"></i> '. $this->_i18n->getMessage('match_manage_complete') .'</a></li>';
 		}
 		
 		$output .= '</ul>';
@@ -69,7 +69,4 @@ class MatchReportLinkConverter implements IConverter {
 	public function toDbValue($value) {
 		return $this->toText($value);
 	}
-	
 }
-
-?>

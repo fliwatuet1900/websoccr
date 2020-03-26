@@ -48,5 +48,3 @@ interface IModel {
 	 */
 	public function getTemplateParameters();
 }
-
-?>

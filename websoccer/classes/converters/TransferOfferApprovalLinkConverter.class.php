@@ -39,8 +39,9 @@ class TransferOfferApprovalLinkConverter implements IConverter {
 	 */
 	public function toHtml($row) {
 		if ($row['entity_transfer_offer_admin_approval_pending']) {
-			$output = ' <a href=\'?site=manage&entity=transfer_offer&action=transferofferapprove&id='. $row['id']. '\' class=\'btn btn-small btn-success\'><i class=\'icon-ok icon-white\'></i> '. $this->_i18n->getMessage('button_approve') .'</a>';
-		} else {
+			$output = ' <a href="?site=manage&entity=transfer_offer&action=transferofferapprove&id='. $row['id']. '" class="btn btn-small btn-success"><i class="icon-ok icon-white"></i> '. $this->_i18n->getMessage('button_approve') .'</a>';
+		}
+		else {
 			$output = '<i class=\'icon-ban-circle\'></i>';
 		}
 		
@@ -60,7 +61,4 @@ class TransferOfferApprovalLinkConverter implements IConverter {
 	public function toDbValue($value) {
 		return $this->toText($value);
 	}
-	
 }
-
-?>

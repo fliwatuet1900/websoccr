@@ -52,7 +52,4 @@ class TopScorersModel implements IModel {
 						$this->_websoccer->getRequestParameter('leagueid')),
 					'leagues' => LeagueDataService::getLeaguesSortedByCountry($this->_websoccer, $this->_db));
 	}
-	
 }
-
-?>

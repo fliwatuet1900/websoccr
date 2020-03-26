@@ -45,7 +45,7 @@ class BadgesDataService {
 		$parameters = array($badgeEvent);
 		$whereCondition = 'event = \'%s\'';
 		if ($benchmark !== NULL) {
-			$whereCondition .= ' AND event_benchmark <= %d';
+			$whereCondition .= ' AND event_benchmark <= \'%d\'';
 			$parameters[] = $benchmark;
 		}
 		$whereCondition .= ' ORDER BY level DESC';
@@ -60,7 +60,7 @@ class BadgesDataService {
 		
 		// check whether it is better than what the user already has
 		$fromTable = $badgeTable . ' INNER JOIN ' . $badgeUserTable . ' ON id = badge_id';
-		$whereCondition = 'user_id = %d AND event = \'%s\' AND level >= \'%s\'';
+		$whereCondition = 'user_id = \'%d\' AND event = \'%s\' AND level >= \'%s\'';
 		$result = $db->querySelect('COUNT(*) AS hits', $fromTable, $whereCondition, array($userId, $badgeEvent, $badge['level']), 1);
 		$userBadges = $result->fetch_array();
 		$result->free();
@@ -94,6 +94,4 @@ class BadgesDataService {
 		NotificationsDataService::createNotification($websoccer, $db, $userId, 'badge_notification', null,
 			'badge', 'user', 'id=' . $userId);
 	}
-	
 }
-?>

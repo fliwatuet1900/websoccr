@@ -67,6 +67,4 @@ class CookieHelper {
 	
 		setcookie(COOKIE_PREFIX . $name, '', time()-86400);
 	}
-	
 }
-?>

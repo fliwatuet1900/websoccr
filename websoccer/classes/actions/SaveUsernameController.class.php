@@ -43,33 +43,28 @@ class SaveUsernameController implements IActionController {
 		
 		// check if user name is already set
 		if (strlen($this->_websoccer->getUser()->username)) {
-			throw new Exception("user name is already set.");
+			throw new Exception('user name is already set.');
 		}
 		
 		// illegal user name?
-		$illegalUsernames = explode(",", strtolower(str_replace(", ", ",", $this->_websoccer->getConfig("illegal_usernames"))));
-		if (array_search(strtolower($parameters["nick"]), $illegalUsernames)) {
-			throw new Exception($this->_i18n->getMessage("registration_illegal_username"));
+		$illegalUsernames = explode(',', strtolower(str_replace(', ', ',', $this->_websoccer->getConfig('illegal_usernames'))));
+		if (array_search(strtolower($parameters['nick']), $illegalUsernames)) {
+			throw new Exception($this->_i18n->getMessage('registration_illegal_username'));
 		}
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_user";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_user';
 		
 		// check if user name exists
-		$wherePart = "UPPER(nick) = '%s'";
-		$result = $this->_db->querySelect("COUNT(*) AS hits", $fromTable, $wherePart, strtoupper($parameters["nick"]));
+		$wherePart = 'UPPER(nick) = \'%s\'';
+		$result = $this->_db->querySelect('COUNT(*) AS hits', $fromTable, $wherePart, strtoupper($parameters['nick']));
 		$rows = $result->fetch_array();
 		$result->free();
-		if ($rows["hits"]) {
-			throw new Exception($this->_i18n->getMessage("registration_user_exists"));
-		}
+		if ($rows['hits']) throw new Exception($this->_i18n->getMessage('registration_user_exists'));
 		
 		// update user
-		$this->_db->queryUpdate(array("nick" => $parameters["nick"]), $fromTable, "id = %d", $this->_websoccer->getUser()->id);
-		$this->_websoccer->getUser()->username = $parameters["nick"];
+		$this->_db->queryUpdate(array('nick' => $parameters['nick']), $fromTable, 'id = \'%d\'', $this->_websoccer->getUser()->id);
+		$this->_websoccer->getUser()->username = $parameters['nick'];
 		
-		return "office";
+		return 'office';
 	}
-	
 }
-
-?>

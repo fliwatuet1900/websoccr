@@ -44,7 +44,7 @@ class TransfermarketDataService {
 		$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_verein AS C ON C.id = B.verein_id';
 		$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_user AS U ON U.id = B.user_id';
 		
-		$whereCondition = 'B.spieler_id = %d AND B.datum >= %d AND B.datum <= %d ORDER BY B.datum DESC';
+		$whereCondition = 'B.spieler_id = \'%d\' AND B.datum >= \'%d\' AND B.datum <= \'%d\' ORDER BY B.datum DESC';
 		$parameters = array($playerId, $transferStart, $transferEnd);
 		
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters, 1);
@@ -73,7 +73,7 @@ class TransfermarketDataService {
 		$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_verein AS C ON C.id = B.verein_id';
 		$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_spieler AS P ON P.id = B.spieler_id';
 	
-		$whereCondition = 'C.id = %d AND P.transfer_ende >= %d ORDER BY B.datum DESC, P.transfer_ende ASC';
+		$whereCondition = 'C.id = \'%d\' AND P.transfer_ende >= \'%d\' ORDER BY B.datum DESC, P.transfer_ende ASC';
 		$parameters = array($teamId, $websoccer->getNowAsTimestamp());
 	
 		$bids = array();
@@ -104,7 +104,7 @@ class TransfermarketDataService {
 		$fromTable = $websoccer->getConfig('db_prefix') . '_transfer_angebot AS B';
 		$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_spieler AS P ON P.id = B.spieler_id';
 	
-		$whereCondition = 'B.user_id = %d ORDER BY B.datum DESC';
+		$whereCondition = 'B.user_id = \'%d\' ORDER BY B.datum DESC';
 		$parameters = $userId;
 	
 		$bids = array();
@@ -117,7 +117,7 @@ class TransfermarketDataService {
 	
 	public static function getCompletedTransfersOfUser(WebSoccer $websoccer, DbConnection $db, $userId) {
 	
-		$whereCondition = 'T.buyer_user_id = %d OR T.seller_user_id = %d ORDER BY T.datum DESC';
+		$whereCondition = 'T.buyer_user_id = \'%d\' OR T.seller_user_id = \'%d\' ORDER BY T.datum DESC';
 		$parameters = array($userId, $userId);
 	
 		return self::getCompletedTransfers($websoccer, $db, $whereCondition, $parameters);
@@ -125,7 +125,7 @@ class TransfermarketDataService {
 	
 	public static function getCompletedTransfersOfTeam(WebSoccer $websoccer, DbConnection $db, $teamId) {
 		
-		$whereCondition = 'SELLER.id = %d OR BUYER.id = %d ORDER BY T.datum DESC';
+		$whereCondition = 'SELLER.id = \'%d\' OR BUYER.id = \'%d\' ORDER BY T.datum DESC';
 		$parameters = array($teamId, $teamId);
 		
 		return self::getCompletedTransfers($websoccer, $db, $whereCondition, $parameters);
@@ -133,7 +133,7 @@ class TransfermarketDataService {
 	
 	public static function getCompletedTransfersOfPlayer(WebSoccer $websoccer, DbConnection $db, $playerId) {
 	
-		$whereCondition = 'T.spieler_id = %d ORDER BY T.datum DESC';
+		$whereCondition = 'T.spieler_id = \'%d\' ORDER BY T.datum DESC';
 		$parameters = array($playerId);
 	
 		return self::getCompletedTransfers($websoccer, $db, $whereCondition, $parameters);
@@ -205,7 +205,7 @@ class TransfermarketDataService {
 		// 1) any player who has no contract any more and are not on the market yet
 		// 2) any player who has no contract any more, but still on the team list
 		// 3) any player who had been added to the list before his contract ended.
-		$whereCondition = 'status = 1 AND (transfermarkt != \'1\' AND (verein_id = 0 OR verein_id IS NULL) OR transfermarkt != \'1\' AND verein_id > 0 AND vertrag_spiele < 1 OR transfermarkt = \'1\' AND verein_id > 0 AND vertrag_spiele < 1)';
+		$whereCondition = 'status = \'1\' AND (transfermarkt != \'1\' AND (verein_id = \'0\' OR verein_id IS NULL) OR transfermarkt != \'1\' AND verein_id > \'0\' AND vertrag_spiele < \'1\' OR transfermarkt = \'1\' AND verein_id > \'0\' AND vertrag_spiele < \'1\')';
 		
 		// update each player, since we might also update user's inactivity
 		$result = $db->querySelect('id, verein_id', $fromTable, $whereCondition);
@@ -213,9 +213,7 @@ class TransfermarketDataService {
 			$team = TeamsDataService::getTeamSummaryById($websoccer, $db, $player['verein_id']);
 			if ($team == NULL || $team['user_id']) {
 				
-				if ($team['user_id']) {
-					UserInactivityDataService::increaseContractExtensionField($websoccer, $db, $team['user_id']);
-				}
+				if ($team['user_id']) UserInactivityDataService::increaseContractExtensionField($websoccer, $db, $team['user_id']);
 				
 				$columns['transfermarkt'] = '1';
 				$columns['transfer_start'] = $websoccer->getNowAsTimestamp();
@@ -225,7 +223,8 @@ class TransfermarketDataService {
 				
 				// do not move player out of team if team has no manager
 				// (prevents shrinking of teams)
-			} else {
+			}
+			else {
 				$columns['transfermarkt'] = '0';
 				$columns['transfer_start'] = '0';
 				$columns['transfer_ende'] = '0';
@@ -233,7 +232,7 @@ class TransfermarketDataService {
 				$columns['verein_id'] = $player['verein_id'];
 			}
 			
-			$db->queryUpdate($columns, $fromTable, 'id = %d', $player['id']);
+			$db->queryUpdate($columns, $fromTable, 'id = \'%d\'', $player['id']);
 		}
 		
 		$result->free();
@@ -256,7 +255,7 @@ class TransfermarketDataService {
 		$fromTable = $websoccer->getConfig('db_prefix') . '_spieler AS P';
 		$fromTable .= ' LEFT JOIN ' . $websoccer->getConfig('db_prefix') . '_verein AS C ON C.id = P.verein_id';
 		
-		$whereCondition = 'P.transfermarkt = \'1\' AND P.status = \'1\' AND P.transfer_ende < %d';
+		$whereCondition = 'P.transfermarkt = \'1\' AND P.status = \'1\' AND P.transfer_ende < \'%d\'';
 		$parameters = $websoccer->getNowAsTimestamp();
 		
 		// only handle 50 per time
@@ -264,21 +263,18 @@ class TransfermarketDataService {
 		while ($player = $result->fetch_array()) {
 			
 			$bid = self::getHighestBidForPlayer($websoccer, $db, $player['player_id'], $player['transfer_start'], $player['transfer_end']);
-			if (!isset($bid['bid_id'])) {
-				self::extendDuration($websoccer, $db, $player['player_id']);
-			} else {
-				self::transferPlayer($websoccer, $db, $player, $bid);
-			}
+			if (!isset($bid['bid_id'])) self::extendDuration($websoccer, $db, $player['player_id']);
+			else self::transferPlayer($websoccer, $db, $player, $bid);
+
 		}
 		$result->free();
-		
-		
+
 	}
 	
 	public static function getTransactionsBetweenUsers(WebSoccer $websoccer, DbConnection $db, $user1, $user2) {
 		$columns = 'COUNT(*) AS number';
 		$fromTable = $websoccer->getConfig('db_prefix') .'_transfer';
-		$whereCondition = 'datum >= %d AND (seller_user_id = %d AND buyer_user_id = %d OR seller_user_id = %d AND buyer_user_id = %d)';
+		$whereCondition = 'datum >= \'%d\' AND (seller_user_id = \'%d\' AND buyer_user_id = \'%d\' OR seller_user_id = \'%d\' AND buyer_user_id = \'%d\')';
 	
 		$parameters = array($websoccer->getNowAsTimestamp() - 30 * 3600 * 24, $user1, $user2, $user2, $user1);
 	
@@ -313,7 +309,7 @@ class TransfermarketDataService {
 		
 		$columns['transfer_ende'] = $websoccer->getNowAsTimestamp() + 24 * 3600 * $websoccer->getConfig('transfermarket_duration_days');
 		
-		$whereCondition = 'id = %d';
+		$whereCondition = 'id = \'%d\'';
 		
 		$db->queryUpdate($columns, $fromTable, $whereCondition, $playerId);
 	}
@@ -333,7 +329,8 @@ class TransfermarketDataService {
 			}
 			
 		// debit / credit fee
-		} else {
+		}
+		else {
 			BankAccountDataService::debitAmount($websoccer, $db, $bid['team_id'],
 				$bid['amount'],
 				'transfer_transaction_subject_fee',
@@ -378,14 +375,10 @@ class TransfermarketDataService {
 			'transfer_bid_notification_transfered', array('player' => $playerName), 'transfermarket', 'player', 'id=' . $player['player_id']);
 		
 		// delete old bids
-		$db->queryDelete($websoccer->getConfig('db_prefix') . '_transfer_angebot', 'spieler_id = %d', $player['player_id']);
+		$db->queryDelete($websoccer->getConfig('db_prefix') . '_transfer_angebot', 'spieler_id = \'%d\'', $player['player_id']);
 		
 		// award badges
 		self::awardUserForTrades($websoccer, $db, $bid['user_id']);
-		if ($player['team_user_id']) {
-			self::awardUserForTrades($websoccer, $db, $player['team_user_id']);
-		}
+		if ($player['team_user_id']) self::awardUserForTrades($websoccer, $db, $player['team_user_id']);
 	}
-	
 }
-?>

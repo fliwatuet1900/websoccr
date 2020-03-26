@@ -41,7 +41,7 @@ class RemovePlayerFromTransfermarketController implements IActionController {
 	 */
 	public function executeAction($parameters) {
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig("transfermarket_enabled")) {
+		if (!$this->_websoccer->getConfig('transfermarket_enabled')) {
 			return NULL;
 		}
 		
@@ -50,31 +50,24 @@ class RemovePlayerFromTransfermarketController implements IActionController {
 		$clubId = $user->getClubId($this->_websoccer, $this->_db);
 		
 		// check if it is own player
-		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters["id"]);
-		if ($clubId != $player["team_id"]) {
-			throw new Exception("nice try");
-		}
+		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $parameters['id']);
+		if ($clubId != $player['team_id']) throw new Exception('nice try');
 		
 		// check if there is already a bid
-		$highestBid = TransfermarketDataService::getHighestBidForPlayer($this->_websoccer, $this->_db, $parameters["id"], $player["transfer_start"], $player["transfer_end"]);
-		if ($highestBid) {
-			throw new Exception($this->_i18n->getMessage("transfermarket_remove_err_bidexists"));
-		}
+		$highestBid = TransfermarketDataService::getHighestBidForPlayer($this->_websoccer, $this->_db, $parameters['id'], $player['transfer_start'], $player['transfer_end']);
+		if ($highestBid) throw new Exception($this->_i18n->getMessage('transfermarket_remove_err_bidexists'));
 		
 		$this->_db->queryUpdate(array(
 				'transfermarkt' => '0',
 				'transfer_start' => 0,
 				'transfer_ende' => 0
-				), $this->_websoccer->getConfig('db_prefix') . '_spieler', 'id = %d', $parameters['id']);
+				), $this->_websoccer->getConfig('db_prefix') . '_spieler', 'id = \'%d\'', $parameters['id']);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("transfermarket_remove_success"),
-				""));
+				$this->_i18n->getMessage('transfermarket_remove_success'),
+				''));
 		
-		return "myteam";
+		return 'myteam';
 	}
-	
 }
-
-?>

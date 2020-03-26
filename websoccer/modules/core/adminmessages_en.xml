@@ -146,7 +146,8 @@
 	<message id="settings_label_time_offset_help">in seconds (3600 is one hour)</message> 	
 	<message id="settings_label_password_protected">Protect all pages.</message> 
 	<message id="settings_label_password_protected_help">Only registered users can see all pages.</message> 
-	<message id="settings_label_password_protected_startpage">Protect also start page.</message> 
+	<message id="settings_label_password_protected_startpage">Protect also start page.</message>
+	<message id="settings_label_save_images_randomized">Encrypt filenames of uploaded files.</message>
 	<message id="settings_label_entries_per_page">Number of entries per page</message> 
 	<message id="settings_label_entries_per_page_help">in lists</message> 
 	<message id="settings_label_supported_languages">Supported Languages</message> 

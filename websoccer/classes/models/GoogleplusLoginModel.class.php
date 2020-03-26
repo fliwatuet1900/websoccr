@@ -35,14 +35,11 @@ class GoogleplusLoginModel implements IModel {
 	}
 	
 	public function renderView() {
-		return $this->_websoccer->getConfig("googleplus_enable_login");
+		return $this->_websoccer->getConfig('googleplus_enable_login');
 	}
 	
 	public function getTemplateParameters() {
 		
-		return array("loginurl" => GoogleplusSdk::getInstance($this->_websoccer)->getLoginUrl());
+		return array('loginurl' => GoogleplusSdk::getInstance($this->_websoccer)->getLoginUrl());
 	}
-	
 }
-
-?>

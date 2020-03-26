@@ -52,12 +52,14 @@ $labels = explode(',', $labelColumns);
 // query
 $whereCondition = '';
 if ($itemId > 0) {
-	$whereCondition = 'id = %d';
+	$whereCondition = 'id = \'%d\'';
 	$queryParameters = $_GET['itemid'];
-} elseif (!strlen($search)) {
-	$whereCondition = '1=1';
+}
+elseif (!strlen($search)) {
+	$whereCondition = '1 = 1';
 	$queryParameters = '';
-} else {
+}
+else {
 	// check every label column
 	$first = TRUE;
 	foreach ($labels as $labelColumn) {
@@ -95,4 +97,3 @@ while($item = $result->fetch_array()) {
 $result->free();
 
 echo json_encode($items);
-?>

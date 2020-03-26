@@ -22,38 +22,23 @@
 
 define('DEBUG', FALSE);
 
-if (DEBUG) {
-	error_reporting(E_ALL);
-} else {
-	error_reporting(E_ERROR);
-}
+if (DEBUG) error_reporting(E_ALL);
+else error_reporting(E_ERROR);
 
 // loads required classes on demand
 function classes_autoloader($class) {
-	
 	$subforder = '';
 	
-	if (substr($class, -9) === 'Converter') {
-		$subforder = 'converters/';
-	} else if (substr($class, -4) === 'Skin') {
-		$subforder = 'skins/';
-	} else if (substr($class, -5) === 'Model') {
-		$subforder = 'models/';
-	} else if (substr($class, -9) === 'Validator') {
-		$subforder = 'validators/';
-	} else if (substr($class, -10) === 'Controller') {
-		$subforder = 'actions/';
-	} else if (substr($class, -7) === 'Service') {
-		$subforder = 'services/';
-	} else if (substr($class, -3) === 'Job') {
-		$subforder = 'jobs/';
-	} else if (substr($class, -11) === 'LoginMethod') {
-		$subforder = 'loginmethods/';
-	} else if (substr($class, -5) === 'Event') {
-		$subforder = 'events/';
-	} else if (substr($class, -6) === 'Plugin') {
-		$subforder = 'plugins/';
-	}
+	if (substr($class, -9) === 'Converter') $subforder = 'converters/';
+	elseif (substr($class, -4) === 'Skin') $subforder = 'skins/';
+	elseif (substr($class, -5) === 'Model') $subforder = 'models/';
+	elseif (substr($class, -9) === 'Validator') $subforder = 'validators/';
+	elseif (substr($class, -10) === 'Controller') $subforder = 'actions/';
+	elseif (substr($class, -7) === 'Service') $subforder = 'services/';
+	elseif (substr($class, -3) === 'Job') $subforder = 'jobs/';
+	elseif (substr($class, -11) === 'LoginMethod') $subforder = 'loginmethods/';
+	elseif (substr($class, -5) === 'Event') $subforder = 'events/';
+	elseif (substr($class, -6) === 'Plugin') $subforder = 'plugins/';
 	
 	@include(BASE_FOLDER . '/classes/' . $subforder . $class . '.class.php');
 }
@@ -89,16 +74,16 @@ $block = null;
 // init application
 try {
 	$website = WebSoccer::getInstance();
-	if (!file_exists(CONFIGCACHE_FILE_FRONTEND)) {
-		$website->resetConfigCache();
-	}
-} catch(Exception $e) {
+	if (!file_exists(CONFIGCACHE_FILE_FRONTEND)) $website->resetConfigCache();
+}
+catch(Exception $e) {
 	// write to log
 	try {
 		$log = new FileWriter('errorlog.txt');
 		$log->writeLine('Website Configuration Error: ' . $e->getMessage());
 		$log->close();
-	} catch(Exception $e) {
+	}
+	catch(Exception $e) {
 		// ignore
 	}
 	header('HTTP/1.0 500 Error');
@@ -112,13 +97,15 @@ try {
 			$website->getConfig('db_user'),
 			$website->getConfig('db_passwort'),
 			$website->getConfig('db_name'));
-} catch(Exception $e) {
+}
+catch(Exception $e) {
 	// write to log
 	try {
 		$log = new FileWriter('dberrorlog.txt');
 		$log->writeLine('DB Error: ' . $e->getMessage());
 		$log->close();
-	} catch(Exception $e) {
+	}
+	catch(Exception $e) {
 		// ignore
 	}
 	die('<h1>Sorry, our data base is currently not available</h1><p>We are working on it.</p>');
@@ -143,8 +130,7 @@ session_start();
 // always set time zone in order to prevent PHP warnings
 try {
 	date_default_timezone_set($website->getConfig('time_zone'));
-} catch (Exception $e) {
+}
+catch (Exception $e) {
 	// do not set time zone. This Exception can appear in particular when updating from older version.
 }
-
-?>

@@ -62,20 +62,22 @@ class MatchPreviewModel implements IModel {
 	}
 	
 	private function _getLatestMatchesByTeam($teamId) {
-		$whereCondition = "M.berechnet = 1 AND (HOME.id = %d OR GUEST.id = %d)";
+		$whereCondition = 'M.berechnet = \'1\' AND (HOME.id = \'%d\' OR GUEST.id = \'%d\')';
 		$parameters = array($teamId, $teamId);
 		
 		if ($this->_match['match_season_id']) {
-			$whereCondition .= ' AND M.saison_id = %d';
+			$whereCondition .= ' AND M.saison_id = \'%d\'';
 			$parameters[] = $this->_match['match_season_id'];
-		} elseif (strlen($this->_match['match_cup_name'])) {
+		}
+		elseif (strlen($this->_match['match_cup_name'])) {
 			$whereCondition .= ' AND M.pokalname = \'%s\'';
 			$parameters[] = $this->_match['match_cup_name'];
-		} else {
+		}
+		else {
 			$whereCondition .= ' AND M.spieltyp = \'Freundschaft\'';
 		}
 		
-		$whereCondition .= " ORDER BY M.datum DESC";
+		$whereCondition .= ' ORDER BY M.datum DESC';
 		
 		return MatchesDataService::getMatchesByCondition($this->_websoccer, $this->_db, $whereCondition, $parameters, 5);
 	}
@@ -83,7 +85,7 @@ class MatchPreviewModel implements IModel {
 	private function _getUserInfoByTeam($teamId) {
 		$columns = 'U.id AS user_id, nick, email, picture';
 		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_user AS U INNER JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_verein AS C ON C.user_id = U.id';
-		$result = $this->_db->querySelect($columns, $fromTable, 'C.id = %d', $teamId);
+		$result = $this->_db->querySelect($columns, $fromTable, 'C.id = \'%d\'', $teamId);
 		$user = $result->fetch_array();
 		$result->free();
 		
@@ -93,7 +95,4 @@ class MatchPreviewModel implements IModel {
 		
 		return $user;
 	}
-	
 }
-
-?>

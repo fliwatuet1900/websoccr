@@ -40,12 +40,9 @@ class PremiumActionDummyController implements IActionController {
 	 */
 	public function executeAction($parameters) {
 		
-		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, "Premium action completed", 
-				"testparam1: " . $parameters["testparam1"] . " - testparam2: " . $parameters["testparam2"]));
+		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 'Premium action completed', 
+				'testparam1: ' . $parameters['testparam1'] . ' - testparam2: ' . $parameters['testparam2']));
 		
 		return null;
 	}
-	
 }
-
-?>

@@ -50,7 +50,4 @@ class CupsListModel implements IModel {
 		
 		return array('cups' => MatchesDataService::getCupRoundsByCupname($this->_websoccer, $this->_db));
 	}
-	
 }
-
-?>

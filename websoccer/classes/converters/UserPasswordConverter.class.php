@@ -58,23 +58,19 @@ class UserPasswordConverter implements IConverter {
 			$db = DbConnection::getInstance();
 			$columns = 'passwort, passwort_salt';
 			$fromTable = $this->_websoccer->getConfig('db_prefix') .'_user';
-			$whereCondition = 'id = %d';
+			$whereCondition = 'id = \'%d\'';
 			$result = $db->querySelect($columns, $fromTable, $whereCondition, $_POST['id'], 1);
 			$user = $result->fetch_array();
 			$result->free();
 			
-			if (strlen($value)) {
-				$passwort = SecurityUtil::hashPassword($value, $user['passwort_salt']);
-			} else {
-				$passwort = $user['passwort'];
-			}
-		} else {
+			if (strlen($value)) $passwort = SecurityUtil::hashPassword($value, $user['passwort_salt']);
+			else $passwort = $user['passwort'];
+
+		}
+		else {
 			$passwort = SecurityUtil::hashPassword($value, '');
 		}
 		
 		return $passwort;
 	}
-	
 }
-
-?>

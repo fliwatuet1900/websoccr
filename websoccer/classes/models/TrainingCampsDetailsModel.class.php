@@ -40,16 +40,11 @@ class TrainingCampsDetailsModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		$camp = TrainingcampsDataService::getCampById($this->_websoccer, $this->_db, $this->_websoccer->getRequestParameter("id"));
-		if (!$camp) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		$camp = TrainingcampsDataService::getCampById($this->_websoccer, $this->_db, $this->_websoccer->getRequestParameter('id'));
+		if (!$camp) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$defaultDate = $this->_websoccer->getNowAsTimestamp() + 24 * 3600;
 		
-		return array("camp" => $camp, "defaultDate" => $defaultDate);
+		return array('camp' => $camp, 'defaultDate' => $defaultDate);
 	}
-	
 }
-
-?>

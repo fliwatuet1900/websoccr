@@ -89,14 +89,10 @@ class TemplateEngine {
 		$loader = new Twig_Loader_Filesystem(TEMPLATES_FOLDER . '/' . TEMPLATE_SUBDIR_DEFAULT);
 		
 		$skinSubDir = $this->_skin->getTemplatesSubDirectory();
-		if (strlen($skinSubDir) && $skinSubDir != TEMPLATE_SUBDIR_DEFAULT) {
-			$loader->prependPath(TEMPLATES_FOLDER .'/'. $skinSubDir);
-		}
+		if (strlen($skinSubDir) && $skinSubDir != TEMPLATE_SUBDIR_DEFAULT) $loader->prependPath(TEMPLATES_FOLDER .'/'. $skinSubDir);
 		
 		// environment config
-		$twigConfig = array(
-				'cache' => CACHE_FOLDER,
-		);
+		$twigConfig = array('cache' => CACHE_FOLDER,);
 		if (DEBUG) {
 			$twigConfig['auto_reload'] = TRUE;
 			$twigConfig['strict_variables'] = TRUE;
@@ -113,6 +109,4 @@ class TemplateEngine {
 		});
 		$this->_environment->addFunction($function);
 	}
-	
 }
-?>

@@ -47,40 +47,37 @@ class ProfileModel implements IModel {
 	 * @see IModel::getTemplateParameters()
 	 */
 	public function getTemplateParameters() {
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_user";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_user';
 		
 		$user = $this->_websoccer->getUser();
 		
 		// select
-		$columns["name"] = "realname";
-		$columns["wohnort"] = "place";
-		$columns["land"] = "country";
-		$columns["geburtstag"] = "birthday";
-		$columns["beruf"] = "occupation";
-		$columns["interessen"] = "interests";
-		$columns["lieblingsverein"] = "favorite_club";
-		$columns["homepage"] = "homepage";
-		$columns["c_hideinonlinelist"] = "c_hideinonlinelist";
+		$columns['name'] = 'realname';
+		$columns['wohnort'] = 'place';
+		$columns['land'] = 'country';
+		$columns['geburtstag'] = 'birthday';
+		$columns['beruf'] = 'occupation';
+		$columns['interessen'] = 'interests';
+		$columns['lieblingsverein'] = 'favorite_club';
+		$columns['homepage'] = 'homepage';
+		$columns['c_hideinonlinelist'] = 'c_hideinonlinelist';
 		
-		$whereCondition = "id = %d";
+		$whereCondition = 'id = \'%d\'';
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $user->id, 1);
 		$userinfo = $result->fetch_array();
 		$result->free();
 		
-		if (!strlen($userinfo["birthday"]) || substr($userinfo["birthday"], 0, 4) == "0000") {
-			$userinfo["birthday"] = "";
-		} else {
-			$userinfo["birthday"] = DateTime::createFromFormat("Y-m-d", $userinfo["birthday"])->format($this->_websoccer->getConfig("date_format"));
+		if (!strlen($userinfo['birthday']) || substr($userinfo['birthday'], 0, 4) == '0000') {
+			$userinfo['birthday'] = '';
+		}
+		else {
+			$userinfo['birthday'] = DateTime::createFromFormat('Y-m-d', $userinfo['birthday'])->format($this->_websoccer->getConfig('date_format'));
 		}
 		
 		foreach ($columns as $dbColumn) {
-			if ($this->_websoccer->getRequestParameter($dbColumn)) {
-				$userinfo[$dbColumn] = $this->_websoccer->getRequestParameter($dbColumn);
-			}
+			if ($this->_websoccer->getRequestParameter($dbColumn)) $userinfo[$dbColumn] = $this->_websoccer->getRequestParameter($dbColumn);
 		}
 		
-		return array("user" => $userinfo);
+		return array('user' => $userinfo);
 	}
-	
 }
-?>

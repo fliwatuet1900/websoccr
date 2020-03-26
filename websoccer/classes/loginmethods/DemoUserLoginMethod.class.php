@@ -94,7 +94,4 @@ class DemoUserLoginMethod implements IUserLoginMethod {
 		// might not make sense at all)
 		throw new Exception('Unsupported action.');
 	}
-	
 }
-
-?>

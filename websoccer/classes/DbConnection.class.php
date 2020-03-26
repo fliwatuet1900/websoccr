@@ -139,9 +139,8 @@ class DbConnection {
 		$queryStr = $queryStr . self::buildColumnsValueList($columns);
 		
 		// WHERE
-		$queryStr = $queryStr . ' WHERE ';
 		$wherePart = self::buildWherePart($whereCondition, $parameters);
-		$queryStr = $queryStr . $wherePart;
+		$queryStr = $queryStr . ' WHERE ' . $wherePart;
 		
 		$this->executeQuery($queryStr);
 		
@@ -161,9 +160,8 @@ class DbConnection {
 		$queryStr = 'DELETE FROM ' . $fromTable;
 		
 		// WHERE
-		$queryStr = $queryStr . ' WHERE ';
 		$wherePart = self::buildWherePart($whereCondition, $parameters);
-		$queryStr = $queryStr . $wherePart;
+		$queryStr = $queryStr . ' WHERE ' . $wherePart;
 		
 		$this->executeQuery($queryStr);
 		
@@ -200,18 +198,15 @@ class DbConnection {
 				
 			$firstColumn = TRUE;
 			foreach($columns as $dbName => $aliasName) {
-				if (!$firstColumn) {
-					$queryStr = $queryStr .', ';
-				} else {
-					$firstColumn = FALSE;
-				}
-				if (is_numeric($dbName)) {
-					$dbName = $aliasName;
-				}
+				if (!$firstColumn) $queryStr = $queryStr .', ';
+				else $firstColumn = FALSE;
+
+				if (is_numeric($dbName)) $dbName = $aliasName;
 		
 				$queryStr = $queryStr . $dbName. ' AS '. $aliasName;
 			}
-		} else {
+		}
+		else {
 			$queryStr = $queryStr . $columns;
 		}
 		
@@ -222,9 +217,8 @@ class DbConnection {
 		$wherePart = self::buildWherePart($whereCondition, $parameters);
 		
 		// add limit
-		if (!empty($limit)) {
-			$wherePart = $wherePart . ' LIMIT ' . $limit;
-		}
+		if (!empty($limit)) $wherePart = $wherePart . ' LIMIT ' . $limit;
+
 		$queryStr = $queryStr . $wherePart;
 		return $queryStr;
 	}
@@ -234,19 +228,12 @@ class DbConnection {
 	
 		$firstColumn = TRUE;
 		foreach($columns as $dbName => $value) {
-			if (!$firstColumn) {
-				$queryStr = $queryStr . ', ';
-			} else {
-				$firstColumn = FALSE;
-			}
+			if (!$firstColumn) $queryStr = $queryStr . ', ';
+			else $firstColumn = FALSE;
 			
-			if (strlen($value)) {
-				$columnValue = '\'' . $this->connection->real_escape_string($value) .'\'';
-			} else {
-				$columnValue = 'DEFAULT';
-			}
-			
-			
+			if (strlen($value)) $columnValue = '\'' . $this->connection->real_escape_string($value) .'\'';
+			else $columnValue = 'DEFAULT';
+
 			$queryStr = $queryStr . $dbName . '=' . $columnValue;
 		}
 		
@@ -260,9 +247,8 @@ class DbConnection {
 	}
 	
 	private function prepareParameters($parameters) {
-		if(!is_array($parameters)){
-			$parameters = array($parameters);
-		}
+		if(!is_array($parameters)) $parameters = array($parameters);
+
 		// mask input
 		$arrayLength = count($parameters);
 		for($i = 0; $i < $arrayLength; $i++) {
@@ -282,12 +268,8 @@ class DbConnection {
 	public function executeQuery($queryStr) {
 		$queryResult = $this->connection->query($queryStr);
 		
-		if (!$queryResult) {
-			throw new Exception('Database Query Error: ' . $this->connection->error);
-		}
+		if (!$queryResult) throw new Exception('Database Query Error: ' . $this->connection->error);
 		
 		return $queryResult;
 	}
-
 }
-?>

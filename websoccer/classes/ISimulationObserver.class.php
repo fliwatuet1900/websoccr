@@ -50,7 +50,7 @@ interface ISimulationObserver {
 	public function onShootFailure(SimulationMatch $match, SimulationPlayer $scorer, SimulationPlayer $goaly);
 	
 	/**
-	 * A tackle happened. Every tackle has a looser and winner. 
+	 * A tackle happened. Every tackle has a loser and winner.
 	 * Hint: Use SimulationMatch->getPlayerWithBall() in order to find out whether the winner is the player who has had already the ball and just could
 	 * defend himself or if he gained the ball from the opponent player (=$looser).
 	 * 
@@ -88,7 +88,7 @@ interface ISimulationObserver {
 	public function onInjury(SimulationMatch $match, SimulationPlayer $player, $numberOfMatches);
 	
 	/**
-	 * The specified player got a yellow or yellow-red card. You know that it is a yellow-red card if SimulationPlayer->yellowCards == 2.
+	 * The specified player got a yellow or second yellow card. You know that it is a second yellow card if SimulationPlayer->yellowCards == 2.
 	 * 
 	 * @param SimulationMatch $match Affected match.
 	 * @param SimulationPlayer $player player who got the yellow card.
@@ -133,4 +133,3 @@ interface ISimulationObserver {
 	 */
 	public function onFreeKick(SimulationMatch $match, SimulationPlayer $player, SimulationPlayer $goaly, $successful);
 }
-?>

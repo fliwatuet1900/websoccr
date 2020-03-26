@@ -93,5 +93,3 @@ FROM (SELECT C.id AS team_id, M.saison_id AS season_id,
 		
 	}
 }
-
-?>

@@ -49,7 +49,7 @@ class ActionLogDataService {
 				);
 		
 		$result = $db->querySelect($columns, $fromTable, 
-				'L.user_id = %d ORDER BY L.created_date DESC', $userId, $limit);
+				'L.user_id = \'%d\' ORDER BY L.created_date DESC', $userId, $limit);
 		
 		$logs = array();
 		while ($log = $result->fetch_array()) {
@@ -108,11 +108,11 @@ class ActionLogDataService {
 		
 		// delete old entries of user (entries which are older than 20 days)
 		$deleteTimeThreshold = $websoccer->getNowAsTimestamp() - 24 * 3600 * 20;
-		$db->queryDelete($fromTable, 'user_id = %d AND created_date < %d', array($userId, $deleteTimeThreshold));
+		$db->queryDelete($fromTable, 'user_id = \'%d\' AND created_date < \'%d\'', array($userId, $deleteTimeThreshold));
 		
 		// check if action has been triggered within the last X minutes. If so, just update timestamp rather than filling DB unnecessary.
 		$timeThreshold = $websoccer->getNowAsTimestamp() - 30 * 60;
-		$result = $db->querySelect('id', $fromTable, 'user_id = %d AND action_id = \'%s\' AND created_date >= %d ORDER BY created_date DESC', 
+		$result = $db->querySelect('id', $fromTable, 'user_id = \'%d\' AND action_id = \'%s\' AND created_date >= \'%d\' ORDER BY created_date DESC',
 				array($userId, $actionId, $timeThreshold), 1);
 		$lastLog = $result->fetch_array();
 		$result->free();
@@ -120,11 +120,11 @@ class ActionLogDataService {
 		// update last log
 		if ($lastLog) {
 			
-			$db->queryUpdate(array('created_date' => $websoccer->getNowAsTimestamp()), $fromTable, 
-					'id = %d', $lastLog['id']);
+			$db->queryUpdate(array('created_date' => $websoccer->getNowAsTimestamp()), $fromTable, 'id = \'%d\'', $lastLog['id']);
 			
 		// create new log
-		} else {
+		}
+		else {
 			
 			$db->queryInsert(array(
 					'user_id' => $userId,
@@ -134,6 +134,4 @@ class ActionLogDataService {
 			
 		}
 	}
-
 }
-?>

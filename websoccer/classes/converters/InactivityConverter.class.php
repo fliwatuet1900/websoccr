@@ -44,7 +44,7 @@ class InactivityConverter implements IConverter {
 		
 		$rate = (int)$this->_format($row['entity_user_inactivity']);
 		$color = $this->_color($rate);
-		$output = '<a href=\'#actPopup'. $row['id']. '\' role=\'button\' data-toggle=\'modal\' title=\''. $this->_i18n->getMessage('manage_show_details') . '\' style=\'color: '. $color .'\'>'.$rate .' %</a>';
+		$output = '<a href="#actPopup'. $row['id']. '" role="button" data-toggle="modal" title="'. $this->_i18n->getMessage('manage_show_details') . '" style="color: '. $color .'">'.$rate .' %</a>';
 		$output .= $this->_renderInActivityPopup($row);
 		return $output;
 	}
@@ -72,13 +72,13 @@ class InactivityConverter implements IConverter {
 	
 	private function _renderInActivityPopup($row) {
 		$popup = '';
-		$popup .= '<div id=\'actPopup'. $row['id']. '\' class=\'modal hide fade\' tabindex=\'-1\' role=\'dialog\' aria-labelledby=\'actPopupLabel\' aria-hidden=\'true\'>';
-		$popup .= '<div class=\'modal-header\'><button type=\'button\' class=\'close\' data-dismiss=\'modal\' aria-hidden=\'true\' title=\''. $this->_i18n->getMessage('button_close') . '\'>&times;</button>';
-		$popup .= '<h3 id=\'actPopupLabel'. $row['id']. '\'>'. $this->_i18n->getMessage('entity_user_inactivity') . ': '. escapeOutput($row['entity_users_nick']) . '</h3></div>';
-		$popup .= '<div class=\'modal-body\'>';
+		$popup .= '<div id="actPopup'. $row['id']. '" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="actPopupLabel" aria-hidden="true">';
+		$popup .= '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true" title="'. $this->_i18n->getMessage('button_close') . '">&times;</button>';
+		$popup .= '<h3 id="actPopupLabel'. $row['id']. '">'. $this->_i18n->getMessage('entity_user_inactivity') . ': '. escapeOutput($row['entity_users_nick']) . '</h3></div>';
+		$popup .= '<div class="modal-body">';
 	
 		$gesamt = $row['entity_user_inactivity_login'] + $row['entity_user_inactivity_aufstellung'] + $row['entity_user_inactivity_transfer']+ $row['entity_user_inactivity_vertragsauslauf'];
-		$popup .= '<table class=\'table table-bordered\'>
+		$popup .= '<table class="table table-bordered">
           <thead><tr>
             <th>'. $this->_i18n->getMessage('popup_user_inactivity_title_action') . '</th>
             <th>'. $this->_i18n->getMessage('entity_user_inactivity') . '</th>
@@ -86,25 +86,25 @@ class InactivityConverter implements IConverter {
           <tbody><tr>
             <td><b>'. $this->_i18n->getMessage('entity_user_inactivity_login') . '</b><br>
             <small>'. $this->_i18n->getMessage('entity_users_lastonline') . ': '. date('d.m.y, H:i',$row['entity_users_lastonline']) .'</small></td>
-            <td style=\'text-align: center; font-weight: bold; color: '. $this->_color($this->_format($row['entity_user_inactivity_login'])) .'\'>'.$this->_format($row['entity_user_inactivity_login']).' %</td>
+            <td style="text-align: center; font-weight: bold; color: '. $this->_color($this->_format($row['entity_user_inactivity_login'])) .'">'.$this->_format($row['entity_user_inactivity_login']).' %</td>
           </tr>
           <tr>
             <td><b>'. $this->_i18n->getMessage('entity_user_inactivity_aufstellung') . '</b></td>
-            <td style=\'text-align: center; font-weight: bold; color: '.$this->_color($this->_format($row['entity_user_inactivity_aufstellung'])).'\'>'.$this->_format($row['entity_user_inactivity_aufstellung']).' %</td>
+            <td style="text-align: center; font-weight: bold; color: '.$this->_color($this->_format($row['entity_user_inactivity_aufstellung'])).'">'.$this->_format($row['entity_user_inactivity_aufstellung']).' %</td>
           </tr>
           <tr>
             <td><b>'. $this->_i18n->getMessage('entity_user_inactivity_transfer') . '</b><br>
             <small>'. sprintf($this->_i18n->getMessage('entity_user_inactivity_transfer_check'), date('d.m.y, H:i',$row['entity_user_inactivity_transfer_check'])) . '</small></td>
-            <td style=\'text-align: center; font-weight: bold; color: '.$this->_color($this->_format($row['entity_user_inactivity_transfer'])).'\'>'.$this->_format($row['entity_user_inactivity_transfer']).' %</td>
+            <td style="text-align: center; font-weight: bold; color: '.$this->_color($this->_format($row['entity_user_inactivity_transfer'])).'">'.$this->_format($row['entity_user_inactivity_transfer']).' %</td>
           </tr>
           <tr>
             <td><b>'. $this->_i18n->getMessage('entity_user_inactivity_vertragsauslauf') . '</b></td>
-            <td style=\'text-align: center; font-weight: bold; color: '.$this->_color($this->_format($row['entity_user_inactivity_vertragsauslauf'])).'\'>'.$this->_format($row['entity_user_inactivity_vertragsauslauf']).' %</td>
+            <td style="text-align: center; font-weight: bold; color: '.$this->_color($this->_format($row['entity_user_inactivity_vertragsauslauf'])).'">'.$this->_format($row['entity_user_inactivity_vertragsauslauf']).' %</td>
           </tr></tbody>
           <tfoot>
           <tr>
             <td><b>'. $this->_i18n->getMessage('popup_user_inactivity_total') . '</b></td>
-            <td style=\'text-align: center; font-weight: bold; color: '.$this->_color($this->_format($gesamt)).'\'>'.$this->_format($gesamt).' %';
+            <td style="text-align: center; font-weight: bold; color: '.$this->_color($this->_format($gesamt)).'">'.$this->_format($gesamt).' %';
 		if ($gesamt > 100) $popup .= '<br/>(' . $gesamt .'%)';
 		$popup .= '</td>
           </tr>
@@ -112,7 +112,7 @@ class InactivityConverter implements IConverter {
         </table>';
 	
 		$popup .= '</div>';
-		$popup .= '<div class=\'modal-footer\'><button class=\'btn btn-primary\' data-dismiss=\'modal\' aria-hidden=\'true\'>'. $this->_i18n->getMessage('button_close') . '</button></div>';
+		$popup .= '<div class="modal-footer"><button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">'. $this->_i18n->getMessage('button_close') . '</button></div>';
 		$popup .= '</div>';
 		return $popup;
 	}	
@@ -127,5 +127,3 @@ class InactivityConverter implements IConverter {
 	
 	}
 }
-
-?>

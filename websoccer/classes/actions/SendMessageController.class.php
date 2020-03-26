@@ -43,60 +43,53 @@ class SendMessageController implements IActionController {
 		$senderId = $this->_websoccer->getUser()->id;
 		
 		// check if messages is enabled
-		if (!$this->_websoccer->getConfig("messages_enabled")) {
-			throw new Exception($this->_i18n->getMessage("messages_err_messagesdisabled"));
+		if (!$this->_websoccer->getConfig('messages_enabled')) {
+			throw new Exception($this->_i18n->getMessage('messages_err_messagesdisabled'));
 		}
 		
 		// find user
-		$recipientId = UsersDataService::getUserIdByNick($this->_websoccer, $this->_db, $parameters["nick"]);
-		if ($recipientId < 1) {
-			throw new Exception($this->_i18n->getMessage("messages_send_err_invalidrecipient"));
-		}
+		$recipientId = UsersDataService::getUserIdByNick($this->_websoccer, $this->_db, $parameters['nick']);
+		if ($recipientId < 1) throw new Exception($this->_i18n->getMessage('messages_send_err_invalidrecipient'));
 		
 		// cannot send to yourself
-		if ($senderId == $recipientId) {
-			throw new Exception($this->_i18n->getMessage("messages_send_err_sendtoyourself"));
-		}
+		if ($senderId == $recipientId) throw new Exception($this->_i18n->getMessage('messages_send_err_sendtoyourself'));
 		
 		$now = $this->_websoccer->getNowAsTimestamp();
 		
 		// check when sent last message (needs x minutes break in order to prevent spam)
 		$lastMessage = MessagesDataService::getLastMessageOfUserId($this->_websoccer, $this->_db, $senderId);
-		$timebreakBoundary = $now - $this->_websoccer->getConfig("messages_break_minutes") * 60;
-		if ($lastMessage != null && $lastMessage["date"] >= $timebreakBoundary) {
-			throw new Exception($this->_i18n->getMessage("messages_send_err_timebreak", $this->_websoccer->getConfig("messages_break_minutes")));
+		$timebreakBoundary = $now - $this->_websoccer->getConfig('messages_break_minutes') * 60;
+		if ($lastMessage != null && $lastMessage['date'] >= $timebreakBoundary) {
+			throw new Exception($this->_i18n->getMessage('messages_send_err_timebreak', $this->_websoccer->getConfig('messages_break_minutes')));
 		}
 		
 		// create message
-		$columns["empfaenger_id"] = $recipientId;
-		$columns["absender_id"] = $senderId;
-		$columns["datum"] = $now;
-		$columns["betreff"] = $parameters["subject"];
-		$columns["nachricht"] = $parameters["msgcontent"];
+		$columns['empfaenger_id'] = $recipientId;
+		$columns['absender_id'] = $senderId;
+		$columns['datum'] = $now;
+		$columns['betreff'] = $parameters['subject'];
+		$columns['nachricht'] = $parameters['msgcontent'];
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_briefe";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_briefe';
 		
 		// create message in inbox of recipient
-		$columns["typ"] = "eingang";
+		$columns['typ'] = 'eingang';
 		$this->_db->queryInsert($columns, $fromTable);
 		
 		// create message in outbox of sender
-		$columns["typ"] = "ausgang";
+		$columns['typ'] = 'ausgang';
 		$this->_db->queryInsert($columns, $fromTable);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("messages_send_success"),
-				""));
+				$this->_i18n->getMessage('messages_send_success'),
+				''));
 		
 		// clear fields
-		$_REQUEST["subject"] = "";
-		$_REQUEST["msgcontent"] = "";
-		$_REQUEST["nick"] = "";
+		$_REQUEST['subject'] = '';
+		$_REQUEST['msgcontent'] = '';
+		$_REQUEST['nick'] = '';
 		
 		return null;
 	}
-	
 }
-
-?>

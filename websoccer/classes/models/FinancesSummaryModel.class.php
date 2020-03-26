@@ -48,7 +48,7 @@ class FinancesSummaryModel implements IModel {
 				);
 		$result = $this->_db->querySelect($columns, 
 				$this->_websoccer->getConfig('db_prefix') . '_konto', 
-				'verein_id = %d AND datum > %d GROUP BY verwendung HAVING COUNT(*) > 5', array($this->_teamId, $minDate));
+				'verein_id = \'%d\' AND datum > \'%d\' GROUP BY verwendung HAVING COUNT(*) > \'5\'', array($this->_teamId, $minDate));
 		$majorPositions = array();
 		while ($position = $result->fetch_array()) {
 			$majorPositions[] = $position;
@@ -57,7 +57,4 @@ class FinancesSummaryModel implements IModel {
 		
 		return array('majorPositions' => $majorPositions);
 	}
-	
 }
-
-?>

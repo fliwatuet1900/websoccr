@@ -40,17 +40,12 @@ class TrainerDetailsModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		$trainerId = $this->_websoccer->getRequestParameter("id");
+		$trainerId = $this->_websoccer->getRequestParameter('id');
 
 		$trainer = TrainingDataService::getTrainerById($this->_websoccer, $this->_db, $trainerId);
 		
-		if (!isset($trainer["id"])) {
-			throw new Exception(MSG_KEY_ERROR_PAGENOTFOUND);
-		}
+		if (!isset($trainer['id'])) throw new Exception(MSG_KEY_ERROR_PAGENOTFOUND);
 		
-		return array("trainer" => $trainer);
+		return array('trainer' => $trainer);
 	}
-	
 }
-
-?>

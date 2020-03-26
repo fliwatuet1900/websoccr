@@ -45,7 +45,4 @@ interface IUserAuthentication {
 	 * @param User $currentUser
 	 */
 	public function logoutUser(User $currentUser);
-	
 }
-
-?>

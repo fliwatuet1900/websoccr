@@ -36,30 +36,30 @@ class ChooseTeamController implements IActionController {
 		$user = $this->_websoccer->getUser();
 		
 		// check whether featue is enabled
-		if (!$this->_websoccer->getConfig("assign_team_automatically")) {
-			throw new Exception($this->_i18n->getMessage("freeclubs_msg_error"));
+		if (!$this->_websoccer->getConfig('assign_team_automatically')) {
+			throw new Exception($this->_i18n->getMessage('freeclubs_msg_error'));
 		}
 		
 		if ($user->getClubId($this->_websoccer, $this->_db) > 0) {
-			throw new Exception($this->_i18n->getMessage("freeclubs_msg_error_user_is_already_manager"));
+			throw new Exception($this->_i18n->getMessage('freeclubs_msg_error_user_is_already_manager'));
 		}
 		
-		$teamId = $parameters["teamId"];
+		$teamId = $parameters['teamId'];
 		
 		// check whether club still has no manager
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_verein";
-		$whereCondition = "id = %d AND status = 1 AND (user_id = 0 OR user_id IS NULL OR interimmanager = '1')";
-		$result = $this->_db->querySelect("id", $fromTable, $whereCondition, $teamId);
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_verein';
+		$whereCondition = 'id = \'%d\' AND status = \'1\' AND (user_id = \'0\' OR user_id IS NULL OR interimmanager = \'1\')';
+		$result = $this->_db->querySelect('id', $fromTable, $whereCondition, $teamId);
 		$club = $result->fetch_array();
 		$result->free();
 		
-		if (!isset($club["id"])) {
-			throw new Exception($this->_i18n->getMessage("freeclubs_msg_error"));
+		if (!isset($club['id'])) {
+			throw new Exception($this->_i18n->getMessage('freeclubs_msg_error'));
 		}
 		
 		$columns = array();
-		$columns["user_id"] = $user->id;
-		$columns["interimmanager"] = "0";
+		$columns['user_id'] = $user->id;
+		$columns['interimmanager'] = '0';
 		
 		// update record
 		if (count($columns)) {
@@ -68,12 +68,9 @@ class ChooseTeamController implements IActionController {
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("freeclubs_msg_success"),
-				""));
+				$this->_i18n->getMessage('freeclubs_msg_success'),
+				''));
 		
-		return "office";
+		return 'office';
 	}
-	
 }
-
-?>

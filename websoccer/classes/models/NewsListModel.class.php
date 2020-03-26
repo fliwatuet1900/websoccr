@@ -49,45 +49,42 @@ class NewsListModel implements IModel {
 	 * @see IModel::getTemplateParameters()
 	 */
 	public function getTemplateParameters() {
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_news";
-		$whereCondition = "status = %d";
-		$parameters = "1";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_news';
+		$whereCondition = 'status = \'%d\'';
+		$parameters = '1';
 		
 		// count items for pagination
-		$result = $this->_db->querySelect("COUNT(*) AS hits", $fromTable, $whereCondition, $parameters);
+		$result = $this->_db->querySelect('COUNT(*) AS hits', $fromTable, $whereCondition, $parameters);
 		$rows = $result->fetch_array();
 		$result->free();
 		
 		// enable paginations
 		$eps = NEWS_ENTRIES_PER_PAGE;
-		$paginator = new Paginator($rows["hits"], $eps, $this->_websoccer);
+		$paginator = new Paginator($rows['hits'], $eps, $this->_websoccer);
 		
 		// select
-		$columns = "id, titel, datum, nachricht";
-		$whereCondition .= " ORDER BY datum DESC";
-		$limit = $paginator->getFirstIndex() .",". $eps;
+		$columns = 'id, titel, datum, nachricht';
+		$whereCondition .= ' ORDER BY datum DESC';
+		$limit = $paginator->getFirstIndex() .','. $eps;
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $parameters, $limit);
 		
 		$articles = array();
 		while ($article = $result->fetch_array()) {
-			$articles[] = array("id" => $article["id"],
-								"title" => $article["titel"],
-								"date" => $this->_websoccer->getFormattedDate($article["datum"]),
-								"teaser" => $this->_shortenMessage($article["nachricht"]));
+			$articles[] = array('id' => $article['id'],
+								'title' => $article['titel'],
+								'date' => $this->_websoccer->getFormattedDate($article['datum']),
+								'teaser' => $this->_shortenMessage($article['nachricht']));
 		}
 		$result->free();
 		
-		return array("articles" => $articles, "paginator" => $paginator);
+		return array('articles' => $articles, 'paginator' => $paginator);
 	}
 	
 	private function _shortenMessage($message) {
 		if (strlen($message) > NEWS_TEASER_MAXLENGTH) {
 			$message = wordwrap($message, NEWS_TEASER_MAXLENGTH);
-			$message = substr($message, 0, strpos($message, "\n")) . "...";
+			$message = substr($message, 0, strpos($message, "\n")) . '...';
 		}
 		return $message;
 	}
-	
 }
-
-?>

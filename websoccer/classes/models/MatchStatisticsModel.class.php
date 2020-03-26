@@ -41,37 +41,32 @@ class MatchStatisticsModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$matchId = (int) $this->_websoccer->getRequestParameter("id");
-		if ($matchId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if ($matchId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$match = MatchesDataService::getMatchById($this->_websoccer, $this->_db, $matchId);
 		
 		// get statistics
-		$columns["SUM(shoots)"] = "shoots";
-		$columns["SUM(ballcontacts)"] = "ballcontacts";
-		$columns["SUM(wontackles)"] = "wontackles";
-		$columns["SUM(passes_successed)"] = "passes_successed";
-		$columns["SUM(passes_failed)"] = "passes_failed";
+		$columns['SUM(shoots)'] = 'shoots';
+		$columns['SUM(ballcontacts)'] = 'ballcontacts';
+		$columns['SUM(wontackles)'] = 'wontackles';
+		$columns['SUM(passes_successed)'] = 'passes_successed';
+		$columns['SUM(passes_failed)'] = 'passes_failed';
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_spiel_berechnung";
-		$whereCondition = "spiel_id = %d AND team_id = %d";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_spiel_berechnung';
+		$whereCondition = 'spiel_id = \'%d\' AND team_id = \'%d\'';
 		
 		// home team
-		$parameters = array($matchId, $match["match_home_id"]);
+		$parameters = array($matchId, $match['match_home_id']);
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $parameters);
 		$homeStatistics = $result->fetch_array();
 		$result->free();
 		
-		// guest team
-		$parameters = array($matchId, $match["match_guest_id"]);
+		// away team
+		$parameters = array($matchId, $match['match_guest_id']);
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $parameters);
 		$guestStatistics = $result->fetch_array();
 		$result->free();
 		
-		return array("match" => $match, "homeStatistics" => $homeStatistics, "guestStatistics" => $guestStatistics);
+		return array('match' => $match, 'homeStatistics' => $homeStatistics, 'guestStatistics' => $guestStatistics);
 	}
-	
 }
-
-?>

@@ -70,14 +70,14 @@ class StringUtil {
 		
 		if ($timestamp >= strtotime('tomorrow', $nowAsTimestamp)) {
 			return $i18n->getMessage('date_tomorrow');
-		} else if ($timestamp >= strtotime('today', $nowAsTimestamp)) {
+		}
+		elseif ($timestamp >= strtotime('today', $nowAsTimestamp)) {
 			return $i18n->getMessage('date_today');
-		} else if ($timestamp >= strtotime('yesterday', $nowAsTimestamp)) {
+		}
+		elseif ($timestamp >= strtotime('yesterday', $nowAsTimestamp)) {
 			return $i18n->getMessage('date_yesterday');
 		}
 		
 		return '';
 	}
 }
-
-?>

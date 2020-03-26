@@ -41,18 +41,12 @@ class MessagesInboxModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$count = MessagesDataService::countInboxMessages($this->_websoccer, $this->_db);
-		$eps = $this->_websoccer->getConfig("entries_per_page");
+		$eps = $this->_websoccer->getConfig('entries_per_page');
 		$paginator = new Paginator($count, $eps, $this->_websoccer);
 		
-		if ($count > 0) {
-			$messages = MessagesDataService::getInboxMessages($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps);
-		} else {
-			$messages = array();
-		}
+		if ($count > 0) $messages = MessagesDataService::getInboxMessages($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps);
+		else $messages = array();
 		
-		return array("messages" => $messages, "paginator" => $paginator);
+		return array('messages' => $messages, 'paginator' => $paginator);
 	}
-	
 }
-
-?>

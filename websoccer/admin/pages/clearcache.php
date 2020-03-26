@@ -28,5 +28,3 @@ $website->resetConfigCache();
 $website->getTemplateEngine($i18n)->clearCache();
 
 echo createSuccessMessage($i18n->getMessage('clearcache_success_title'), $i18n->getMessage('clearcache_success_message'));
-
-?>

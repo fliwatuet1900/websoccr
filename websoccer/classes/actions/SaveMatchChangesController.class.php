@@ -61,9 +61,7 @@ class SaveMatchChangesController implements IActionController {
 		}
 		
 		// is already completed?
-		if ($matchinfo['match_simulated']) {
-			throw new Exception($this->_i18n->getMessage('match_details_match_completed'));
-		}
+		if ($matchinfo['match_simulated']) throw new Exception($this->_i18n->getMessage('match_details_match_completed'));
 		
 		// update match fields
 		$columns = array();
@@ -78,7 +76,8 @@ class SaveMatchChangesController implements IActionController {
 			
 			if ($existingMinute > 0 && $existingMinute <= $matchinfo['match_minutes']) {
 				$occupiedSubPos[$subNo] = TRUE;
-			} elseif ($existingMinute > 0) {
+			}
+			elseif ($existingMinute > 0) {
 				$existingFutureSubs[$matchinfo[$teamPrefix . '_sub'. $subNo . '_out']] = array(
 						'minute' => $matchinfo[$teamPrefix . '_sub'. $subNo . '_minute'],
 						'in' => $matchinfo[$teamPrefix . '_sub'. $subNo . '_in'],
@@ -145,12 +144,10 @@ class SaveMatchChangesController implements IActionController {
 		$prevOffensive = $matchinfo['match_'. $teamPrefix .'_offensive'];
 		$prevLongpasses = $matchinfo['match_'. $teamPrefix .'_longpasses'];
 		$prevCounterattacks = $matchinfo['match_'. $teamPrefix .'_counterattacks'];
-		if (!$prevLongpasses) {
-			$prevLongpasses = '0';
-		}
-		if (!$prevCounterattacks) {
-			$prevCounterattacks = '0';
-		}
+		if (!$prevLongpasses) $prevLongpasses = '0';
+
+		if (!$prevCounterattacks) $prevCounterattacks = '0';
+
 		if ($prevOffensive !== $parameters['offensive']
 				|| $prevLongpasses !== $parameters['longpasses']
 				|| $prevCounterattacks !== $parameters['counterattacks']) {
@@ -178,7 +175,7 @@ class SaveMatchChangesController implements IActionController {
 		// execute update
 		if (count($columns)) {
 			$fromTable = $this->_websoccer->getConfig('db_prefix') . '_spiel';
-			$whereCondition = 'id = %d';
+			$whereCondition = 'id = \'%d\'';
 			
 			$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $matchId);
 		}
@@ -244,7 +241,8 @@ class SaveMatchChangesController implements IActionController {
 						$strength = round($strength * (1 - $this->_websoccer->getConfig('sim_strength_reduction_wrongposition') / 100));
 						
 						// player becomes weaker: secondary position
-					} elseif (strlen($player['position_main']) && $player['position_main'] != $newPos &&
+					}
+					elseif (strlen($player['position_main']) && $player['position_main'] != $newPos &&
 							($player['position'] == $position || $player['position_second'] == $newPos)) {
 						$strength = round($strength * (1 - $this->_websoccer->getConfig('sim_strength_reduction_secondary') / 100));
 					}
@@ -282,7 +280,4 @@ class SaveMatchChangesController implements IActionController {
 				), 
 				$this->_websoccer->getConfig('db_prefix') . '_matchreport');
 	}
-	
 }
-
-?>

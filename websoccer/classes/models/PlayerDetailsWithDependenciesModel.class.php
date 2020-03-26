@@ -40,43 +40,36 @@ class PlayerDetailsWithDependenciesModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		$playerId = (int) $this->_websoccer->getRequestParameter("id");
-		if ($playerId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		$playerId = (int) $this->_websoccer->getRequestParameter('id');
+		if ($playerId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $playerId);
 		
-		if (!isset($player["player_id"])) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if (!isset($player['player_id'])) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$grades = $this->_getGrades($playerId);
 		
 		$transfers = TransfermarketDataService::getCompletedTransfersOfPlayer($this->_websoccer, $this->_db, $playerId);
-		return array("player" => $player, "grades" => $grades, "completedtransfers" => $transfers);
+		return array('player' => $player, 'grades' => $grades, 'completedtransfers' => $transfers);
 	}
 	
 	private function _getGrades($playerId) {
 		$grades = array();
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_spiel_berechnung";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_spiel_berechnung';
 		
-		$columns = "note AS grade";
+		$columns = 'note AS grade';
 		
-		$whereCondition = "spieler_id = %d AND minuten_gespielt > 0 ORDER BY id DESC";
+		$whereCondition = 'spieler_id = \'%d\' AND minuten_gespielt > \'0\' ORDER BY id DESC';
 		$parameters = $playerId;
 		
 		$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $parameters, 10);
 		while ($grade = $result->fetch_array()) {
-			$grades[] = $grade["grade"];
+			$grades[] = $grade['grade'];
 		}		
 		
 		$grades = array_reverse($grades);
 		
 		return $grades;
 	}
-	
 }
-
-?>

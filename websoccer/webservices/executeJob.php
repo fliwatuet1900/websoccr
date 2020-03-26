@@ -64,9 +64,8 @@ if (class_exists($jobClass)) {
 	$i18n = I18n::getInstance($website->getConfig('supported_languages'));
 	$job = new $jobClass($website, $db, $i18n, $jobId);
 	
-} else {
+}
+else {
 	die('class not found: ' . $jobClass);
 }
-
 $job->execute();
-?>

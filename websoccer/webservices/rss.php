@@ -34,7 +34,8 @@ $lang = $website->getRequestParameter('lang');
 if ($lang) {
 	try {
 		$i18n->setCurrentLanguage($lang);
-	} catch (Exception $e) {
+	}
+	catch (Exception $e) {
 		// ignore and use default language
 	}
 }
@@ -49,7 +50,7 @@ header('Content-type: application/rss+xml; charset=utf-8');
 $viewHandler = new ViewHandler($website, $db, $i18n, $page, $block, null);
 try {
 	echo $viewHandler->handlePage($pageId, array());
-} catch (Exception $e) {
+}
+catch (Exception $e) {
 	echo $e->getMessage();
 }
-?>

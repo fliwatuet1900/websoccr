@@ -40,24 +40,20 @@ class CupGroupDetailsModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		$cupRoundId = $this->_websoccer->getRequestParameter("roundid");
-		$cupGroup = $this->_websoccer->getRequestParameter("group");
+		$cupRoundId = $this->_websoccer->getRequestParameter('roundid');
+		$cupGroup = $this->_websoccer->getRequestParameter('group');
 		
-		$columns = "C.name AS cup_name, R.name AS round_name";
-		$fromTable = $this->_websoccer->getConfig("db_prefix") . "_cup_round AS R";
-		$fromTable .= " INNER JOIN " . $this->_websoccer->getConfig("db_prefix") . "_cup AS C ON C.id = R.cup_id";
+		$columns = 'C.name AS cup_name, R.name AS round_name';
+		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_cup_round AS R';
+		$fromTable .= ' INNER JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_cup AS C ON C.id = R.cup_id';
 		
-		$result = $this->_db->querySelect($columns, $fromTable, "R.id = %d", $cupRoundId);
+		$result = $this->_db->querySelect($columns, $fromTable, 'R.id = \'%d\'', $cupRoundId);
 		$round = $result->fetch_array();
 		$result->free();
 		
-		$matches = MatchesDataService::getMatchesByCupRoundAndGroup($this->_websoccer, $this->_db, $round["cup_name"], $round["round_name"], $cupGroup);
+		$matches = MatchesDataService::getMatchesByCupRoundAndGroup($this->_websoccer, $this->_db, $round['cup_name'], $round['round_name'], $cupGroup);
 		
-		return array("matches" => $matches, "groupteams" => CupsDataService::getTeamsOfCupGroupInRankingOrder($this->_websoccer, 
+		return array('matches' => $matches, 'groupteams' => CupsDataService::getTeamsOfCupGroupInRankingOrder($this->_websoccer, 
 			$this->_db, $cupRoundId, $cupGroup));
 	}
-	
-	
 }
-
-?>

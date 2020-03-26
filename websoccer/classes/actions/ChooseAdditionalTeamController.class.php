@@ -52,7 +52,7 @@ class ChooseAdditionalTeamController implements IActionController {
 		$minHighscore = (int) $this->_websoccer->getConfig('additional_team_min_highscore');
 		if ($minHighscore) {
 			$result = $this->_db->querySelect('highscore', $this->_websoccer->getConfig('db_prefix') . '_user',
-					'id = %d', $user->id);
+					'id = \'%d\'', $user->id);
 			$userinfo = $result->fetch_array();
 			$result->free();
 			
@@ -63,7 +63,7 @@ class ChooseAdditionalTeamController implements IActionController {
 		
 		// check maximum number of teams per user
 		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_verein';
-		$result = $this->_db->querySelect('id,liga_id', $fromTable, 'user_id = %d', $user->id);
+		$result = $this->_db->querySelect('id,liga_id', $fromTable, 'user_id = \'%d\'', $user->id);
 		$teamsOfUser = array();
 		while ($teamOfUser = $result->fetch_array()) {
 			$teamsOfUser[$teamOfUser['liga_id']][] = $teamOfUser['id'];
@@ -77,7 +77,7 @@ class ChooseAdditionalTeamController implements IActionController {
 		$teamId = $parameters['teamId'];
 		
 		// check whether club still has no manager
-		$result = $this->_db->querySelect('id,user_id,liga_id,interimmanager', $fromTable, 'id = %d AND status = 1', $teamId);
+		$result = $this->_db->querySelect('id,user_id,liga_id,interimmanager', $fromTable, 'id = \'%d\' AND status = \'1\'', $teamId);
 		$club = $result->fetch_array();
 		$result->free();
 		
@@ -91,7 +91,7 @@ class ChooseAdditionalTeamController implements IActionController {
 		}
 		
 		// update record
-		$this->_db->queryUpdate(array('user_id' => $user->id), $fromTable, "id = %d", $teamId);
+		$this->_db->queryUpdate(array('user_id' => $user->id), $fromTable, 'id = \'%d\'', $teamId);
 		
 		$user->setClubId($teamId);
 		
@@ -102,7 +102,4 @@ class ChooseAdditionalTeamController implements IActionController {
 		
 		return 'office';
 	}
-	
 }
-
-?>

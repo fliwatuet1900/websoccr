@@ -42,34 +42,29 @@ class LeagueDetailsModel implements IModel {
 		
 		$league = null;
 		
-		$leagueId = (int) $this->_websoccer->getRequestParameter("id");
+		$leagueId = (int) $this->_websoccer->getRequestParameter('id');
 		
 		// pre-select user's league
 		if ($leagueId == 0) {
 			$clubId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 			if ($clubId > 0) {
-				$result = $this->_db->querySelect("liga_id", $this->_websoccer->getConfig("db_prefix") . "_verein",
-						"id = %d", $clubId, 1);
+				$result = $this->_db->querySelect('liga_id', $this->_websoccer->getConfig('db_prefix') . '_verein',
+						'id = \'%d\'', $clubId, 1);
 				$club = $result->fetch_array();
 				$result->free();
 					
-				$leagueId = $club["liga_id"];
+				$leagueId = $club['liga_id'];
 			}
 		}
 		
 		if ($leagueId > 0) {
 			$league = LeagueDataService::getLeagueById($this->_websoccer, $this->_db, $leagueId);
 			
-			if (!isset($league["league_id"])) {
+			if (!isset($league['league_id'])) {
 				throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 			}
 		}
 
-		
-		return array("league" => $league, "leagues" => LeagueDataService::getLeaguesSortedByCountry($this->_websoccer, $this->_db));
+		return array('league' => $league, 'leagues' => LeagueDataService::getLeaguesSortedByCountry($this->_websoccer, $this->_db));
 	}
-	
-	
 }
-
-?>

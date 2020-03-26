@@ -50,7 +50,7 @@ class FormationTemplatesModel implements IModel {
 		
 		$templates = array();
 		$result = $this->_db->querySelect('id, datum AS date, templatename', $this->_websoccer->getConfig('db_prefix') . '_aufstellung', 
-				'verein_id = %d AND templatename IS NOT NULL ORDER BY datum DESC', 
+				'verein_id = \'%d\' AND templatename IS NOT NULL ORDER BY datum DESC',
 				$this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db));
 		while ($template = $result->fetch_array()) {
 			$templates[] = $template;
@@ -59,7 +59,4 @@ class FormationTemplatesModel implements IModel {
 		
 		return array('templates' => $templates);
 	}
-	
 }
-
-?>

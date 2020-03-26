@@ -51,13 +51,8 @@ class OfficeModel implements IModel {
 		// trigger random event detection
 		$user = $this->_websoccer->getUser();
 		$clubId = $user->getClubId($this->_websoccer, $this->_db);
-		if ($clubId) {
-			RandomEventsDataService::createEventIfRequired($this->_websoccer, $this->_db, $user->id);
-		}
+		if ($clubId) RandomEventsDataService::createEventIfRequired($this->_websoccer, $this->_db, $user->id);
 
 		return array();
 	}
-
 }
-
-?>

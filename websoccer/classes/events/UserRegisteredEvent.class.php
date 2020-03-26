@@ -50,15 +50,11 @@ class UserRegisteredEvent extends AbstractEvent {
 	 * @param string $username entered user name.
 	 * @param string $email entered e-mail address with lower case letters.
 	 */
-	function __construct(WebSoccer $websoccer, DbConnection $db, I18n $i18n,
-			$userid, $username, $email) {
+	function __construct(WebSoccer $websoccer, DbConnection $db, I18n $i18n, $userid, $username, $email) {
 		parent::__construct($websoccer, $db, $i18n);
 		
 		$this->userId = $userid;
 		$this->username = $username;
 		$this->email = $email;
 	}
-
 }
-
-?>

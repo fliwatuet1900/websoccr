@@ -68,5 +68,3 @@ class NavigationItem {
 		$this->weight = $weight;
 	}
 }
-
-?>

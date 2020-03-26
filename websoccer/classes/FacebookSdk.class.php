@@ -42,9 +42,8 @@ class FacebookSdk {
 	 * @return FacebookSdk the only instance during current request.
 	 */
 	public static function getInstance(WebSoccer $websoccer) {
-		if(self::$_instance == NULL) {
-			self::$_instance = new FacebookSdk($websoccer);
-		}
+		if(self::$_instance == NULL) self::$_instance = new FacebookSdk($websoccer);
+
 		return self::$_instance;
 	}
 	
@@ -102,7 +101,6 @@ class FacebookSdk {
 				// it is possible that we have a user ID although user is logged out. 
 				// Hence, check for exception which indicates this situation.
 				try {
-					
 					// query e-mail and save in session
 					$fql = 'SELECT email from user where uid = ' . $userId;
 					$ret_obj = $this->_facebook->api(array(
@@ -112,12 +110,14 @@ class FacebookSdk {
 					$this->_userEmail = $ret_obj[0]['email'];
 					$_SESSION['fbemail'] = $this->_userEmail;
 					
-				} catch(FacebookApiException $e) {
+				}
+				catch(FacebookApiException $e) {
 					$this->_userEmail = '';
 				}
 				
 				// user is not logged in
-			} else {
+			}
+			else {
 				$this->_userEmail = '';
 			}
 			
@@ -132,4 +132,3 @@ class FacebookSdk {
 		$this->_facebook->destroySession();
 	}
 }
-?>

@@ -56,9 +56,8 @@ abstract class AbstractJob {
 			$initTime = (int) $xmlConfig->attributes()->inittime;
 			$now = $websoccer->getNowAsTimestamp();
 			$timeoutTime = $now - 5 * 60;
-			if ($initTime > $timeoutTime) {
-				throw new Exception('Another instance of this job is already running.');
-			}
+			if ($initTime > $timeoutTime) throw new Exception('Another instance of this job is already running.');
+
 			$this->replaceAttribute('inittime', $now);
 		}
 		
@@ -99,9 +98,7 @@ abstract class AbstractJob {
 			
 			$xmlConfig = $this->getXmlConfig();
 			$stop = (int) $xmlConfig->attributes()->stop;
-			if ($stop === 1) {
-				$this->stop();
-			}
+			if ($stop === 1) $this->stop();
 			
 			$now = $this->_websoccer->getNowAsTimestamp();
 			
@@ -128,7 +125,8 @@ abstract class AbstractJob {
 				
 				// force freeing memory by garbage collector
 				gc_collect_cycles();
-			} catch (Exception $e) {
+			}
+			catch (Exception $e) {
 				$this->replaceAttribute('error', $e->getMessage());
 				$this->stop();
 			}
@@ -155,9 +153,7 @@ abstract class AbstractJob {
 	private function getXmlConfig() {
 		$xml = simplexml_load_file(JOBS_CONFIG_FILE);
 		$xmlConfig = $xml->xpath('//job[@id = \''. $this->_id . '\']');
-		if (!$xmlConfig) {
-			throw new Exception('Job config not found.');
-		}
+		if (!$xmlConfig) throw new Exception('Job config not found.');
 		
 		return $xmlConfig[0];
 	}
@@ -181,9 +177,7 @@ abstract class AbstractJob {
 		$xmlConfig = $xml->xpath('//job[@id = \''. $this->_id . '\']');
 		$xmlConfig[0][$name] = $value;
 		$successfulWritten = $xml->asXML(JOBS_CONFIG_FILE);
-		if (!$successfulWritten) {
-			throw new Exception('Job with ID \'' . $this->_id . '\': Could not save updated attribute \'' . $name . '\' with value \'' . $value . '\'.');
-		}
+		if (!$successfulWritten) throw new Exception('Job with ID \'' . $this->_id . '\': Could not save updated attribute \'' . $name . '\' with value \'' . $value . '\'.');
 		
 		// unlock
 		flock($fp, LOCK_UN);
@@ -194,5 +188,3 @@ abstract class AbstractJob {
 	 */
 	abstract function execute();
 }
-
-?>

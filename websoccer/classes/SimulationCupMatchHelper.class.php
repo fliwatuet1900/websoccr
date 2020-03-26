@@ -29,7 +29,7 @@
 class SimulationCupMatchHelper {
 	
 	/**
-	 * Checks if the specified cup match requires after-time or penalty shooting, due to a draw. Also considering the result of
+	 * Checks if the specified cup match requires after-time or penalty shootout, due to a draw. Also considering the result of
 	 * a frst round if match is second-round match (will be detected automatically).
 	 * It also automatically creates matches for a next round in case there is already a winner.
 	 * 
@@ -50,7 +50,7 @@ class SimulationCupMatchHelper {
 		$columns['gast_tore'] = 'guest_goals';
 		$columns['berechnet'] = 'is_simulated';
 		
-		$whereCondition = 'home_verein = %d AND gast_verein = %d AND pokalname = \'%s\' AND pokalrunde = \'%s\'';
+		$whereCondition = 'home_verein = \'%d\' AND gast_verein = \'%d\' AND pokalname = \'%s\' AND pokalrunde = \'%s\'';
 		$result = $db->querySelect($columns, $websoccer->getConfig('db_prefix') . '_spiel', $whereCondition,
 				array($match->guestTeam->id, $match->homeTeam->id, $match->cupName, $match->cupRoundName), 1);
 		$otherRound = $result->fetch_array();
@@ -69,13 +69,15 @@ class SimulationCupMatchHelper {
 				return TRUE;
 				
 				// home team won
-			} elseif ($match->homeTeam->getGoals() > $match->guestTeam->getGoals()) {
+			}
+			elseif ($match->homeTeam->getGoals() > $match->guestTeam->getGoals()) {
 				self::createNextRoundMatchAndPayAwards($websoccer, $db, 
 						$match->homeTeam->id, $match->guestTeam->id, $match->cupName, $match->cupRoundName);
 				return FALSE;
 				
-				// guest team won
-			} else {
+				// away team won
+			}
+			else {
 				self::createNextRoundMatchAndPayAwards($websoccer, $db,
 						$match->guestTeam->id, $match->homeTeam->id, $match->cupName, $match->cupRoundName);
 				return FALSE;
@@ -96,22 +98,26 @@ class SimulationCupMatchHelper {
 		if ($totalHomeGoals > $totalGuestGoals) {
 			$winnerTeam =  $match->homeTeam;
 			$loserTeam =  $match->guestTeam;
-		// guest team
-		} elseif ($totalHomeGoals < $totalGuestGoals) {
+		// away team
+		}
+		elseif ($totalHomeGoals < $totalGuestGoals) {
 			$winnerTeam =  $match->guestTeam;
 			$loserTeam =  $match->homeTeam;
 		// same amount of goals, so check guest goals ('Auswärtstorregelung')
-		} else {
+		}
+		else {
 			
 			if ($otherRound['guest_goals'] > $match->guestTeam->getGoals()) {
 				$winnerTeam =  $match->homeTeam;
 				$loserTeam =  $match->guestTeam;
-			} elseif ($otherRound['guest_goals'] < $match->guestTeam->getGoals()) {
+			}
+			elseif ($otherRound['guest_goals'] < $match->guestTeam->getGoals()) {
 				$winnerTeam =  $match->guestTeam;
 				$loserTeam =  $match->homeTeam;
 				
 				// no winner
-			} else {
+			}
+			else {
 				return TRUE;
 			}
 			
@@ -220,7 +226,8 @@ class SimulationCupMatchHelper {
 			
 			
 		// create matches for next round
-		} else {
+		}
+		else {
 			$columns = 'id,firstround_date,secondround_date,name';
 			$fromTable = $websoccer->getConfig('db_prefix') . '_cup_round';
 			
@@ -254,7 +261,7 @@ class SimulationCupMatchHelper {
 		
 		// check if there are any open matches in this round
 		$result = $db->querySelect('COUNT(*) AS hits', $websoccer->getConfig('db_prefix') . '_spiel', 
-				'berechnet = \'0\' AND pokalname = \'%s\' AND pokalrunde = \'%s\' AND id != %d',
+				'berechnet = \'0\' AND pokalname = \'%s\' AND pokalrunde = \'%s\' AND id != \'%d\'',
 				array($match->cupName, $match->cupRoundName, $match->id));
 		$openMatches = $result->fetch_array();
 		$result->free();
@@ -309,7 +316,7 @@ class SimulationCupMatchHelper {
 			
 			// get round info
 			$result = $db->querySelect('name,firstround_date,secondround_date', $websoccer->getConfig('db_prefix') . '_cup_round', 
-					'id = %d', $nextRoundId);
+					'id = \'%d\'', $nextRoundId);
 			$roundInfo = $result->fetch_array();
 			$result->free();
 			if (!$roundInfo) {
@@ -353,14 +360,15 @@ class SimulationCupMatchHelper {
 		
 		// get opponent team from pending list
 		$pendingTable = $websoccer->getConfig('db_prefix') . '_cup_round_pending';
-		$result = $db->querySelect('team_id', $pendingTable, 'cup_round_id = %d', $roundId, 1);
+		$result = $db->querySelect('team_id', $pendingTable, 'cup_round_id = \'%d\'', $roundId, 1);
 		$opponent = $result->fetch_array();
 		$result->free();
 		
 		// no opponent -> add to pending list
 		if (!$opponent) {
 			$db->queryInsert(array('team_id' => $teamId, 'cup_round_id' => $roundId), $pendingTable);
-		} else {
+		}
+		else {
 			
 			$matchTable = $websoccer->getConfig('db_prefix') . '_spiel';
 			$type = 'Pokalspiel';
@@ -369,7 +377,8 @@ class SimulationCupMatchHelper {
 			if (SimulationHelper::selectItemFromProbabilities(array(1 => 50, 0 => 50))) {
 				$homeTeam = $teamId;
 				$guestTeam = $opponent['team_id'];
-			} else {
+			}
+			else {
 				$homeTeam = $opponent['team_id'];
 				$guestTeam = $teamId;
 			}
@@ -397,12 +406,8 @@ class SimulationCupMatchHelper {
 			}
 			
 			// remove opponent team from pending list
-			$db->queryDelete($pendingTable, 'team_id = %d AND cup_round_id = %d', array($opponent['team_id'], $roundId));
+			$db->queryDelete($pendingTable, 'team_id = \'%d\' AND cup_round_id = \'%d\'', array($opponent['team_id'], $roundId));
 			
 		}
-		
 	}
-	
 }
-
-?>

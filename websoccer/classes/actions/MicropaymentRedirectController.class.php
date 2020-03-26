@@ -41,30 +41,21 @@ class MicropaymentRedirectController implements IActionController {
 	 */
 	public function executeAction($parameters) {
 		
-		$projectId = trim($this->_websoccer->getConfig("micropayment_project"));
-		if (!strlen($projectId)) {
-			throw new Exception("Configuration error: micropayment.de project ID is not specified.");
-		}
+		$projectId = trim($this->_websoccer->getConfig('micropayment_project'));
+		if (!strlen($projectId)) throw new Exception('Configuration error: micropayment.de project ID is not specified.');
 		
-		$accessKey = trim($this->_websoccer->getConfig("micropayment_accesskey"));
-		if (!strlen($accessKey)) {
-			throw new Exception("Configuration error: micropayment.de AccessKey is not specified.");
-		}
+		$accessKey = trim($this->_websoccer->getConfig('micropayment_accesskey'));
+		if (!strlen($accessKey)) throw new Exception('Configuration error: micropayment.de AccessKey is not specified.');
 		
 		// collect valid modules for verification
 		$validModules = array();
-		if ($this->_websoccer->getConfig("micropayment_call2pay_enabled")) {
-			$validModules[] = 'call2pay';
-		}
-		if ($this->_websoccer->getConfig("micropayment_handypay_enabled")) {
-			$validModules[] = 'handypay';
-		}
-		if ($this->_websoccer->getConfig("micropayment_ebank2pay_enabled")) {
-			$validModules[] = 'ebank2pay';
-		}
-		if ($this->_websoccer->getConfig("micropayment_creditcard_enabled")) {
-			$validModules[] = 'creditcard';
-		}
+		if ($this->_websoccer->getConfig('micropayment_call2pay_enabled')) $validModules[] = 'call2pay';
+
+		if ($this->_websoccer->getConfig('micropayment_handypay_enabled')) $validModules[] = 'handypay';
+
+		if ($this->_websoccer->getConfig('micropayment_ebank2pay_enabled')) $validModules[] = 'ebank2pay';
+
+		if ($this->_websoccer->getConfig('micropayment_creditcard_enabled')) $validModules[] = 'creditcard';
 		
 		// get module ID and verify it
 		$module = FALSE;
@@ -73,9 +64,7 @@ class MicropaymentRedirectController implements IActionController {
 				$module = $moduleId;
 			}
 		}
-		if (!$module || !in_array($moduleId, $validModules)) {
-			throw new Exception('Illegal payment module.');
-		}
+		if (!$module || !in_array($moduleId, $validModules)) throw new Exception('Illegal payment module.');
 		
 		// verify amount (check if specified in options)
 		$amount = $parameters['amount'];
@@ -96,7 +85,7 @@ class MicropaymentRedirectController implements IActionController {
 		}
 		if (!$validAmount) {
 			// amount comes actually from a selection list, hence can be invalid only by cheating -> no i18n
-			throw new Exception("Invalid amount");
+			throw new Exception('Invalid amount');
 		}
 		
 		// micropayments expect amount in Eurocents
@@ -127,7 +116,4 @@ class MicropaymentRedirectController implements IActionController {
 		
 		return null;
 	}
-	
 }
-
-?>

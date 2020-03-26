@@ -46,26 +46,26 @@ class AcceptStadiumConstructionWorkController implements IActionController {
 		
 		// verify that it is due
 		$construction = StadiumsDataService::getCurrentConstructionOrderOfTeam($this->_websoccer, $this->_db, $clubId);
-		if ($construction == NULL || $construction["deadline"] > $this->_websoccer->getNowAsTimestamp()) {
-			throw new Exception($this->_i18n->getMessage("stadium_acceptconstruction_err_nonedue"));
+		if ($construction == NULL || $construction['deadline'] > $this->_websoccer->getNowAsTimestamp()) {
+			throw new Exception($this->_i18n->getMessage('stadium_acceptconstruction_err_nonedue'));
 		}
 		
 		// is completed?
-		$pStatus["completed"] = $construction["builder_reliability"];
-		$pStatus["notcompleted"] = 100 - $pStatus["completed"];
+		$pStatus['completed'] = $construction['builder_reliability'];
+		$pStatus['notcompleted'] = 100 - $pStatus['completed'];
 		$constructionResult = SimulationHelper::selectItemFromProbabilities($pStatus);
 		
 		// not completed: postpone deadline
-		if ($constructionResult == "notcompleted") {
+		if ($constructionResult == 'notcompleted') {
 			
-			$newDeadline = $this->_websoccer->getNowAsTimestamp() + $this->_websoccer->getConfig("stadium_construction_delay") * 24 * 3600;
-			$this->_db->queryUpdate(array("deadline" => $newDeadline), $this->_websoccer->getConfig("db_prefix") . "_stadium_construction", 
-					"id = %d", $construction["id"]);
+			$newDeadline = $this->_websoccer->getNowAsTimestamp() + $this->_websoccer->getConfig('stadium_construction_delay') * 24 * 3600;
+			$this->_db->queryUpdate(array('deadline' => $newDeadline), $this->_websoccer->getConfig('db_prefix') . '_stadium_construction', 
+					'id = \'%d\'', $construction['id']);
 			
 			// show warning alert
 			$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_WARNING,
-					$this->_i18n->getMessage("stadium_acceptconstruction_notcompleted_title"),
-					$this->_i18n->getMessage("stadium_acceptconstruction_notcompleted_details")));
+					$this->_i18n->getMessage('stadium_acceptconstruction_notcompleted_title'),
+					$this->_i18n->getMessage('stadium_acceptconstruction_notcompleted_details')));
 			
 			// completed
 		} else {
@@ -73,27 +73,24 @@ class AcceptStadiumConstructionWorkController implements IActionController {
 			// update stadium
 			$stadium = StadiumsDataService::getStadiumByTeamId($this->_websoccer, $this->_db, $clubId);
 			$columns = array();
-			$columns["p_steh"] = $stadium["places_stands"] + $construction["p_steh"];
-			$columns["p_sitz"] = $stadium["places_seats"] + $construction["p_sitz"];
-			$columns["p_haupt_steh"] = $stadium["places_stands_grand"] + $construction["p_haupt_steh"];
-			$columns["p_haupt_sitz"] = $stadium["places_seats_grand"] + $construction["p_haupt_sitz"];
-			$columns["p_vip"] = $stadium["places_vip"] + $construction["p_vip"];
-			$this->_db->queryUpdate($columns, $this->_websoccer->getConfig("db_prefix") . "_stadion", "id = %d", 
-					$stadium["stadium_id"]);
+			$columns['p_steh'] = $stadium['places_stands'] + $construction['p_steh'];
+			$columns['p_sitz'] = $stadium['places_seats'] + $construction['p_sitz'];
+			$columns['p_haupt_steh'] = $stadium['places_stands_grand'] + $construction['p_haupt_steh'];
+			$columns['p_haupt_sitz'] = $stadium['places_seats_grand'] + $construction['p_haupt_sitz'];
+			$columns['p_vip'] = $stadium['places_vip'] + $construction['p_vip'];
+			$this->_db->queryUpdate($columns, $this->_websoccer->getConfig('db_prefix') . '_stadion', 'id = \'%d\'',
+					$stadium['stadium_id']);
 			
 			// delete order
-			$this->_db->queryDelete($this->_websoccer->getConfig("db_prefix") . "_stadium_construction", 
-					"id = %d", $construction["id"]);
+			$this->_db->queryDelete($this->_websoccer->getConfig('db_prefix') . '_stadium_construction', 
+					'id = \'%d\'', $construction['id']);
 			
 			// create success message
 			$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS,
-					$this->_i18n->getMessage("stadium_acceptconstruction_completed_title"),
-					$this->_i18n->getMessage("stadium_acceptconstruction_completed_details")));
+					$this->_i18n->getMessage('stadium_acceptconstruction_completed_title'),
+					$this->_i18n->getMessage('stadium_acceptconstruction_completed_details')));
 		}
 		
 		return null;
 	}
-	
 }
-
-?>

@@ -40,21 +40,18 @@ class MessageDetailsModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		$id = $this->_websoccer->getRequestParameter("id");
+		$id = $this->_websoccer->getRequestParameter('id');
 		$message = MessagesDataService::getMessageById($this->_websoccer, $this->_db, $id);
 		
-		// update "seen" state
-		if ($message && !$message["seen"]) {
-			$columns["gelesen"] = "1";
-			$fromTable = $this->_websoccer->getConfig("db_prefix") . "_briefe";
-			$whereCondition = "id = %d";
+		// update 'seen' state
+		if ($message && !$message['seen']) {
+			$columns['gelesen'] = '1';
+			$fromTable = $this->_websoccer->getConfig('db_prefix') . '_briefe';
+			$whereCondition = 'id = \'%d\'';
 			
 			$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $id);
 		}
 		
-		return array("message" => $message);
+		return array('message' => $message);
 	}
-	
 }
-
-?>

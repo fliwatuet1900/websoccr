@@ -43,30 +43,27 @@ class DisableAccountController implements IActionController {
 		// fire user
 		$clubId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 		if ($clubId) {
-			$this->_db->queryUpdate(array("user_id" => '', "captain_id" => ''), $this->_websoccer->getConfig("db_prefix") . "_verein", 
-					"user_id = %d", $this->_websoccer->getUser()->id);
+			$this->_db->queryUpdate(array('user_id' => '', 'captain_id' => ''), $this->_websoccer->getConfig('db_prefix') . '_verein', 
+					'user_id = \'%d\'', $this->_websoccer->getUser()->id);
 		}
 		
 		// disable user
-		$this->_db->queryUpdate(array("status" => "0"), $this->_websoccer->getConfig("db_prefix") . "_user",
-				"id = %d", $this->_websoccer->getUser()->id);
+		$this->_db->queryUpdate(array('status' => '0'), $this->_websoccer->getConfig('db_prefix') . '_user',
+				'id = \'%d\'', $this->_websoccer->getUser()->id);
 		
 		// logout user
-		$authenticatorClasses = explode(",", $this->_websoccer->getConfig("authentication_mechanism"));
+		$authenticatorClasses = explode(',', $this->_websoccer->getConfig('authentication_mechanism'));
 		foreach ($authenticatorClasses as $authenticatorClass) {
 			$authenticatorClass = trim($authenticatorClass);
 			if (!class_exists($authenticatorClass)) {
-				throw new Exception("Class not found: " . $authenticatorClass);
+				throw new Exception('Class not found: ' . $authenticatorClass);
 			}
 			$authenticator = new $authenticatorClass($this->_websoccer);
 			$authenticator->logoutUser($this->_websoccer->getUser());
 		}
-		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, $this->_i18n->getMessage("cancellation_success"),
-				""));
+		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, $this->_i18n->getMessage('cancellation_success'),
+				''));
 		
-		return "home";
+		return 'home';
 	}
-	
 }
-
-?>

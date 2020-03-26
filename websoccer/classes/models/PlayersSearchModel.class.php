@@ -42,12 +42,12 @@ class PlayersSearchModel implements IModel {
 	}
 	
 	public function renderView() {
-		$this->_firstName = $this->_websoccer->getRequestParameter("fname");
-		$this->_lastName = $this->_websoccer->getRequestParameter("lname");
-		$this->_club = $this->_websoccer->getRequestParameter("club");
-		$this->_position = $this->_websoccer->getRequestParameter("position");
-		$this->_strength = $this->_websoccer->getRequestParameter("strength");
-		$this->_lendableOnly = ($this->_websoccer->getRequestParameter("lendable") == "1") ? TRUE : FALSE;
+		$this->_firstName = $this->_websoccer->getRequestParameter('fname');
+		$this->_lastName = $this->_websoccer->getRequestParameter('lname');
+		$this->_club = $this->_websoccer->getRequestParameter('club');
+		$this->_position = $this->_websoccer->getRequestParameter('position');
+		$this->_strength = $this->_websoccer->getRequestParameter('strength');
+		$this->_lendableOnly = ($this->_websoccer->getRequestParameter('lendable') == '1') ? TRUE : FALSE;
 		
 		// display content only if user entered any filter
 		return ($this->_firstName !== null || $this->_lastName !== null
@@ -61,29 +61,26 @@ class PlayersSearchModel implements IModel {
 				$this->_firstName, $this->_lastName, $this->_club, $this->_position, $this->_strength, $this->_lendableOnly);
 		
 		// setup paginator
-		$eps = $this->_websoccer->getConfig("entries_per_page");
+		$eps = $this->_websoccer->getConfig('entries_per_page');
 		$paginator = new Paginator($playersCount, $eps, $this->_websoccer);
-		$paginator->addParameter("block", "playerssearch-results");
-		$paginator->addParameter("fname", $this->_firstName);
-		$paginator->addParameter("lname", $this->_lastName);
-		$paginator->addParameter("club", $this->_club);
-		$paginator->addParameter("position", $this->_position);
-		$paginator->addParameter("strength", $this->_strength);
-		$paginator->addParameter("lendable", $this->_lendableOnly);
+		$paginator->addParameter('block', 'playerssearch-results');
+		$paginator->addParameter('fname', $this->_firstName);
+		$paginator->addParameter('lname', $this->_lastName);
+		$paginator->addParameter('club', $this->_club);
+		$paginator->addParameter('position', $this->_position);
+		$paginator->addParameter('strength', $this->_strength);
+		$paginator->addParameter('lendable', $this->_lendableOnly);
 		
 		// get players records
 		if ($playersCount > 0) {
 			$players = PlayersDataService::findPlayers($this->_websoccer, $this->_db,
 						$this->_firstName, $this->_lastName, $this->_club, $this->_position, $this->_strength, $this->_lendableOnly,
 						$paginator->getFirstIndex(), $eps);
-		} else {
+		}
+		else {
 			$players = array();
 		}
 		
-		return array("playersCount" => $playersCount, "players" => $players, "paginator" => $paginator);
+		return array('playersCount' => $playersCount, 'players' => $players, 'paginator' => $paginator);
 	}
-	
-	
 }
-
-?>

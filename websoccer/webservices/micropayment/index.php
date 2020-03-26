@@ -71,4 +71,3 @@ $response.= 'forward=' . $forward;
 
 // send response
 echo $response;
-?>

@@ -49,19 +49,15 @@ class UserDetailsModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$userId = (int) $this->_websoccer->getRequestParameter('id');
-		if ($userId < 1) {
-			$userId = $this->_websoccer->getUser()->id;
-		}
+		if ($userId < 1) $userId = $this->_websoccer->getUser()->id;
 		
 		$user = UsersDataService::getUserById($this->_websoccer, $this->_db, $userId);
 		
-		if (!isset($user['id'])) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		if (!isset($user['id'])) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		// get teams of user
 		$fromTable = $this->_websoccer->getConfig('db_prefix') . '_verein';
-		$whereCondition = 'user_id = %d AND status = \'1\' AND nationalteam != \'1\' ORDER BY name ASC';
+		$whereCondition = 'user_id = \'%d\' AND status = \'1\' AND nationalteam != \'1\' ORDER BY name ASC';
 		$result = $this->_db->querySelect('id,name', $fromTable, $whereCondition, $userId);		
 		
 		$teams = array();
@@ -74,24 +70,20 @@ class UserDetailsModel implements IModel {
 		if ($this->_websoccer->getConfig('nationalteams_enabled')) {
 			$columns = 'id,name';
 			$fromTable = $this->_websoccer->getConfig('db_prefix') . '_verein';
-			$whereCondition = 'user_id = %d AND nationalteam = \'1\'';
+			$whereCondition = 'user_id = \'%d\' AND nationalteam = \'1\'';
 			$result = $this->_db->querySelect($columns, $fromTable, $whereCondition, $userId, 1);
 			$nationalteam = $result->fetch_array();
 			$result->free();
-			if (isset($nationalteam['id'])) {
-				$user['nationalteam'] = $nationalteam;
-			}
+			if (isset($nationalteam['id'])) $user['nationalteam'] = $nationalteam;
 		}
 		
 		// badges
 		$result = $this->_db->querySelect('name, description, level, date_rewarded, event', 
 				$this->_websoccer->getConfig('db_prefix') . '_badge INNER JOIN ' . $this->_websoccer->getConfig('db_prefix') . '_badge_user ON id = badge_id', 
-				'user_id = %d ORDER BY level DESC, date_rewarded ASC', $userId);
+				'user_id = \'%d\' ORDER BY level DESC, date_rewarded ASC', $userId);
 		$badges = array();
 		while ($badge = $result->fetch_array()) {
-			if (!isset($badges[$badge['event']])) {
-				$badges[$badge['event']] = $badge;
-			}
+			if (!isset($badges[$badge['event']])) $badges[$badge['event']] = $badge;
 		}
 		$result->free();
 		
@@ -99,7 +91,4 @@ class UserDetailsModel implements IModel {
 				'absence' => AbsencesDataService::getCurrentAbsenceOfUser($this->_websoccer, $this->_db, $userId),
 				'badges' => $badges);
 	}
-	
 }
-
-?>

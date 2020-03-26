@@ -40,7 +40,7 @@ class TeamPlayersModel implements IModel {
 	 * @see IModel::renderView()
 	 */
 	public function renderView() {
-		$this->_teamid = (int) $this->_websoccer->getRequestParameter("teamid");
+		$this->_teamid = (int) $this->_websoccer->getRequestParameter('teamid');
 		return ($this->_teamid > 0);
 	}
 	
@@ -50,12 +50,9 @@ class TeamPlayersModel implements IModel {
 	 */
 	public function getTemplateParameters() {
 		
-		$isNationalTeam = ($this->_websoccer->getRequestParameter("nationalteam")) ? TRUE : FALSE;
+		$isNationalTeam = ($this->_websoccer->getRequestParameter('nationalteam')) ? TRUE : FALSE;
 		$players = PlayersDataService::getPlayersOfTeamById($this->_websoccer, $this->_db, $this->_teamid, $isNationalTeam);
 		
-		return array("players" => $players);
+		return array('players' => $players);
 	}
-	
 }
-
-?>

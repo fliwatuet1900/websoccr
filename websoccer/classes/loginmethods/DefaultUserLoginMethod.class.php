@@ -62,7 +62,7 @@ class DefaultUserLoginMethod implements IUserLoginMethod {
 		// get user data
 		$columns = 'id, passwort, passwort_neu, passwort_salt';
 		
-		$wherePart = $column . ' = \'%s\' AND status = 1';
+		$wherePart = $column . ' = \'%s\' AND status = \'1\'';
 		$parameter = $loginstr;
 		
 		$result = $this->_db->querySelect($columns, $fromTable, $wherePart, $parameter);
@@ -83,14 +83,11 @@ class DefaultUserLoginMethod implements IUserLoginMethod {
 		// update password after a generated one
 		if ($userdata['passwort_neu'] == $inputPassword) {
 			$columns = array('passwort' => $inputPassword, 'passwort_neu_angefordert' => 0, 'passwort_neu' => '');
-			$whereCondition = 'id = %d';
+			$whereCondition = 'id = \'%d\'';
 			$parameter = $userdata['id'];
 			$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameter);
 		}
 		
 		return $userdata['id'];
 	}
-	
 }
-
-?>

@@ -32,37 +32,34 @@ class UserActivationController implements IActionController {
 	}
 	
 	public function executeAction($parameters) {
-		$key = $parameters["key"];
-		$userid = $parameters["userid"];
+		$key = $parameters['key'];
+		$userid = $parameters['userid'];
 		
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_user";
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_user';
 		
 		// get user
-		$columns = "id";
-		$wherePart = "schluessel = '%s' AND id = %d AND status = 2";
+		$columns = 'id';
+		$wherePart = 'schluessel = \'%s\' AND id = \'%d\' AND status = \'2\'';
 		$parameters = array($key, $userid);
 		$result = $this->_db->querySelect($columns, $fromTable, $wherePart, $parameters);
 		$userdata = $result->fetch_array();
 		$result->free();
 		
-		if (!isset($userdata["id"])) {
+		if (!isset($userdata['id'])) {
 			sleep(5);
-			throw new Exception($this->_i18n->getMessage("activate-user_user-not-found"));
+			throw new Exception($this->_i18n->getMessage('activate-user_user-not-found'));
 		}
 		
 		// update user
-		$columns = array("status" => 1);
-		$whereCondition = "id = %d";
-		$parameter = $userdata["id"];
+		$columns = array('status' => 1);
+		$whereCondition = 'id = \'%d\'';
+		$parameter = $userdata['id'];
 		$this->_db->queryUpdate($columns, $fromTable, $whereCondition, $parameter);
 		
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("activate-user_message_title"),
-				$this->_i18n->getMessage("activate-user_message_content")));
+				$this->_i18n->getMessage('activate-user_message_title'),
+				$this->_i18n->getMessage('activate-user_message_content')));
 		
 		return null;
 	}
-	
 }
-
-?>

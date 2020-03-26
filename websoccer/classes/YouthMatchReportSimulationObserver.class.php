@@ -99,7 +99,8 @@ class YouthMatchReportSimulationObserver implements ISimulationObserver {
 		if ($player->yellowCards > 1) {
 			YouthMatchesDataService::createMatchReportItem($this->_websoccer, $this->_db, $match->id, $match->minute,
 				'ymreport_card_yellowred', array('player' => $player->name), $player->team->id == $match->homeTeam->id);
-		} else {
+		}
+		else {
 			YouthMatchesDataService::createMatchReportItem($this->_websoccer, $this->_db, $match->id, $match->minute,
 				'ymreport_card_yellow', array('player' => $player->name), $player->team->id == $match->homeTeam->id);
 		}
@@ -123,7 +124,8 @@ class YouthMatchReportSimulationObserver implements ISimulationObserver {
 		if ($successful) {
 			YouthMatchesDataService::createMatchReportItem($this->_websoccer, $this->_db, $match->id, $match->minute,
 				'ymreport_penalty_success', array('player' => $player->name), $player->team->id == $match->homeTeam->id);
-		} else {
+		}
+		else {
 			YouthMatchesDataService::createMatchReportItem($this->_websoccer, $this->_db, $match->id, $match->minute,
 				'ymreport_penalty_failure', array('player' => $player->name), $player->team->id == $match->homeTeam->id);
 		}
@@ -143,10 +145,6 @@ class YouthMatchReportSimulationObserver implements ISimulationObserver {
 	 * @see ISimulationObserver::onFreeKick()
 	 */
 	public function onFreeKick(SimulationMatch $match, SimulationPlayer $player, SimulationPlayer $goaly, $successful) {
-		if ($successful) {
-			$this->onGoal($match, $player, $goaly);
-		}
+		if ($successful) $this->onGoal($match, $player, $goaly);
 	}
-	
 }
-?>

@@ -47,9 +47,6 @@ class FreeClubsModel implements IModel {
 	 * @see IModel::getTemplateParameters()
 	 */
 	public function getTemplateParameters() {
-		return array("countries" => TeamsDataService::getTeamsWithoutUser($this->_websoccer, $this->_db));
+		return array('countries' => TeamsDataService::getTeamsWithoutUser($this->_websoccer, $this->_db));
 	}
-	
 }
-
-?>

@@ -92,9 +92,7 @@ class GoogleplusSdk {
 			$_SESSION['gptoken'] = $this->_client->getAccessToken();
 		}
 		
-		if (isset($_SESSION['gptoken'])) {
-			$this->_client->setAccessToken($_SESSION['gptoken']);
-		}
+		if (isset($_SESSION['gptoken'])) $this->_client->setAccessToken($_SESSION['gptoken']);
 		
 		// provide e-mail of user
 		if ($this->_client->getAccessToken()) {
@@ -111,6 +109,4 @@ class GoogleplusSdk {
 		
 		return FALSE;
 	}
-	
 }
-?>

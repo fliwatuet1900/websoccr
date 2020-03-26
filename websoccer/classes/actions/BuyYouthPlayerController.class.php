@@ -40,7 +40,7 @@ class BuyYouthPlayerController implements IActionController {
 	 */
 	public function executeAction($parameters) {
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig("youth_enabled")) {
+		if (!$this->_websoccer->getConfig('youth_enabled')) {
 			return NULL;
 		}
 		
@@ -48,53 +48,50 @@ class BuyYouthPlayerController implements IActionController {
 		
 		$clubId = $user->getClubId($this->_websoccer, $this->_db);
 		if ($clubId < 1) {
-			throw new Exception($this->_i18n->getMessage("feature_requires_team"));
+			throw new Exception($this->_i18n->getMessage('feature_requires_team'));
 		}
 		
 		// check if it is already own player
-		$player = YouthPlayersDataService::getYouthPlayerById($this->_websoccer, $this->_db, $this->_i18n, $parameters["id"]);
-		if ($clubId == $player["team_id"]) {
-			throw new Exception($this->_i18n->getMessage("youthteam_buy_err_ownplayer"));
+		$player = YouthPlayersDataService::getYouthPlayerById($this->_websoccer, $this->_db, $this->_i18n, $parameters['id']);
+		if ($clubId == $player['team_id']) {
+			throw new Exception($this->_i18n->getMessage('youthteam_buy_err_ownplayer'));
 		}
 		
 		// player must not be tranfered from one of user's other teams
-		$result = $this->_db->querySelect("user_id", $this->_websoccer->getConfig("db_prefix") . "_verein", "id = %d", $player["team_id"]);
+		$result = $this->_db->querySelect('user_id', $this->_websoccer->getConfig('db_prefix') . '_verein', 'id = \'%d\'', $player['team_id']);
 		$playerteam = $result->fetch_array();
 		$result->free_result();
-		if ($playerteam["user_id"] == $user->id) {
-			throw new Exception($this->_i18n->getMessage("youthteam_buy_err_ownplayer_otherteam"));
+		if ($playerteam['user_id'] == $user->id) {
+			throw new Exception($this->_i18n->getMessage('youthteam_buy_err_ownplayer_otherteam'));
 		}
 		
 		// check if enough budget
 		$team = TeamsDataService::getTeamSummaryById($this->_websoccer, $this->_db, $clubId);
-		if ($team["team_budget"] <= $player["transfer_fee"]) {
-			throw new Exception($this->_i18n->getMessage("youthteam_buy_err_notenoughbudget"));
+		if ($team['team_budget'] <= $player['transfer_fee']) {
+			throw new Exception($this->_i18n->getMessage('youthteam_buy_err_notenoughbudget'));
 		}
 		
 		// credit / debit amount
-		$prevTeam = TeamsDataService::getTeamSummaryById($this->_websoccer, $this->_db, $player["team_id"]);
-		BankAccountDataService::debitAmount($this->_websoccer, $this->_db, $clubId, $player["transfer_fee"], "youthteam_transferfee_subject", 
-			$prevTeam["team_name"]);
-		BankAccountDataService::creditAmount($this->_websoccer, $this->_db, $player["team_id"], $player["transfer_fee"], "youthteam_transferfee_subject",
-			$team["team_name"]);
+		$prevTeam = TeamsDataService::getTeamSummaryById($this->_websoccer, $this->_db, $player['team_id']);
+		BankAccountDataService::debitAmount($this->_websoccer, $this->_db, $clubId, $player['transfer_fee'], 'youthteam_transferfee_subject', 
+			$prevTeam['team_name']);
+		BankAccountDataService::creditAmount($this->_websoccer, $this->_db, $player['team_id'], $player['transfer_fee'], 'youthteam_transferfee_subject',
+			$team['team_name']);
 		
 		// update player
-		$this->_db->queryUpdate(array("team_id" => $clubId, "transfer_fee" => 0),
-				$this->_websoccer->getConfig("db_prefix") . "_youthplayer", "id = %d", $parameters["id"]);
+		$this->_db->queryUpdate(array('team_id' => $clubId, 'transfer_fee' => 0),
+				$this->_websoccer->getConfig('db_prefix') . '_youthplayer', 'id = \'%d\'', $parameters['id']);
 		
 		// create notification
-		NotificationsDataService::createNotification($this->_websoccer, $this->_db, $prevTeam["user_id"], "youthteam_transfer_notification",
-			array("player" => $player["firstname"] . " " . $player["lastname"],
-				"newteam" => $team["team_name"]), "youth_transfer", "team", "id=" . $clubId);
+		NotificationsDataService::createNotification($this->_websoccer, $this->_db, $prevTeam['user_id'], 'youthteam_transfer_notification',
+			array('player' => $player['firstname'] . ' ' . $player['lastname'],
+				'newteam' => $team['team_name']), 'youth_transfer', 'team', 'id=' . $clubId);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("youthteam_buy_success"),
-				""));
+				$this->_i18n->getMessage('youthteam_buy_success'),
+				''));
 		
-		return "youth-team";
+		return 'youth-team';
 	}
-	
 }
-
-?>

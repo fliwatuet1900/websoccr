@@ -19,15 +19,14 @@
   If not, see <http://www.gnu.org/licenses/>.
 
 ******************************************************/
-echo "<h1>". $mainTitle ." &raquo; ". $i18n->getMessage("subpage_save_title") . " &raquo; ". $i18n->getMessage("subpage_error_title") . "</h1>";
+echo '<h1>'. $mainTitle .' &raquo; '. $i18n->getMessage('subpage_save_title') . ' &raquo; '. $i18n->getMessage('subpage_error_title') . '</h1>';
 
-$message = "<ul>";
+$message = '<ul>';
 foreach ($err as $e => $error) {
-  $message .= "<li>". $error ."</li>";
+  $message .= '<li>'. $error .'</li>';
 }
-$message .= "</ul>";
+$message .= '</ul>';
 
-echo createErrorMessage($i18n->getMessage("subpage_error_alertbox_title") , $message);
+echo createErrorMessage($i18n->getMessage('subpage_error_alertbox_title') , $message);
+echo '<p>&raquo; <a href="?site='. $site . '">'. $i18n->getMessage('back_label') . '</a></p>\n';
 
-echo "<p>&raquo; <a href=\"?site=". $site . "\">". $i18n->getMessage("back_label") . "</a></p>\n";
-?>

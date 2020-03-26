@@ -45,21 +45,16 @@ class SelectTeamController implements IActionController {
 		}
 		
 		// check whether club is one of user's teams
-		$fromTable = $this->_websoccer->getConfig("db_prefix") ."_verein";
-		$whereCondition = "id = %d AND user_id = %d AND status = '1' AND nationalteam != '1'";
-		$result = $this->_db->querySelect("id", $fromTable, $whereCondition, array($teamId, $user->id));
+		$fromTable = $this->_websoccer->getConfig('db_prefix') .'_verein';
+		$whereCondition = 'id = \'%d\' AND user_id = \'%d\' AND status = \'1\' AND nationalteam != \'1\'';
+		$result = $this->_db->querySelect('id', $fromTable, $whereCondition, array($teamId, $user->id));
 		$club = $result->fetch_array();
 		$result->free();
 		
-		if (!isset($club["id"])) {
-			throw new Exception("illegal club ID");
-		}
+		if (!isset($club['id'])) throw new Exception('illegal club ID');
 		
 		$user->setClubId($teamId);
 		
 		return null;
 	}
-	
 }
-
-?>

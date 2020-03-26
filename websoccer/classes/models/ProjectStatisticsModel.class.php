@@ -40,12 +40,9 @@ class ProjectStatisticsModel implements IModel {
 	
 	public function getTemplateParameters() {
 		
-		return array("usersOnline" => UsersDataService::countOnlineUsers($this->_websoccer, $this->_db),
-				"usersTotal" => UsersDataService::countTotalUsers($this->_websoccer, $this->_db),
-				"numberOfLeagues" => LeagueDataService::countTotalLeagues($this->_websoccer, $this->_db),
-				"numberOfFreeTeams" => TeamsDataService::countTeamsWithoutManager($this->_websoccer, $this->_db));
+		return array('usersOnline' => UsersDataService::countOnlineUsers($this->_websoccer, $this->_db),
+				'usersTotal' => UsersDataService::countTotalUsers($this->_websoccer, $this->_db),
+				'numberOfLeagues' => LeagueDataService::countTotalLeagues($this->_websoccer, $this->_db),
+				'numberOfFreeTeams' => TeamsDataService::countTeamsWithoutManager($this->_websoccer, $this->_db));
 	}
-	
 }
-
-?>

@@ -39,7 +39,7 @@ class NationalTeamMatchesModel implements IModel {
 	 * @see IModel::renderView()
 	 */
 	public function renderView() {
-		return $this->_websoccer->getConfig("nationalteams_enabled");
+		return $this->_websoccer->getConfig('nationalteams_enabled');
 	}
 	
 	/**
@@ -50,13 +50,8 @@ class NationalTeamMatchesModel implements IModel {
 		
 		// get team info
 		$teamId = NationalteamsDataService::getNationalTeamManagedByCurrentUser($this->_websoccer, $this->_db);
-		if (!$teamId) {
-			throw new Exception($this->_i18n->getMessage("nationalteams_user_requires_team"));
-		}
+		if (!$teamId) throw new Exception($this->_i18n->getMessage('nationalteams_user_requires_team'));
 		
 		return array();
 	}
-	
 }
-
-?>

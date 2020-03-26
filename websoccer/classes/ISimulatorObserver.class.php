@@ -49,6 +49,4 @@ interface ISimulatorObserver {
 	 * @param SimulationMatch $match simulated match.
 	 */
 	public function onBeforeMatchStarts(SimulationMatch $match);
-	
 }
-?>

@@ -58,5 +58,3 @@ interface IConverter {
 	 */
 	public function toDbValue($value);
 }
-
-?>

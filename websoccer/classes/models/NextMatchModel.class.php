@@ -39,22 +39,14 @@ class NextMatchModel implements IModel {
 	}
 	
 	public function getTemplateParameters() {
-		if ($this->_websoccer->getRequestParameter("nationalteam")) {
-			$clubId = NationalteamsDataService::getNationalTeamManagedByCurrentUser($this->_websoccer, $this->_db);
-		} else {
-			$clubId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
-		}
+		if ($this->_websoccer->getRequestParameter('nationalteam')) $clubId = NationalteamsDataService::getNationalTeamManagedByCurrentUser($this->_websoccer, $this->_db);
+		else $clubId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
 		
 		$matchinfo = MatchesDataService::getNextMatch($this->_websoccer, $this->_db, $clubId);
 		
 		// get previous matches against this team
-		if (count($matchinfo)) {
-			$matchinfo["previous_matches"] = MatchesDataService::getPreviousMatches($matchinfo, $this->_websoccer, $this->_db);
-		}
+		if (count($matchinfo)) $matchinfo['previous_matches'] = MatchesDataService::getPreviousMatches($matchinfo, $this->_websoccer, $this->_db);
 		
 		return $matchinfo;
 	}
-	
 }
-
-?>

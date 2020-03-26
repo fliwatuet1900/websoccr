@@ -37,22 +37,17 @@ class UrlUtil {
 		
 		$first = TRUE;
 		foreach($parameters as $parameterName => $parameterValue) {
-			if (!$first) {
-				$url .= '&';
-			}
+			if (!$first) $url .= '&';
+
 			$url .= $parameterName .'='. $parameterValue;
 			$first = FALSE;
 		}
 		
 		foreach($_GET as $parameterName => $parameterValue) {
 			// skip overriden value
-			if (!isset($parameters[$parameterName])) {
-				$url .= '&' . $parameterName .'='. $parameterValue;
-			}
+			if (!isset($parameters[$parameterName])) $url .= '&' . $parameterName .'='. $parameterValue;
 		} 
 		
 		return escapeOutput($url);
 	}
 }
-
-?>

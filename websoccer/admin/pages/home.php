@@ -22,40 +22,35 @@
 
 if (!$show) {
 
-  ?>
+    ?>
 
-  <h1><?php echo sprintf($i18n->getMessage('home_title'), escapeOutput($admin['name'])); ?></h1>
+    <h1><?php echo sprintf($i18n->getMessage('home_title'), escapeOutput($admin['name'])); ?></h1>
+    <p><?php echo $i18n->getMessage('home_intro'); ?></p>
 
-  <p><?php echo $i18n->getMessage('home_intro'); ?></p>
+    <h3><?php echo $i18n->getMessage('home_softwareinfo_title'); ?></h3>
+    <table class="table table-bordered" style="width: 500px;">
+        <tr>
+            <td><b><?php echo $i18n->getMessage('home_softwareinfo_name'); ?></b></td>
+            <td>OpenWebSoccer-Sim</td>
+        </tr>
+        <tr>
+            <td><b><?php echo $i18n->getMessage('home_softwareinfo_version'); ?></b></td>
+            <td><?php readfile('config/version.txt'); ?></td>
+        </tr>
+    </table>
 
-  <h3><?php echo $i18n->getMessage('home_softwareinfo_title'); ?></h3>
-  
- <table class='table table-bordered' style='width: 500px;'>
-  <tr>
-	<td><b><?php echo $i18n->getMessage('home_softwareinfo_name'); ?></b></td>
-	<td>OpenWebSoccer-Sim</td>
-  </tr>
-  <tr>
-	<td><b><?php echo $i18n->getMessage('home_softwareinfo_version'); ?></b></td>
-	<td><?php readfile('config/version.txt'); ?></td>
-  </tr>
-</table> 
+    <h3><?php echo $i18n->getMessage('home_projectinfo_title'); ?></h3>
 
-  <h3><?php echo $i18n->getMessage('home_projectinfo_title'); ?></h3>
-
-        <table class='table table-bordered' style='width: 500px;'>
-          <tr>
+    <table class="table table-bordered" style="width: 500px;">
+        <tr>
             <td><b><?php echo $i18n->getMessage('home_projectinfo_name'); ?></b></td>
             <td><?php echo escapeOutput($website->getConfig('projectname')) ?></td>
-          </tr>
-          <tr>
+        </tr>
+        <tr>
             <td><b><?php echo $i18n->getMessage('home_projectinfo_adminemail'); ?></b></td>
-            <td><a href='mailto:<?php echo $website->getConfig('systememail'); ?>'><?php echo $website->getConfig('systememail'); ?></a></td>
-          </tr>
-        </table>
-
-  <?php
-
+            <td><a href="mailto:<?php echo $website->getConfig('systememail'); ?>"><?php echo $website->getConfig('systememail'); ?></a></td>
+        </tr>
+    </table>
+    <?php
 }
 
-?>

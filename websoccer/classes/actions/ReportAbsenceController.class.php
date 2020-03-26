@@ -43,27 +43,19 @@ class ReportAbsenceController implements IActionController {
 		$userId = $this->_websoccer->getUser()->id;
 		
 		// find deputy
-		$deputyId = UsersDataService::getUserIdByNick($this->_websoccer, $this->_db, $parameters["deputynick"]);
-		if ($deputyId < 1) {
-			throw new Exception($this->_i18n->getMessage("absence_err_invaliddeputy"));
-		}
+		$deputyId = UsersDataService::getUserIdByNick($this->_websoccer, $this->_db, $parameters['deputynick']);
+		if ($deputyId < 1) throw new Exception($this->_i18n->getMessage('absence_err_invaliddeputy'));
 		
 		// cannot assign to himself
-		if ($userId == $deputyId) {
-			throw new Exception($this->_i18n->getMessage("absence_err_deputyisself"));
-		}
+		if ($userId == $deputyId) throw new Exception($this->_i18n->getMessage('absence_err_deputyisself'));
 		
 		AbsencesDataService::makeUserAbsent($this->_websoccer, $this->_db, $userId, $deputyId, $parameters['days']);
 		
 		// success message
 		$this->_websoccer->addFrontMessage(new FrontMessage(MESSAGE_TYPE_SUCCESS, 
-				$this->_i18n->getMessage("absence_report_success"),
-				""));
+				$this->_i18n->getMessage('absence_report_success'),
+				''));
 		
 		return null;
 	}
-	
-	
 }
-
-?>

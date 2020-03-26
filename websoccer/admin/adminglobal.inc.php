@@ -39,12 +39,13 @@ $action = (isset($_REQUEST['action'])) ? $_REQUEST['action'] : null;
 if (SecurityUtil::isAdminLoggedIn()) {
 	$columns = '*';
 	$fromTable = $conf['db_prefix'] .'_admin';
-	$whereCondition = 'id = %d';
+	$whereCondition = 'id = \'%d\'';
 	$parameters = $_SESSION['userid'];
 	$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters);
 	$admin = $result->fetch_array();
 	$result->free();
-} else {
+}
+else {
 	header('location: login.php?forwarded=1');
 	exit;
 }
@@ -54,7 +55,8 @@ $i18n = I18n::getInstance($website->getConfig('supported_languages'));
 if ($admin['lang']) {
 	try {
 		$i18n->setCurrentLanguage($admin['lang']);
-	} catch (Exception $e) {
+	}
+	catch (Exception $e) {
 		// ignore and use default language
 	}
 }

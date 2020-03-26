@@ -51,13 +51,11 @@ class DataGeneratorService {
 			$generateStadium, $stadiumNamePattern, $stadiumStands, $stadiumSeats, $stadiumStandsGrand, $stadiumSeatsGrand, $stadiumVip) {
 		
 		// get country
-		$result = $db->querySelect('*', $websoccer->getConfig('db_prefix') . '_liga', 'id = %d', $leagueId);
+		$result = $db->querySelect('*', $websoccer->getConfig('db_prefix') . '_liga', 'id = \'%d\'', $leagueId);
 		$league = $result->fetch_array();
 		$result->free();
 		
-		if (!$league) {
-			throw new Exception('illegal league ID');
-		}
+		if (!$league) throw new Exception('illegal league ID');
 		
 		$country = $league['land'];
 		
@@ -66,7 +64,8 @@ class DataGeneratorService {
 		$suffixes = array();
 		try {
 			$suffixes = self::_getLines(FILE_SUFFIXNAMES, $country);
-		} catch(Exception $e) {
+		}
+		catch(Exception $e) {
 			// no suffix file exist or is empty, so we will take only prefixes.
 		}
 		
@@ -98,17 +97,16 @@ class DataGeneratorService {
 		
 		if (strlen($nationality)) {
 			$country = $nationality;
-		} else {
+		}
+		else {
 			// get country from team
 			$fromTable = $websoccer->getConfig('db_prefix') . '_verein AS T';
 			$fromTable .= ' INNER JOIN ' . $websoccer->getConfig('db_prefix') . '_liga AS L ON L.id = T.liga_id';
-			$result = $db->querySelect('L.land AS country', $fromTable, 'T.id = %d', $teamId);
+			$result = $db->querySelect('L.land AS country', $fromTable, 'T.id = \'%d\'', $teamId);
 			$league = $result->fetch_array();
 			$result->free();
 			
-			if (!$league) {
-				throw new Exception('illegal team ID');
-			}
+			if (!$league) throw new Exception('illegal team ID');
 			
 			$country = $league['country'];
 		}
@@ -145,22 +143,16 @@ class DataGeneratorService {
 				self::_createPlayer($websoccer, $db, $teamId, $firstName, $lastName,
 						$mainPositions[$mainPosition], $mainPosition, $strengths, $country, $playerAge, $birthday, $salary, $contractDuration, $maxDeviation);
 			}
-
 		}
-		
 	}
 	
 	private static function _getLines($fileName, $country) {
 		$filePath = sprintf($fileName, $country);
 		
-		if (!file_exists($filePath)) {
-			self::_throwException('generator_err_filedoesnotexist', $filePath);
-		}
+		if (!file_exists($filePath)) self::_throwException('generator_err_filedoesnotexist', $filePath);
 		
 		$items = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		if (!count($items)) {
-			self::_throwException('generator_err_emptyfile', $filePath);
-		}
+		if (!count($items)) self::_throwException('generator_err_emptyfile', $filePath);
 		
 		return $items;
 	}
@@ -186,11 +178,8 @@ class DataGeneratorService {
 		$shortName = strtoupper(substr($cityName, 0, 3));
 		
 		// prefix or suffix?
-		if (rand(0, 1) && count($suffixes)) {
-			$teamName .= ' ' . self::_getItemFromArray($suffixes);
-		} else {
-			$teamName = self::_getItemFromArray($prefixes) . ' ' . $teamName;
-		}
+		if (rand(0, 1) && count($suffixes)) $teamName .= ' ' . self::_getItemFromArray($suffixes);
+		else $teamName = self::_getItemFromArray($prefixes) . ' ' . $teamName;
 		
 		// stadium
 		$stadiumId = 0;
@@ -253,7 +242,8 @@ class DataGeneratorService {
 		
 		if ($teamId) {
 			$columns['verein_id'] = $teamId;
-		} else {
+		}
+		else {
 			$columns['transfermarkt'] = '1';
 			$columns['transfer_start'] = $websoccer->getNowAsTimestamp();
 			$columns['transfer_ende'] = $columns['transfer_start'] + $websoccer->getConfig('transfermarket_duration_days') * 24 * 3600;
@@ -270,6 +260,4 @@ class DataGeneratorService {
 		
 		return mt_rand(0 - $maxDeviation, $maxDeviation);
 	}
-	
 }
-?>

@@ -36,23 +36,18 @@ class TransferBidModel implements IModel {
 	}
 	
 	public function renderView() {
-		$playerId = (int) $this->_websoccer->getRequestParameter("id");
-		if ($playerId < 1) {
-			throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
-		}
+		$playerId = (int) $this->_websoccer->getRequestParameter('id');
+		if ($playerId < 1) throw new Exception($this->_i18n->getMessage(MSG_KEY_ERROR_PAGENOTFOUND));
 		
 		$this->_player = PlayersDataService::getPlayerById($this->_websoccer, $this->_db, $playerId);
 		
-		return ($this->_player["transfer_end"] > $this->_websoccer->getNowAsTimestamp());
+		return ($this->_player['transfer_end'] > $this->_websoccer->getNowAsTimestamp());
 	}
 	
 	public function getTemplateParameters() {
 		
-		$highestBid = TransfermarketDataService::getHighestBidForPlayer($this->_websoccer, $this->_db, $this->_player["player_id"], $this->_player["transfer_start"], $this->_player["transfer_end"]);
+		$highestBid = TransfermarketDataService::getHighestBidForPlayer($this->_websoccer, $this->_db, $this->_player['player_id'], $this->_player['transfer_start'], $this->_player['transfer_end']);
 		
-		return array("player" => $this->_player, "highestbid" => $highestBid);
+		return array('player' => $this->_player, 'highestbid' => $highestBid);
 	}
-	
 }
-
-?>

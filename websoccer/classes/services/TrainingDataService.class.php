@@ -26,31 +26,31 @@
 class TrainingDataService {
 	
 	public static function countTrainers(WebSoccer $websoccer, DbConnection $db) {
-		$fromTable = $websoccer->getConfig("db_prefix") . "_trainer";
+		$fromTable = $websoccer->getConfig('db_prefix') . '_trainer';
 	
 		// where
-		$whereCondition = "1=1";
+		$whereCondition = '1=1';
 	
 		// select
-		$columns = "COUNT(*) AS hits";
+		$columns = 'COUNT(*) AS hits';
 	
 		$result = $db->querySelect($columns, $fromTable, $whereCondition);
 		$trainers = $result->fetch_array();
 		$result->free();
 	
-		return $trainers["hits"];
+		return $trainers['hits'];
 	}
 	
 	public static function getTrainers(WebSoccer $websoccer, DbConnection $db, $startIndex, $entries_per_page) {
-		$fromTable = $websoccer->getConfig("db_prefix") . "_trainer";
+		$fromTable = $websoccer->getConfig('db_prefix') . '_trainer';
 	
 		// where
-		$whereCondition = "1=1 ORDER BY salary DESC";
+		$whereCondition = '1=1 ORDER BY salary DESC';
 	
 		// select
-		$columns = "*";
+		$columns = '*';
 		
-		$limit = $startIndex .",". $entries_per_page;
+		$limit = $startIndex .','. $entries_per_page;
 	
 		$trainers = array();
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, null, $limit);
@@ -63,13 +63,13 @@ class TrainingDataService {
 	}
 	
 	public static function getTrainerById(WebSoccer $websoccer, DbConnection $db, $trainerId) {
-		$fromTable = $websoccer->getConfig("db_prefix") . "_trainer";
+		$fromTable = $websoccer->getConfig('db_prefix') . '_trainer';
 	
 		// where
-		$whereCondition = "id = %d";
+		$whereCondition = 'id = \'%d\'';
 	
 		// select
-		$columns = "*";
+		$columns = '*';
 	
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $trainerId);
 		$trainer = $result->fetch_array();
@@ -79,39 +79,40 @@ class TrainingDataService {
 	}
 	
 	public static function countRemainingTrainingUnits(WebSoccer $websoccer, DbConnection $db, $teamId) {
-		$columns = "COUNT(*) AS hits";
-		$fromTable = $websoccer->getConfig("db_prefix") . "_training_unit";
-		$whereCondition = "team_id = %d AND date_executed = 0 OR date_executed IS NULL";
+		$columns = 'COUNT(*) AS hits';
+		$fromTable = $websoccer->getConfig('db_prefix') . '_training_unit';
+		$whereCondition = 'team_id = \'%d\' AND date_executed = \'0\' OR date_executed IS NULL';
 		$parameters = $teamId;
 	
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters);
 		$units = $result->fetch_array();
 		$result->free();
 		
-		return $units["hits"];
+		return $units['hits'];
 	}
 	
 	public static function getLatestTrainingExecutionTime(WebSoccer $websoccer, DbConnection $db, $teamId) {
-		$columns = "date_executed";
-		$fromTable = $websoccer->getConfig("db_prefix") . "_training_unit";
-		$whereCondition = "team_id = %d AND date_executed > 0 ORDER BY date_executed DESC";
+		$columns = 'date_executed';
+		$fromTable = $websoccer->getConfig('db_prefix') . '_training_unit';
+		$whereCondition = 'team_id = \'%d\' AND date_executed > \'0\' ORDER BY date_executed DESC';
 		$parameters = $teamId;
 		
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters, 1);
 		$unit = $result->fetch_array();
 		$result->free();
 		
-		if (isset($unit["date_executed"])) {
-			return $unit["date_executed"];
-		} else {
+		if (isset($unit['date_executed'])) {
+			return $unit['date_executed'];
+		}
+		else {
 			return 0;
 		}
 	}
 	
 	public static function getValidTrainingUnit(WebSoccer $websoccer, DbConnection $db, $teamId) {
-		$columns = "id,trainer_id";
-		$fromTable = $websoccer->getConfig("db_prefix") . "_training_unit";
-		$whereCondition = "team_id = %d AND date_executed = 0 OR date_executed IS NULL ORDER BY id ASC";
+		$columns = 'id,trainer_id';
+		$fromTable = $websoccer->getConfig('db_prefix') . '_training_unit';
+		$whereCondition = 'team_id = \'%d\' AND date_executed = \'0\' OR date_executed IS NULL ORDER BY id ASC';
 		$parameters = $teamId;
 	
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters, 1);
@@ -122,9 +123,9 @@ class TrainingDataService {
 	}
 	
 	public static function getTrainingUnitById(WebSoccer $websoccer, DbConnection $db, $teamId, $unitId) {
-		$columns = "*";
-		$fromTable = $websoccer->getConfig("db_prefix") . "_training_unit";
-		$whereCondition = "id = %d AND team_id = %d";
+		$columns = '*';
+		$fromTable = $websoccer->getConfig('db_prefix') . '_training_unit';
+		$whereCondition = 'id = \'%d\' AND team_id = \'%d\'';
 		$parameters = array($unitId, $teamId);
 	
 		$result = $db->querySelect($columns, $fromTable, $whereCondition, $parameters, 1);
@@ -133,6 +134,4 @@ class TrainingDataService {
 	
 		return $unit;
 	}
-	
 }
-?>

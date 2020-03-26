@@ -34,5 +34,3 @@ class SimulateMatchesJob extends AbstractJob {
 		MatchSimulationExecutor::simulateOpenMatches($this->_websoccer, $this->_db);
 	}
 }
-
-?>

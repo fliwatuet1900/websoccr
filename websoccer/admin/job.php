@@ -40,21 +40,11 @@ $jobId = $_REQUEST['id'];
 
 $xml = simplexml_load_file(JOBS_CONFIG_FILE);
 $jobConfig = $xml->xpath('//job[@id = \''. $jobId . '\']');
-if (!$jobConfig) {
-	throw new Exception('Job config not found.');
-}
+if (!$jobConfig) throw new Exception('Job config not found.');
 
 $jobClass = (string) $jobConfig[0]->attributes()->class;
-if (class_exists($jobClass)) {
-	$job = new $jobClass($website, $db, $i18n, $jobId, $action !== 'stop');
-} else {
-	throw new Exception('class not found: ' . $jobClass);
-}
+if (class_exists($jobClass)) $job = new $jobClass($website, $db, $i18n, $jobId, $action !== 'stop');
+else throw new Exception('class not found: ' . $jobClass);
 
-if ($action == 'start') {
-	$job->start();
-} else if ($action == 'stop') {
-	$job->stop();
-}
-
-?>
+if ($action === 'start') $job->start();
+elseif ($action === 'stop') $job->stop();

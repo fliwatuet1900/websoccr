@@ -41,9 +41,7 @@ class SponsorModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$teamId = $this->_websoccer->getUser()->getClubId($this->_websoccer, $this->_db);
-		if ($teamId < 1) {
-			throw new Exception($this->_i18n->getMessage("feature_requires_team"));
-		}
+		if ($teamId < 1) throw new Exception($this->_i18n->getMessage('feature_requires_team'));
 		
 		$sponsor = SponsorsDataService::getSponsorinfoByTeamId($this->_websoccer, $this->_db, $teamId);
 		
@@ -52,15 +50,11 @@ class SponsorModel implements IModel {
 		if (!$sponsor) {
 			$teamMatchday = MatchesDataService::getMatchdayNumberOfTeam($this->_websoccer, $this->_db, $teamId);
 			
-			if ($teamMatchday >= $this->_websoccer->getConfig("sponsor_earliest_matchday")) {
+			if ($teamMatchday >= $this->_websoccer->getConfig('sponsor_earliest_matchday')) {
 				$sponsors = SponsorsDataService::getSponsorOffers($this->_websoccer, $this->_db, $teamId);
 			}
-			
 		}
 
-		return array("sponsor" => $sponsor, "sponsors" => $sponsors, "teamMatchday" => $teamMatchday);
+		return array('sponsor' => $sponsor, 'sponsors' => $sponsors, 'teamMatchday' => $teamMatchday);
 	}
-	
 }
-
-?>

@@ -83,11 +83,10 @@ class SimulationHelper {
 				$players = $team->positionsAndPlayers[$position];
 			
 				// filter excludePlayer
-			} else {
+			}
+			else {
 				foreach ($team->positionsAndPlayers[$position] as $player) {
-					if ($player->id !== $excludePlayer->id) {
-						$players[] = $player;
-					}
+					if ($player->id !== $excludePlayer->id) $players[] = $player;
 				}
 			}
 		}
@@ -98,9 +97,11 @@ class SimulationHelper {
 		if ($noOfPlayers < 1) {
 			if ($position == PLAYER_POSITION_STRIKER) {
 				return self::selectPlayer($team, PLAYER_POSITION_MIDFIELD, $excludePlayer);
-			} else if ($position == PLAYER_POSITION_MIDFIELD) {
+			}
+			elseif ($position == PLAYER_POSITION_MIDFIELD) {
 				return self::selectPlayer($team, PLAYER_POSITION_DEFENCE, $excludePlayer);
-			} else if ($position == PLAYER_POSITION_DEFENCE) {
+			}
+			elseif ($position == PLAYER_POSITION_DEFENCE) {
 				return self::selectPlayer($team, PLAYER_POSITION_GOALY, $excludePlayer);
 			}
 			
@@ -120,7 +121,7 @@ class SimulationHelper {
 	}
 	
 	/**
-	 * Get the opponent team of specified player. E.g. if player is from home team, return the guest team.
+	 * Get the opponent team of specified player. E.g. if player is from home team, return the away team.
 	 * 
 	 * @param SimulationPlayer $player player.
 	 * @param SimulationMatch $match match.
@@ -131,7 +132,7 @@ class SimulationHelper {
 	}
 	
 	/**
-	 * Get the opponent team of specified team. E.g. if team home team, return the guest team.
+	 * Get the opponent team of specified team. E.g. if team home team, return the away team.
 	 *
 	 * @param SimulationTeam $team team.
 	 * @param SimulationMatch $match match.
@@ -177,16 +178,19 @@ class SimulationHelper {
 				// third: add player to his general position, without any main position
 				if (strlen($substitution->position)) {
 					$mainPosition = $substitution->position;
-				} else if (strlen($substitution->playerIn->mainPosition) && $substitution->playerIn->mainPosition != "-") {
+				}
+				elseif (strlen($substitution->playerIn->mainPosition) && $substitution->playerIn->mainPosition != '-') {
 					$mainPosition = $substitution->playerIn->mainPosition;
-				} else {
+				}
+				else {
 					$mainPosition = NULL;
 				}
 				
 				// determine general position
 				if ($mainPosition == NULL) {
 					$position = $substitution->playerIn->position;
-				} else {
+				}
+				else {
 					$positionMapping = self::getPositionsMapping();
 					$position = $positionMapping[$mainPosition];
 				}
@@ -194,9 +198,10 @@ class SimulationHelper {
 				// strength deduction needed?
 				$strength = $substitution->playerIn->strength;
 				if ($position != $substitution->playerIn->position) {
-					$strength = round($strength * (1 - WebSoccer::getInstance()->getConfig("sim_strength_reduction_wrongposition") / 100));
-				} else if ($mainPosition != NULL && $mainPosition != $substitution->playerIn->mainPosition) {
-					$strength = round($strength * (1 - WebSoccer::getInstance()->getConfig("sim_strength_reduction_secondary") / 100));
+					$strength = round($strength * (1 - WebSoccer::getInstance()->getConfig('sim_strength_reduction_wrongposition') / 100));
+				}
+				elseif ($mainPosition != NULL && $mainPosition != $substitution->playerIn->mainPosition) {
+					$strength = round($strength * (1 - WebSoccer::getInstance()->getConfig('sim_strength_reduction_secondary') / 100));
 				}
 				
 				// updates values
@@ -239,22 +244,19 @@ class SimulationHelper {
 		// no striker on bench, try other positions
 		if ($player == NULL && $position == PLAYER_POSITION_STRIKER) {
 			$player = self::selectPlayerFromBench($team->playersOnBench, PLAYER_POSITION_MIDFIELD);
-			if ($player == NULL) {
-				$player = self::selectPlayerFromBench($team->playersOnBench, PLAYER_POSITION_DEFENCE);
-			}
+			if ($player == NULL) $player = self::selectPlayerFromBench($team->playersOnBench, PLAYER_POSITION_DEFENCE);
 			
 			// no midfielder
-		} else if ($player == NULL && $position == PLAYER_POSITION_MIDFIELD) {
+		}
+		elseif ($player == NULL && $position == PLAYER_POSITION_MIDFIELD) {
 			$player = self::selectPlayerFromBench($team->playersOnBench, PLAYER_POSITION_DEFENCE);
-			if ($player == NULL) {
-				$player = self::selectPlayerFromBench($team->playersOnBench, PLAYER_POSITION_STRIKER);
-			}
+			if ($player == NULL) $player = self::selectPlayerFromBench($team->playersOnBench, PLAYER_POSITION_STRIKER);
+
 			// no defender
-		} else if ($player == NULL && $position == PLAYER_POSITION_DEFENCE) {
+		}
+		elseif ($player == NULL && $position == PLAYER_POSITION_DEFENCE) {
 			$player = self::selectPlayerFromBench($team->playersOnBench, PLAYER_POSITION_MIDFIELD);
-			if ($player == NULL) {
-				$player = self::selectPlayerFromBench($team->playersOnBench, PLAYER_POSITION_STRIKER);
-			}
+			if ($player == NULL) $player = self::selectPlayerFromBench($team->playersOnBench, PLAYER_POSITION_STRIKER);
 		}
 		
 		// no appropriate player found
@@ -268,7 +270,7 @@ class SimulationHelper {
 	}
 	
 	/**
-	 * Gets availabl players of specified team for penalty shooting.
+	 * Gets availabl players of specified team for penalties.
 	 * 
 	 * @param SimulationTeam $team
 	 * @return array array of all players of team, sorted by strength descending (strongest is first). Goalkeeper is appended to end.
@@ -290,9 +292,7 @@ class SimulationHelper {
 		usort($players, array("SimulationHelper", "sortByStrength"));
 		
 		// append goalkepper to end
-		if ($goalkeeper != null) {
-			$players[] = $goalkeeper;
-		}
+		if ($goalkeeper != null) $players[] = $goalkeeper;
 		
 		return $players;
 	}
@@ -379,6 +379,4 @@ class SimulationHelper {
 				'RS' => 'Sturm'
 		);
 	}
-	
 }
-?>
