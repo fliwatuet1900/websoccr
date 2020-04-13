@@ -96,7 +96,6 @@ class SofortComRedirectController implements IActionController {
 			header('Location: '.$paymentUrl);
 			exit;
 		}
-		
-		return null;
+
 	}
 }

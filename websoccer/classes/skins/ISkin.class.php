@@ -56,7 +56,7 @@ interface ISkin {
 	 * implementation could map particular templates to another file.
 	 * 
 	 * @param string $templateName name of template to load, without file extension.
-	 * @return sring Name of template file to load.
+	 * @return string Name of template file to load.
 	 */
 	public function getTemplate($templateName);
 	

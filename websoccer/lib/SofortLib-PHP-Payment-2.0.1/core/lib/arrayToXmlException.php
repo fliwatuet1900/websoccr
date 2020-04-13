@@ -13,5 +13,3 @@
  * @link http://www.sofort.com/
  */
 class ArrayToXmlException extends Exception {}
-
-?>

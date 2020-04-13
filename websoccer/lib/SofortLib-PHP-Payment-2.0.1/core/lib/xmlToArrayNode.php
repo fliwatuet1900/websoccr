@@ -193,4 +193,3 @@ class XmlToArrayNode {
 		$this->_ParentXmlToArrayNode = $XmlToArrayNode;
 	}
 }
-?>

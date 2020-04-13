@@ -207,4 +207,3 @@ class SofortLibHttp {
 		return '<errors><error><code>0'.$code.'</code><message>'.$message.'</message></error></errors>';
 	}
 }
-?>

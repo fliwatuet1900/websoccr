@@ -90,7 +90,7 @@ class DataGeneratorService {
 	 * @param array $strengths assoc. array of strength values. Keys are: strength, technique, stamina, freshness, satisfaction
 	 * @param array $positions assoc array of positions and number of players to generate for each position. Key=abbreviated positions as in DB.
 	 * @param int $maxDeviation maximum deviation in strength.
-	 * @param sring|NULL $nationality optional. Nationality of player.If not provided, it is taken from club.
+	 * @param string|NULL $nationality optional. Nationality of player.If not provided, it is taken from club.
 	 * @throws Exception if generation failed.
 	 */
 	public static function generatePlayers(WebSoccer $websoccer, DbConnection $db, $teamId, $age, $ageDeviation, $salary, $contractDuration, $strengths, $positions, $maxDeviation, $nationality = NULL) {

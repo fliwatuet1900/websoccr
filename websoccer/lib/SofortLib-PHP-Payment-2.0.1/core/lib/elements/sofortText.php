@@ -43,4 +43,3 @@ class SofortText extends SofortElement {
 		return $this->escape ? htmlspecialchars($this->text) : $this->text;
 	}
 }
-?>

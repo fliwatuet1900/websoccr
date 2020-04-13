@@ -48,9 +48,8 @@ class LeagueDataService {
 		$columns['L.land'] = 'league_country';
 	
 		$leagueinfos = $db->queryCachedSelect($columns, $fromTable, $whereCondition, $parameters, 1);
-		$league = (isset($leagueinfos[0])) ? $leagueinfos[0] : array();
 		
-		return $league;
+		return (isset($leagueinfos[0])) ? $leagueinfos[0] : array();
 	}
 	
 	/**

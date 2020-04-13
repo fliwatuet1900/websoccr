@@ -29,7 +29,7 @@ interface IActionController {
 	/**
 	 * @param I18n $i18n i18n instance.
 	 * @param WebSoccer $websoccer Websoccer instance.
-	 * @param DbConnnection $db DB connection.
+	 * @param DbConnection $db DB connection.
 	 */
 	public function __construct(I18n $i18n, WebSoccer $websoccer, DbConnection $db);
 	

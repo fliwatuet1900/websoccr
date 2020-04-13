@@ -223,4 +223,3 @@ abstract class AbstractDataHandler {
 		return $this->_rawRequest;
 	}
 }
-?>

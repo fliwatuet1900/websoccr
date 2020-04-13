@@ -60,9 +60,7 @@ class YouthPlayersDataService {
 		$fromTable = $websoccer->getConfig('db_prefix') . '_youthplayer';
 		$whereCondition = 'team_id = \'%d\' ORDER BY position ASC, lastname ASC, firstname ASC';
 		
-		$players = $db->queryCachedSelect('*', $fromTable, $whereCondition, $teamId);
-		
-		return $players;
+		return $db->queryCachedSelect('*', $fromTable, $whereCondition, $teamId);
 	}
 	
 	/**
@@ -178,8 +176,7 @@ class YouthPlayersDataService {
 	 * @param int $entries_per_page Number of items to fetch.
 	 * @return array Array of players or empty array if no youth players found.
 	 */
-	public static function getTransferableYouthPlayers(WebSoccer $websoccer, DbConnection $db, $positionFilter = NULL,
-			$startIndex, $entries_per_page) {
+	public static function getTransferableYouthPlayers(WebSoccer $websoccer, DbConnection $db, $startIndex, $entries_per_page, $positionFilter = NULL) {
 		
 		$columns = array(
 				'P.id' => 'player_id',

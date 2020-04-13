@@ -14,4 +14,3 @@
  *
  */
 class XmlToArrayException extends Exception {}
-?>

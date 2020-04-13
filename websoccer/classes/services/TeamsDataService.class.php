@@ -135,9 +135,8 @@ class TeamsDataService {
 		$columns['L.id'] = 'team_league_id';
 		
 		$teaminfos = $db->queryCachedSelect($columns, $fromTable, $whereCondition, $parameters, 1);
-		$team = (isset($teaminfos[0])) ? $teaminfos[0] : array();
 		
-		return $team;
+		return (isset($teaminfos[0])) ? $teaminfos[0] : array();
 	}
 	
 	/**

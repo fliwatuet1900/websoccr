@@ -38,7 +38,7 @@ interface IConverter {
 	 * Converts specified value into a secure (i.e. escaped) HTML string, ready for output.
 	 * 
 	 * @param mixed $value value to be converted.
-	 * @return HTML representation of specified value.
+	 * returns HTML representation of specified value.
 	 */
 	public function toHtml($value);
 	
@@ -46,7 +46,7 @@ interface IConverter {
 	 * Converts specified value into an unescaped, but properly formatted text.
 	 *
 	 * @param mixed $value value to be converted.
-	 * @return formatted value for output.
+	 * returns formatted value for output.
 	 */	
 	public function toText($value);
 	
@@ -54,7 +54,7 @@ interface IConverter {
 	 * Converts specified value into a value that can be stored into the data base.
 	 *
 	 * @param mixed $value value to be converted.
-	 * @return formatted value for the database.
+	 * returns formatted value for the database.
 	 */
 	public function toDbValue($value);
 }

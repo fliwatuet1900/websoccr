@@ -125,7 +125,7 @@ class ConfigCacheFileWriter {
 	private function _processModule($file, $module) {
 		$doc = new DOMDocument();
 		$loaded = @$doc->load($file, LIBXML_DTDLOAD|LIBXML_DTDVALID);
-		if (!$loaded) throw new Exception('Could not load XML config file: ' + $file);
+		if (!$loaded) throw new Exception('Could not load XML config file: '. $file);
 		
 		// validate (will throw warnings in development mode)
 		$isValid = $doc->validate();
@@ -150,7 +150,8 @@ class ConfigCacheFileWriter {
 		
 		if ($itemname === 'eventlistener') {
 			$line = '$'. $itemname .'[\''. $xml->getAttribute('event') . '\'][]';
-		} else {
+		}
+		else {
 			$id = $xml->getAttribute($keyAttribute);
 			$line = '$'. $itemname .'[\''. $xml->getAttribute($keyAttribute) . '\']';
 		}
@@ -213,7 +214,7 @@ class ConfigCacheFileWriter {
 	private function _processMessages($file, $fileWriters) {
 		$doc = new DOMDocument();
 		$loaded = @$doc->load($file);
-		if (!$loaded) throw new Exception('Could not load XML messages file: ' + $file);
+		if (!$loaded) throw new Exception('Could not load XML messages file: '. $file);
 		
 		$lang = substr($file, strrpos($file, '_') + 1, 2);
 	

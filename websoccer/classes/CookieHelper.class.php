@@ -45,7 +45,7 @@ class CookieHelper {
 	/**
 	 * 
 	 * @param string $name cookie name (without application prefix)
-	 * @return NULL|sring Cookie value or NULL if there is no cookie with specified name.
+	 * @return NULL|string Cookie value or NULL if there is no cookie with specified name.
 	 */
 	public static function getCookieValue($name) {
 		if (!isset($_COOKIE[COOKIE_PREFIX . $name])) {

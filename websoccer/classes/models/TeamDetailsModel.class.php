@@ -110,7 +110,7 @@ class TeamDetailsModel implements IModel {
 		
 		$victories = array();
 		while ($cup = $result->fetch_array()) {
-			$victories[] = $cup;;
+			$victories[] = $cup;
 		}
 		$result->free();
 		return $victories;

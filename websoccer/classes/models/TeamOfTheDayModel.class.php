@@ -49,7 +49,7 @@ class TeamOfTheDayModel implements IModel {
 	public function getTemplateParameters() {
 		
 		$players = array();
-		$positions;
+		// $positions;
 		
 		// leagues
 		$leagues = LeagueDataService::getLeaguesSortedByCountry($this->_websoccer, $this->_db);

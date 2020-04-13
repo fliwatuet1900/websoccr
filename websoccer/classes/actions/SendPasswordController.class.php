@@ -58,7 +58,7 @@ class SendPasswordController implements IActionController {
 		
 		// get user
 		$columns = 'id, passwort_salt, passwort_neu_angefordert';
-		$wherePart = 'UPPER(email) = \'%s' AND status = \'1\'';
+		$wherePart = 'UPPER(email) = \'%s\' AND status = \'1\'';
 		$result = $this->_db->querySelect($columns, $fromTable, $wherePart, strtoupper($email));
 		$userdata = $result->fetch_array();
 		$result->free();

@@ -41,7 +41,7 @@ interface IUserLoginMethod {
 	 * 
 	 * @param string $email By the user entered e-mail string (not escaped).
 	 * @param string $password unhashed entered password (not escaped).
-	 * @return ID of user in internal database in case user could be authenticated. FALSE if user could not be authenticated.
+	 * returns ID of user in internal database in case user could be authenticated. FALSE if user could not be authenticated.
 	 */
 	public function authenticateWithEmail($email, $password);
 	
@@ -52,7 +52,7 @@ interface IUserLoginMethod {
 	 *
 	 * @param string $nick By the user entered user name string (not escaped).
 	 * @param string $password unhashed entered password (not escaped).
-	 * @return ID of user in internal database in case user could be authenticated. FALSE if user could not be authenticated.
+	 * returns ID of user in internal database in case user could be authenticated. FALSE if user could not be authenticated.
 	 */
 	public function authenticateWithUsername($nick, $password);
 	

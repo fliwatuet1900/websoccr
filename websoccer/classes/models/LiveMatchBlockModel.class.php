@@ -36,7 +36,7 @@ class LiveMatchBlockModel implements IModel {
 	}
 	
 	public function renderView() {
-		$this->_match = MatchesDataService::getLiveMatch($this->_websoccer, $this->_db);;
+		$this->_match = MatchesDataService::getLiveMatch($this->_websoccer, $this->_db);
 		return (count($this->_match));
 	}
 	

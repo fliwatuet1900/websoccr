@@ -74,7 +74,7 @@ class DirectTransfersDataService {
 	 * 
 	 * @param WebSoccer $websoccer application context.
 	 * @param DbConnection $db DB connection.
-	 * @param unknown $offerId id of direct transfer offer.
+	 * @param int $offerId id of direct transfer offer.
 	 */
 	public static function executeTransferFromOffer(WebSoccer $websoccer, DbConnection $db, $offerId) {
 		

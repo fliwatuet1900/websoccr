@@ -56,8 +56,7 @@ function printWelcomeScreen() {
 			echo ' checked';
 			$first = FALSE;
 		}
-		echo '> $langLabel';
-		echo '</label>';
+		echo '> '.$langLabel.'</label>';
 	}
 	
 	echo '<button type="submit" class="btn">Wählen / Choose</button>';
@@ -162,7 +161,7 @@ function printSystemCheck($messages) {
 	
 	if ($valid) {
 		echo '<form method="post">';
-		echo '<button type="submit" class="btn">". $messages["button_next"] . "</button>';
+		echo '<button type="submit" class="btn">'. $messages['button_next'] . '</button>';
 		echo '<input type="hidden" name="action" value="actionGotoConfig">';
 		echo '</form>';
 	}

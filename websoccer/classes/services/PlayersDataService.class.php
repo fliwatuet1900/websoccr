@@ -125,8 +125,7 @@ class PlayersDataService {
 				'unsellable' => 'unsellable',
 				'lending_matches' => 'lending_matches',
 				'lending_fee' => 'lending_fee',
-				'lending_owner_id' => 'lending_owner_id',
-				'transfermarkt' => 'transfermarket'
+				'lending_owner_id' => 'lending_owner_id'
 		);
 		
 		if ($websoccer->getConfig('players_aging') == 'birthday') $ageColumn = 'TIMESTAMPDIFF(YEAR,geburtstag,CURDATE())';

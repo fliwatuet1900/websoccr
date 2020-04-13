@@ -200,9 +200,8 @@ class ViewHandler {
 		$template = $this->_website->getTemplateEngine($this->_i18n, $this)->loadTemplate('blocks/' . $viewConfig['template']);
 		
 		$parameters['blockId'] = $blockId;
-		$output =$template->render($parameters);
 		
-		return $output;
+		return $template->render($parameters);
 	}
 	
 	private function _getBlocksForPage($pageId) {

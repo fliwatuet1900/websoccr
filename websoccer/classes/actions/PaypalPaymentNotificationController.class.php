@@ -102,7 +102,6 @@ class PaypalPaymentNotificationController implements IActionController {
 			header('X-Error-Message: invalid paypal response: ' . $response, true, 500);
 			die('X-Error-Message: invalid paypal response: ' . $response);
 		}
-		
-		return null;
+
 	}
 }

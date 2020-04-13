@@ -113,7 +113,5 @@ class MicropaymentRedirectController implements IActionController {
 		// redirect to payment url
 		header('Location: '.$paymentUrl);
 		exit;
-		
-		return null;
 	}
 }

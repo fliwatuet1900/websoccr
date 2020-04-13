@@ -38,7 +38,7 @@ class WebSoccer {
 	private $_contextParameters;
 	
 	/**
-	 * @return the only instance during current request.
+	 * returns the only instance during current request.
 	 */
 	public static function getInstance() {
         if(self::$_instance == NULL) {
@@ -94,7 +94,7 @@ class WebSoccer {
 	}
 	
 	/**
-	 * @return current internal page ID
+	 * @return string current internal page ID
 	 */
 	public function getPageId() {
 		return $this->_pageId;

@@ -36,7 +36,7 @@ class DbConnection {
 	private $_queryCache;
 	
 	/**
-	 * @return the only instance during current request.
+	 * returns the only instance during current request.
 	 */
 	public static function getInstance() {
 		if(self::$_instance == NULL) {
@@ -77,7 +77,7 @@ class DbConnection {
 	/**
 	 * Executes an SQL SELECT statement. Parameter values will be escaped against SQL injection.
 	 * 
-	 * @param sring|array $columns List of columns to select. Either a string or as an assoc. array with key=DB column name, value=alias name.
+	 * @param string|array $columns List of columns to select. Either a string or as an assoc. array with key=DB column name, value=alias name.
 	 * @param string $fromTable Name of table to select, including prefix. JOINs can be appended.
 	 * @param string $whereCondition Part that comes after keyworkd WHERE in query; 
 	 * 			parameters shall be added with placeholders with format as defined at {@link http://php.net/manual/en/function.sprintf.php sprintf()}
@@ -97,7 +97,7 @@ class DbConnection {
 	 * The return value is always a two dimensional array, unlike at querySelect().
 	 * Parameter values will be escaped against SQL injection.
 	 *
-	 * @param sring|array $columns List of columns to select. Either a string or as an assoc. array with key=DB column name, value=alias name.
+	 * @param string|array $columns List of columns to select. Either a string or as an assoc. array with key=DB column name, value=alias name.
 	 * @param string $fromTable Name of table to select, including prefix. JOINs can be appended.
 	 * @param string $whereCondition Part that comes after keyworkd WHERE in query;
 	 * 			parameters shall be added with placeholders with format as defined at {@link http://php.net/manual/en/function.sprintf.php sprintf()}

@@ -48,7 +48,7 @@ class YouthMarketplaceModel implements IModel {
 		
 		if ($positionFilter != null) $paginator->addParameter('position', $positionFilter);
 		
-		$players = YouthPlayersDataService::getTransferableYouthPlayers($this->_websoccer, $this->_db, $positionFilter, $paginator->getFirstIndex(), $eps);
+		$players = YouthPlayersDataService::getTransferableYouthPlayers($this->_websoccer, $this->_db, $paginator->getFirstIndex(), $eps, $positionFilter);
 		
 		return array('players' => $players, 'paginator' => $paginator);
 	}

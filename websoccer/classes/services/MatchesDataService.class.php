@@ -230,9 +230,8 @@ class MatchesDataService {
 		}
 	
 		$matchinfos = $db->queryCachedSelect($columns, $fromTable, $whereCondition, $parameters, 1);
-		$match = (isset($matchinfos[0])) ? $matchinfos[0] : array();
 	
-		return $match;
+		return (isset($matchinfos[0])) ? $matchinfos[0] : array();
 	}
 	
 	public static function getLastMatch(WebSoccer $websoccer, DbConnection $db) {
@@ -466,9 +465,8 @@ class MatchesDataService {
 		$order = 'field(M.position_main, \'T\', \'LV\', \'IV\', \'RV\', \'DM\', \'LM\', \'ZM\', \'RM\', \'OM\', \'LS\', \'MS\', \'RS\')';
 		$whereCondition = 'M.spiel_id = \'%d\' AND M.team_id = \'%d\' AND M.feld != \'Ersatzbank\' ORDER BY ' . $order . ', M.id ASC';
 		$parameters = array($matchId, $teamId);
-		
-		$players = $db->queryCachedSelect($columns, $fromTable, $whereCondition, $parameters);
-		return $players;
+
+		return $db->queryCachedSelect($columns, $fromTable, $whereCondition, $parameters);
 	}
 	
 	public static function getMatchPlayerRecordsByField(WebSoccer $websoccer, DbConnection $db, $matchId, $teamId) {

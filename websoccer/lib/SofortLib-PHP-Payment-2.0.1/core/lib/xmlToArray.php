@@ -214,5 +214,3 @@ class XmlToArray {
 		$this->_CurrentXmlToArrayNode = $XmlToArrayNode;
 	}
 }
-
-?>

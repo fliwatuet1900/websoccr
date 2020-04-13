@@ -194,7 +194,7 @@ abstract class SofortLibAbstract {
 	 * Getter for warnings
 	 * @param string $paymentMethod - 'all', 'su' (default "all")
 	 * @param (optional) array $message response array
-	 * @return empty array if no warnings exists ELSE array with warning-codes and warning-messages
+	 * @return array empty array if no warnings exists ELSE array with warning-codes and warning-messages
 	 */
 	public function getWarnings($paymentMethod = 'all', $message = '') {
 		if ($message == '') {
@@ -310,7 +310,7 @@ abstract class SofortLibAbstract {
 	 * Getter for errors
 	 * @param string $paymentMethod - 'all', 'sr', 'su' (default "all")
 	 * @param (optional) array $message response array
-	 * @return emtpy array if no error exist ELSE array with error-codes and error-messages
+	 * @return array emtpy array if no error exist ELSE array with error-codes and error-messages
 	 */
 	public function getErrors($paymentMethod = 'all', $message = '') {
 		if ($message == '') {
@@ -355,7 +355,7 @@ abstract class SofortLibAbstract {
 	/**
 	 * Alter error array and set error message and error code together as one
 	 * @param array $errors
-	 * @return emtpy array if no error exist ELSE array with error-codes and error-messages
+	 * @return array emtpy array if no error exist ELSE array with error-codes and error-messages
 	 */
 	public function handleErrors($errors) {
 		$errorKeys = array_keys($errors);
@@ -369,7 +369,7 @@ abstract class SofortLibAbstract {
 				}
 				
 				$i++;
-			};
+			}
 		}
 		
 		return $errors;
@@ -387,7 +387,6 @@ abstract class SofortLibAbstract {
 	
 	/**
 	 * Getter for the Request Data
-	 * @return Ambigous
 	 */
 	public function getRequest() {
 		return $this->_request;
@@ -479,7 +478,6 @@ abstract class SofortLibAbstract {
 	
 	/**
 	 * Getter for Paramterarray
-	 * @return multitype
 	 */
 	public function getParameters() {
 		return $this->_parameters;
@@ -697,7 +695,7 @@ abstract class SofortLibAbstract {
 	
 	/**
 	 * Preparing Requestarray
-	 * @return Ambigous <array, string>
+	 * @return array|string
 	 */
 	public function getData() {
 		if (in_array($this->_rootTag, array('multipay', 'paycode'))) {

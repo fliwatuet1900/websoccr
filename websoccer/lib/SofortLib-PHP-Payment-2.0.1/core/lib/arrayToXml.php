@@ -236,4 +236,3 @@ class ArrayToXml {
 		return $currentDepth;
 	}
 }
-?>

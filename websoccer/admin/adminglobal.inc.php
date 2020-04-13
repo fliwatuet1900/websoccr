@@ -26,9 +26,9 @@ define('JOBS_CONFIG_FILE', BASE_FOLDER . '/admin/config/jobs.xml');
 define('LOG_TYPE_EDIT', 'edit');
 define('LOG_TYPE_DELETE', 'delete');
 
-include(BASE_FOLDER . '/admin/config/global.inc.php');
-include(BASE_FOLDER . '/admin/functions.inc.php');
-include(CONFIGCACHE_FILE_ADMIN);
+include (BASE_FOLDER . '/admin/config/global.inc.php');
+include (BASE_FOLDER . '/admin/functions.inc.php');
+include (CONFIGCACHE_FILE_ADMIN);
 
 // request parameters
 $site = (isset($_REQUEST['site'])) ? $_REQUEST['site'] : '';

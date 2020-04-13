@@ -48,7 +48,7 @@ class SimulationPlayer {
 	public $position;
 	
 	/**
-	 * @var main position (as in DB) on which player is actually playing during this match. 
+	 * @var string main position (as in DB) on which player is actually playing during this match.
 	 * NOTE that before version 4.0.0, this had been the player's main position, regardless of actual positiom.
 	 */
 	public $mainPosition;

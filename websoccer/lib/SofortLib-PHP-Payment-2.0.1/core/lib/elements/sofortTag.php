@@ -68,4 +68,3 @@ class SofortTag extends SofortElement {
 		return $output !== '' ? "<{$this->tagname}{$attributes}>{$output}</{$this->tagname}>" : "<{$this->tagname}{$attributes} />";
 	}
 }
-?>

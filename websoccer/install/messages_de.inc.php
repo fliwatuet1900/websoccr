@@ -24,7 +24,7 @@ $messages['check_req_error'] = 'Die Mindestanforderungen sind auf diesem Webserv
 $messages['config_formtitle'] = 'Füllen Sie das Formular komplett aus';
 
 $messages['label_db_host'] = 'Datenbank Server (Host)';
-$messages['label_db_host_help'] = 'Für gewöhnlich 'localhost'';
+$messages['label_db_host_help'] = 'Für gewöhnlich \'localhost\'';
 $messages['label_db_name'] = 'Datenbank Name';
 $messages['label_db_user'] = 'Datenbank Benutzer (User)';
 $messages['label_db_password'] = 'Datenbank Passwort';

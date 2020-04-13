@@ -41,7 +41,7 @@ class RenameClubController implements IActionController {
 	public function executeAction($parameters) {
 		
 		// check if feature is enabled
-		if (!$this->_websoccer->getConfig('rename_club_enabled')) throw new Exceltion('feature is disabled');
+		if (!$this->_websoccer->getConfig('rename_club_enabled')) throw new Exception('feature is disabled');
 		
 		$user = $this->_websoccer->getUser();
 		

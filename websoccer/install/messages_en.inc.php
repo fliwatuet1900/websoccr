@@ -24,7 +24,7 @@ $messages['check_req_error'] = 'The minimum requirements are not fulfilled on th
 $messages['config_formtitle'] = 'Complete the form';
 
 $messages['label_db_host'] = 'Database Server (Host)';
-$messages['label_db_host_help'] = 'usually 'localhost'';
+$messages['label_db_host_help'] = 'usually \'localhost\'';
 $messages['label_db_name'] = 'Database Name';
 $messages['label_db_user'] = 'Database User';
 $messages['label_db_password'] = 'Database Password';

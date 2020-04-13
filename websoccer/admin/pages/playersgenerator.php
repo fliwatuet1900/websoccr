@@ -219,7 +219,7 @@ elseif ($show === 'generate') {
 
         echo createSuccessMessage($i18n->getMessage('generator_success'), '');
 
-        echo '<p>&raquo; <a href="?site='. $site .'&leagueid='. $leagueid . '">'. $i18n->getMessage('back_label') . '</a></p>\n';
+        echo '<p>&raquo; <a href="?site='. $site .'&leagueid='. $leagueid . '">'. $i18n->getMessage('back_label') . '</a></p>';
 
     }
 }

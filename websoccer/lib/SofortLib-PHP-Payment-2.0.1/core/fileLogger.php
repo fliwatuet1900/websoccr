@@ -73,7 +73,7 @@ class FileLogger extends AbstractLoggerHandler {
 	
 	/**
 	 * Setting a log entry
-	 * @param string_type $message
+	 * @param string $message
 	 * @param string $log
 	 * @return boolean
 	 */
@@ -153,4 +153,3 @@ class FileLogger extends AbstractLoggerHandler {
 		return false;
 	}
 }
-?>

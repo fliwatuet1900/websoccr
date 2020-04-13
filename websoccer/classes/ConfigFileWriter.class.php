@@ -34,7 +34,7 @@ class ConfigFileWriter {
 	 * Provides request's only instance of this class.
 	 * 
 	 * @param array $settings existing settings.
-	 * @return the only instance during current request.
+	 * returns the only instance during current request.
 	 */
 	public static function getInstance($settings) {
         if(self::$_instance == NULL) {

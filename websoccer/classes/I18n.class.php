@@ -36,7 +36,7 @@ class I18n {
 	
 	/**
 	 * @param string supported languages as comma separated string
-	 * @return the only instance during current request.
+	 * returns the only instance during current request.
 	 */
 	public static function getInstance($supportedLanguages) {
 		if(self::$_instance == NULL) self::$_instance = new I18n($supportedLanguages);

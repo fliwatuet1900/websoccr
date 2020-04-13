@@ -83,7 +83,7 @@ interface ISimulationObserver {
 	 * 
 	 * @param SimulationMatch $match Affected match.
 	 * @param SimulationPlayer $player player who got injured.
-	 * @param unknown $numberOfMatches Number of matches he has to pause.
+	 * @param int $numberOfMatches Number of matches he has to pause.
 	 */
 	public function onInjury(SimulationMatch $match, SimulationPlayer $player, $numberOfMatches);
 	
